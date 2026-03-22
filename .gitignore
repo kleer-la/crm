@@ -1,0 +1,8 @@
+# Node modules
+/node_modules/
+
+# Claude Code work storage
+/.claude/*
+!/.claude/skills/
+!/.claude/commands/
+!/.claude/CLAUDE.md
