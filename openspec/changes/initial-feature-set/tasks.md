@@ -57,14 +57,14 @@
 
 ## 7. Prospects Module
 
-- [ ] 7.1 Create Prospect model validations: required fields, company_name uniqueness (across Prospects + Customers), email uniqueness (across Prospects + Customer contacts)
-- [ ] 7.2 Build ProspectsController with full CRUD actions
-- [ ] 7.3 Create Prospect list view with filtering by all fields and column sorting
-- [ ] 7.4 Create Prospect show/edit views with all fields and status management
-- [ ] 7.5 Implement Disqualify action with required reason validation
-- [ ] 7.6 Implement Convert to Customer service object: create Customer, re-link Proposals, mark Prospect read-only with converted_customer reference
-- [ ] 7.7 Add touchpoint logging and activity log display on Prospect show page
-- [ ] 7.8 Implement consultant reassignment (responsible + collaborating) with activity log entries
+- [x] 7.1 Create Prospect model validations: required fields, company_name uniqueness (across Prospects + Customers), email uniqueness (across Prospects + Customer contacts)
+- [x] 7.2 Build ProspectsController with full CRUD actions
+- [x] 7.3 Create Prospect list view with filtering by all fields and column sorting
+- [x] 7.4 Create Prospect show/edit views with all fields and status management
+- [x] 7.5 Implement Disqualify action with required reason validation
+- [x] 7.6 Implement Convert to Customer service object: create Customer, re-link Proposals, mark Prospect read-only with converted_customer reference
+- [x] 7.7 Add touchpoint logging and activity log display on Prospect show page
+- [x] 7.8 Implement consultant reassignment (responsible + collaborating) with activity log entries
 
 ## 8. Customers Module
 

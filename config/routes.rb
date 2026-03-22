@@ -17,6 +17,14 @@ Rails.application.routes.draw do
     end
   end
 
+  # Prospects
+  resources :prospects do
+    member do
+      patch :disqualify
+      patch :convert
+    end
+  end
+
   # Touchpoints
   resources :touchpoints, only: [ :create ]
 

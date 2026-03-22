@@ -1,0 +1,23 @@
+<%= form_with(model: prospect, class: "space-y-0") do |f| %>
+  <%= render "shared/error_summary", record: prospect %>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6">
+    <%= render "shared/form_field", form: f, field: :company_name, label: "Company Name", required: true %>
+    <%= render "shared/form_field", form: f, field: :industry, label: "Industry" %>
+    <%= render "shared/form_field", form: f, field: :primary_contact_name, label: "Primary Contact Name", required: true %>
+    <%= render "shared/form_field", form: f, field: :primary_contact_email, label: "Primary Contact Email", type: :email_field, required: true %>
+    <%= render "shared/form_field", form: f, field: :primary_contact_phone, label: "Primary Contact Phone" %>
+    <%= render "shared/form_field", form: f, field: :source, label: "Source", type: :select, options: { choices: Prospect.sources.keys.map { |s| [s.titleize, s] }, include_blank: "Select source..." } %>
+    <%= render "shared/form_field", form: f, field: :estimated_value, label: "Estimated Value", type: :number_field %>
+    <%= render "shared/form_field", form: f, field: :date_added, label: "Date Added", type: :date_field, required: true %>
+  </div>
+
+  <%= render "shared/consultant_select", form: f, field: :responsible_consultant_id, label: "Responsible Consultant", required: true %>
+  <%= render "shared/consultant_multi_select", form: f, field: :collaborating_consultant_ids, label: "Collaborating Consultants" %>
+
+  <% if prospect.persisted? && !prospect.converted? %>
+    <%= render "shared/form_field", form: f, field: :status, label: "Status", type: :select, options: { choices: Prospect.statuses.keys.reject { |s| s == "converted" }.map { |s| [s.titleize, s] } } %>
+  <% end %>
+
+  <%= render "shared/form_actions", form: f, cancel_path: prospect.persisted? ? prospect_path(prospect) : prospects_path %>
+<% end %>

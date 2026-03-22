@@ -21,6 +21,9 @@ class Prospect < ApplicationRecord
   validates :last_activity_date, presence: true
   validates :disqualification_reason, presence: true, if: :disqualified?
 
+  validate :company_name_unique_across_customers
+  validate :email_unique_across_customer_contacts
+
   after_commit :log_creation, on: :create
   after_commit :log_changes, on: :update
 
@@ -29,6 +32,22 @@ class Prospect < ApplicationRecord
   end
 
   private
+
+  def company_name_unique_across_customers
+    return if company_name.blank?
+
+    if Customer.where(company_name: company_name).exists?
+      errors.add(:company_name, "is already taken by an existing customer")
+    end
+  end
+
+  def email_unique_across_customer_contacts
+    return if primary_contact_email.blank?
+
+    if Contact.where(email: primary_contact_email).exists?
+      errors.add(:primary_contact_email, "is already used by an existing customer contact")
+    end
+  end
 
   def log_creation
     log_system_event("Prospect created: #{company_name}")
