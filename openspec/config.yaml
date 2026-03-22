@@ -1,7 +1,7 @@
 schema: spec-driven
 
 context: |
- 
+
   Tech stack:
     Rails 8, PostgreSQL, Hotwire (Turbo + Stimulus), Tailwind CSS
 
@@ -11,16 +11,21 @@ context: |
   Background jobs:
     Solid Queue
 
+  Testing:
+    All implementation tasks must include tests.
+    Use Rails default Minitest (model tests, controller tests, integration tests).
+    Test models for validations, associations, callbacks, and scopes.
+    Test controllers for CRUD actions, authorization, and edge cases.
+    Test service objects for happy path and error scenarios.
+
   Domain:
     Internal consulting CRM for a small team (6-15 people)
     All monetary values in USD, stored as decimal(12,2)
-    Prospects and Customer are separate models, but both have many Contacts
-    Prospects can be converted to Customers, but not vice versa
-    Customers have many Proposals, which have many Tasks
-    Tasks have a status (pending, completed, overdue) and a due date
-    Proposals have a total value, calculated from associated Tasks
-    Users can comment on Proposals and Tasks
-    Admin users can manage all records, regular users can only manage records they created
-
-  Migration
-    We have some spreadsheet data to import, but we can start with an empty database and add seed data later    
+    Prospects have inline contact fields (primary_contact_name, email, phone) — not a Contact association
+    Customers have many Contacts (with primary flag enforcement)
+    Prospects can be converted to Customers (becomes read-only), but not vice versa
+    Proposals are polymorphically linked to Prospects or Customers
+    Customer total_revenue is auto-calculated from Won proposal final_values
+    Tasks are polymorphically linked to Prospects, Customers, or Proposals
+    ActivityLog is append-only (immutable after creation)
+    Admin users can manage all users; consultants can manage their assigned records
