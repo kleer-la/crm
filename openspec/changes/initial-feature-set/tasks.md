@@ -49,11 +49,11 @@
 
 ## 6. Activity Log System
 
-- [ ] 6.1 Create ActivityLog model with readonly? override (returns true for persisted records), no update/destroy routes
-- [ ] 6.2 Create Loggable concern: shared methods for models that have activity logs (has_many :activity_logs, as: :loggable)
-- [ ] 6.3 Implement after_commit callbacks on Prospect, Customer, Proposal for automatic system event logging (status changes, creation, assignment changes, conversions, document link updates)
-- [ ] 6.4 Create TouchpointsController for manual touchpoint logging with type and description validation
-- [ ] 6.5 Auto-update last_activity_date on parent record when activity is logged
+- [x] 6.1 Create ActivityLog model with readonly? override (returns true for persisted records), no update/destroy routes
+- [x] 6.2 Create Loggable concern: shared methods for models that have activity logs (has_many :activity_logs, as: :loggable)
+- [x] 6.3 Implement after_commit callbacks on Prospect, Customer, Proposal for automatic system event logging (status changes, creation, assignment changes, conversions, document link updates)
+- [x] 6.4 Create TouchpointsController for manual touchpoint logging with type and description validation
+- [x] 6.5 Auto-update last_activity_date on parent record when activity is logged
 
 ## 7. Prospects Module
 

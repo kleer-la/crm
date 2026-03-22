@@ -17,6 +17,9 @@ Rails.application.routes.draw do
     end
   end
 
+  # Touchpoints
+  resources :touchpoints, only: [ :create ]
+
   # Health check
   get "up" => "rails/health#show", as: :rails_health_check
 
