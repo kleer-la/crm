@@ -40,12 +40,12 @@
 
 ## 5. Shared Layout & Components
 
-- [ ] 5.1 Create application layout (sidebar nav, top bar with user menu and notification bell placeholder, mobile-responsive)
-- [ ] 5.2 Build reusable form partials (text input, select, multi-select, date picker, currency input, URL input with validation)
-- [ ] 5.3 Build reusable sortable/filterable table partial with Stimulus controller for filter controls
-- [ ] 5.4 Build consultant selector partial (single and multi-select, scoped to active users with roles)
-- [ ] 5.5 Build activity log timeline partial (chronological entries display)
-- [ ] 5.6 Build touchpoint logging form partial (type selector: Call/Email/Meeting/Note + description textarea)
+- [x] 5.1 Create application layout (sidebar nav, top bar with user menu and notification bell placeholder, mobile-responsive)
+- [x] 5.2 Build reusable form partials (text input, select, multi-select, date picker, currency input, URL input with validation)
+- [x] 5.3 Build reusable sortable/filterable table partial with Stimulus controller for filter controls
+- [x] 5.4 Build consultant selector partial (single and multi-select, scoped to active users with roles)
+- [x] 5.5 Build activity log timeline partial (chronological entries display)
+- [x] 5.6 Build touchpoint logging form partial (type selector: Call/Email/Meeting/Note + description textarea)
 
 ## 6. Activity Log System
 

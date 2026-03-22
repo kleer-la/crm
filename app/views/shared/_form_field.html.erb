@@ -1,0 +1,35 @@
+<%# Usage: render "shared/form_field", form: f, field: :name, label: "Name", type: :text_field, required: true %>
+<% type ||= :text_field %>
+<% required ||= false %>
+<% hint ||= nil %>
+<% options ||= {} %>
+
+<div class="mb-4">
+  <%= form.label field, label, class: "block text-sm font-medium text-gray-700 mb-1" %>
+  <% if required %><span class="text-red-500 text-xs">*</span><% end %>
+
+  <% case type.to_sym %>
+  <% when :text_field %>
+    <%= form.text_field field, class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm #{'border-red-500' if form.object&.errors&.[](field)&.any?}", required: required, **options %>
+  <% when :email_field %>
+    <%= form.email_field field, class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm #{'border-red-500' if form.object&.errors&.[](field)&.any?}", required: required, **options %>
+  <% when :text_area %>
+    <%= form.text_area field, rows: options.delete(:rows) || 3, class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm #{'border-red-500' if form.object&.errors&.[](field)&.any?}", required: required, **options %>
+  <% when :date_field %>
+    <%= form.date_field field, class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm #{'border-red-500' if form.object&.errors&.[](field)&.any?}", required: required, **options %>
+  <% when :number_field %>
+    <%= form.number_field field, step: options.delete(:step) || "0.01", class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm #{'border-red-500' if form.object&.errors&.[](field)&.any?}", required: required, **options %>
+  <% when :url_field %>
+    <%= form.url_field field, class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm #{'border-red-500' if form.object&.errors&.[](field)&.any?}", required: required, placeholder: "https://...", **options %>
+  <% when :select %>
+    <%= form.select field, options.delete(:choices) || [], { include_blank: options.delete(:include_blank) }, class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm #{'border-red-500' if form.object&.errors&.[](field)&.any?}", required: required, **options %>
+  <% end %>
+
+  <% if hint %>
+    <p class="mt-1 text-xs text-gray-500"><%= hint %></p>
+  <% end %>
+
+  <% if form.object&.errors&.[](field)&.any? %>
+    <p class="mt-1 text-xs text-red-600"><%= form.object.errors[field].first %></p>
+  <% end %>
+</div>

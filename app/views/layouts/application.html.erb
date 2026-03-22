@@ -1,31 +1,53 @@
 <!DOCTYPE html>
-<html>
+<html class="h-full bg-gray-50">
   <head>
-    <title><%= content_for(:title) || "App" %></title>
+    <title><%= content_for(:title) || "Consulting CRM" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="App">
+    <meta name="application-name" content="Consulting CRM">
     <meta name="mobile-web-app-capable" content="yes">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
     <%= yield :head %>
 
-    <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
-    <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
-
     <link rel="icon" href="/icon.png" type="image/png">
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
 
-    <%# Includes all stylesheet files in app/assets/stylesheets %>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
 
-  <body>
-    <main class="container mx-auto mt-28 px-5 flex">
+  <body class="h-full">
+    <% if current_user && !current_user.pending? %>
+      <div class="min-h-full" data-controller="sidebar">
+        <%# Mobile sidebar overlay %>
+        <div class="hidden lg:hidden fixed inset-0 z-40" data-sidebar-target="overlay" data-action="click->sidebar#close">
+          <div class="fixed inset-0 bg-gray-600 bg-opacity-75"></div>
+          <div class="fixed inset-y-0 left-0 flex w-64" data-sidebar-target="mobile">
+            <%= render "layouts/sidebar" %>
+          </div>
+        </div>
+
+        <%# Desktop sidebar %>
+        <div class="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64">
+          <%= render "layouts/sidebar" %>
+        </div>
+
+        <%# Main content area %>
+        <div class="lg:pl-64">
+          <%= render "layouts/top_bar" %>
+
+          <main class="py-6 px-4 sm:px-6 lg:px-8">
+            <%= render "layouts/flash" %>
+            <%= yield %>
+          </main>
+        </div>
+      </div>
+    <% else %>
+      <%= render "layouts/flash" unless content_for?(:hide_flash) %>
       <%= yield %>
-    </main>
+    <% end %>
   </body>
 </html>
