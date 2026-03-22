@@ -7,17 +7,17 @@
 
 ## 2. Database Schema & Models
 
-- [ ] 2.1 Generate User model (name, email, role enum [pending/consultant/admin], active flag, google_uid, avatar_url)
-- [ ] 2.2 Generate Prospect model (company_name, primary_contact_name, primary_contact_email, primary_contact_phone, industry, source enum, status enum, estimated_value, disqualification_reason, converted_customer_id, responsible_consultant_id, date_added, last_activity_date)
-- [ ] 2.3 Generate Customer model (company_name, industry, status enum, total_revenue, date_became_customer, last_activity_date, responsible_consultant_id)
-- [ ] 2.4 Generate Contact model (name, email, phone, role_title, primary flag, customer_id FK)
-- [ ] 2.5 Generate Proposal model (title, linkable polymorphic [Prospect/Customer], status enum, estimated_value, final_value, date_sent, expected_close_date, actual_close_date, win_loss_reason, notes, current_document_url, responsible_consultant_id)
-- [ ] 2.6 Generate DocumentVersion model (label, url, proposal_id FK, archived_by_id FK, archived_at)
-- [ ] 2.7 Generate Task model (title, linkable polymorphic [Prospect/Customer/Proposal], assigned_to_id FK, due_date, priority enum, status enum, cancellation_reason, completed_at, notes)
-- [ ] 2.8 Generate ActivityLog model (loggable polymorphic, user_id FK, entry_type enum [system/touchpoint], touchpoint_type enum [call/email/meeting/note], content, created_at)
-- [ ] 2.9 Generate NotificationPreference model (user_id FK, notification_type, enabled flag)
-- [ ] 2.10 Create ConsultantAssignment join model (user_id, assignable polymorphic) for collaborating consultants
-- [ ] 2.11 Add database indexes (polymorphic type+id, status fields, due dates, unique constraints on company_name, unique on email) and run migrations
+- [x] 2.1 Generate User model (name, email, role enum [pending/consultant/admin], active flag, google_uid, avatar_url)
+- [x] 2.2 Generate Prospect model (company_name, primary_contact_name, primary_contact_email, primary_contact_phone, industry, source enum, status enum, estimated_value, disqualification_reason, converted_customer_id, responsible_consultant_id, date_added, last_activity_date)
+- [x] 2.3 Generate Customer model (company_name, industry, status enum, total_revenue, date_became_customer, last_activity_date, responsible_consultant_id)
+- [x] 2.4 Generate Contact model (name, email, phone, role_title, primary flag, customer_id FK)
+- [x] 2.5 Generate Proposal model (title, linkable polymorphic [Prospect/Customer], status enum, estimated_value, final_value, date_sent, expected_close_date, actual_close_date, win_loss_reason, notes, current_document_url, responsible_consultant_id)
+- [x] 2.6 Generate DocumentVersion model (label, url, proposal_id FK, archived_by_id FK, archived_at)
+- [x] 2.7 Generate Task model (title, linkable polymorphic [Prospect/Customer/Proposal], assigned_to_id FK, due_date, priority enum, status enum, cancellation_reason, completed_at, notes)
+- [x] 2.8 Generate ActivityLog model (loggable polymorphic, user_id FK, entry_type enum [system/touchpoint], touchpoint_type enum [call/email/meeting/note], content, created_at)
+- [x] 2.9 Generate NotificationPreference model (user_id FK, notification_type, enabled flag)
+- [x] 2.10 Create ConsultantAssignment join model (user_id, assignable polymorphic) for collaborating consultants
+- [x] 2.11 Add database indexes (polymorphic type+id, status fields, due dates, unique constraints on company_name, unique on email) and run migrations
 
 ## 3. Authentication & Authorization
 
