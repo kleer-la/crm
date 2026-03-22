@@ -14,6 +14,7 @@ context: |
   Testing:
     All implementation tasks must include tests.
     Use Rails default Minitest (model tests, controller tests, integration tests).
+    Use FactoryBot for test data generation.
     Test models for validations, associations, callbacks, and scopes.
     Test controllers for CRUD actions, authorization, and edge cases.
     Test service objects for happy path and error scenarios.

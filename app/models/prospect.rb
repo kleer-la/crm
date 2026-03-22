@@ -35,6 +35,7 @@ class Prospect < ApplicationRecord
 
   def company_name_unique_across_customers
     return if company_name.blank?
+    return if converted?
 
     if Customer.where(company_name: company_name).exists?
       errors.add(:company_name, "is already taken by an existing customer")
@@ -43,6 +44,7 @@ class Prospect < ApplicationRecord
 
   def email_unique_across_customer_contacts
     return if primary_contact_email.blank?
+    return if converted?
 
     if Contact.where(email: primary_contact_email).exists?
       errors.add(:primary_contact_email, "is already used by an existing customer contact")

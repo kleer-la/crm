@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_22_204050) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_22_215804) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -22,7 +22,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_22_204050) do
     t.string "loggable_type", null: false
     t.integer "touchpoint_type"
     t.datetime "updated_at", null: false
-    t.bigint "user_id", null: false
+    t.bigint "user_id"
     t.index ["created_at"], name: "index_activity_logs_on_created_at"
     t.index ["loggable_type", "loggable_id"], name: "index_activity_logs_on_loggable"
     t.index ["user_id"], name: "index_activity_logs_on_user_id"

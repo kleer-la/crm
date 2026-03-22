@@ -45,10 +45,11 @@ class CustomersController < ApplicationController
   end
 
   def destroy
-    @customer.destroy!
-    redirect_to customers_path, notice: "Customer was successfully deleted."
-  rescue ActiveRecord::DeleteRestrictionError
-    redirect_to @customer, alert: "Cannot delete customer with associated proposals or tasks."
+    if @customer.destroy
+      redirect_to customers_path, notice: "Customer was successfully deleted."
+    else
+      redirect_to @customer, alert: "Cannot delete customer with associated proposals or tasks."
+    end
   end
 
   private

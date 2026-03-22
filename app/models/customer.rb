@@ -24,7 +24,7 @@ class Customer < ApplicationRecord
   after_commit :log_changes, on: :update
 
   def recalculate_total_revenue!
-    update!(total_revenue: proposals.where(status: :won).sum(:final_value))
+    update_column(:total_revenue, proposals.where(status: :won).sum(:final_value))
   end
 
   private

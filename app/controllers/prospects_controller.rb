@@ -44,10 +44,11 @@ class ProspectsController < ApplicationController
   end
 
   def destroy
-    @prospect.destroy!
-    redirect_to prospects_path, notice: "Prospect was successfully deleted."
-  rescue ActiveRecord::DeleteRestrictionError
-    redirect_to @prospect, alert: "Cannot delete prospect with associated proposals or tasks."
+    if @prospect.destroy
+      redirect_to prospects_path, notice: "Prospect was successfully deleted."
+    else
+      redirect_to @prospect, alert: "Cannot delete prospect with associated proposals or tasks."
+    end
   end
 
   def disqualify

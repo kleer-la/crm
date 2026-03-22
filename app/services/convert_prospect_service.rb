@@ -10,10 +10,11 @@ class ConvertProspectService
     validate!
 
     ActiveRecord::Base.transaction do
+      mark_prospect_converting
       customer = create_customer
       relink_proposals(customer)
       relink_tasks(customer)
-      mark_prospect_converted(customer)
+      link_prospect_to_customer(customer)
       customer
     end
   end
@@ -49,10 +50,11 @@ class ConvertProspectService
     end
   end
 
-  def mark_prospect_converted(customer)
-    @prospect.update!(
-      status: :converted,
-      converted_customer: customer
-    )
+  def mark_prospect_converting
+    @prospect.update!(status: :converted)
+  end
+
+  def link_prospect_to_customer(customer)
+    @prospect.update!(converted_customer: customer)
   end
 end
