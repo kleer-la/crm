@@ -6,6 +6,17 @@ Rails.application.routes.draw do
   get "login", to: "sessions#new", as: :login
   get "pending", to: "sessions#pending", as: :pending_approval
 
+  # Admin
+  namespace :admin do
+    resources :users, only: [ :index ] do
+      member do
+        patch :assign_role
+        patch :deactivate
+        patch :reactivate
+      end
+    end
+  end
+
   # Health check
   get "up" => "rails/health#show", as: :rails_health_check
 

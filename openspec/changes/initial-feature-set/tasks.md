@@ -32,11 +32,11 @@
 
 ## 4. User Management (Admin)
 
-- [ ] 4.1 Build Admin::UsersController with index (list all users grouped by status: pending, active, deactivated)
-- [ ] 4.2 Implement assign role action (Admin sets pending user to Consultant or Admin)
-- [ ] 4.3 Implement deactivate/reactivate user actions
-- [ ] 4.4 Add "(Deactivated) Name" display helper used across the app
-- [ ] 4.5 Build user management views with Turbo Frames for inline role assignment
+- [x] 4.1 Build Admin::UsersController with index (list all users grouped by status: pending, active, deactivated)
+- [x] 4.2 Implement assign role action (Admin sets pending user to Consultant or Admin)
+- [x] 4.3 Implement deactivate/reactivate user actions
+- [x] 4.4 Add "(Deactivated) Name" display helper used across the app
+- [x] 4.5 Build user management views with Turbo Frames for inline role assignment
 
 ## 5. Shared Layout & Components
 
