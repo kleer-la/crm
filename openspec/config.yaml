@@ -1,20 +1,26 @@
 schema: spec-driven
 
-# Project context (optional)
-# This is shown to AI when creating artifacts.
-# Add your tech stack, conventions, style guides, domain knowledge, etc.
-# Example:
-#   context: |
-#     Tech stack: TypeScript, React, Node.js
-#     We use conventional commits
-#     Domain: e-commerce platform
+context: |
+ 
+  Tech stack:
+    Rails 8, PostgreSQL, Hotwire (Turbo + Stimulus), Tailwind CSS
 
-# Per-artifact rules (optional)
-# Add custom rules for specific artifacts.
-# Example:
-#   rules:
-#     proposal:
-#       - Keep proposals under 500 words
-#       - Always include a "Non-goals" section
-#     tasks:
-#       - Break tasks into chunks of max 2 hours
+  Auth:
+    Google OAuth via omniauth-google-oauth2 (self-registration, admin role assignment, no devise)
+
+  Background jobs:
+    Solid Queue
+
+  Domain:
+    Internal consulting CRM for a small team (6-15 people)
+    All monetary values in USD, stored as decimal(12,2)
+    Prospects and Customer are separate models, but both have many Contacts
+    Prospects can be converted to Customers, but not vice versa
+    Customers have many Proposals, which have many Tasks
+    Tasks have a status (pending, completed, overdue) and a due date
+    Proposals have a total value, calculated from associated Tasks
+    Users can comment on Proposals and Tasks
+    Admin users can manage all records, regular users can only manage records they created
+
+  Migration
+    We have some spreadsheet data to import, but we can start with an empty database and add seed data later    
