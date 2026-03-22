@@ -1,9 +1,9 @@
 ## 1. Project Setup
 
-- [ ] 1.1 Initialize Rails 8 app with PostgreSQL, Hotwire (Turbo + Stimulus), and Tailwind CSS
-- [ ] 1.2 Configure database.yml and create development/test databases
-- [ ] 1.3 Set up environment variables (credentials/dotenv) for Google OAuth client ID/secret and SMTP settings
-- [ ] 1.4 Configure Solid Queue for background job processing
+- [x] 1.1 Initialize Rails 8 app with PostgreSQL, Hotwire (Turbo + Stimulus), and Tailwind CSS
+- [x] 1.2 Configure database.yml and create development/test databases
+- [x] 1.3 Set up environment variables (credentials/dotenv) for Google OAuth client ID/secret and SMTP settings
+- [x] 1.4 Configure Solid Queue for background job processing
 
 ## 2. Database Schema & Models
 
