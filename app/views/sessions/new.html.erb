@@ -1,0 +1,18 @@
+<div class="min-h-screen flex items-center justify-center -mt-28">
+  <div class="max-w-md w-full space-y-8">
+    <div class="text-center">
+      <h1 class="text-3xl font-bold text-gray-900">Consulting CRM</h1>
+      <p class="mt-2 text-gray-600">Sign in to access your team's CRM</p>
+    </div>
+
+    <% if flash[:alert] %>
+      <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+        <%= flash[:alert] %>
+      </div>
+    <% end %>
+
+    <div class="bg-white shadow rounded-lg p-8">
+      <%= button_to "Sign in with Google", "/auth/google_oauth2", method: :post, data: { turbo: false }, class: "w-full flex items-center justify-center gap-3 px-4 py-3 border border-gray-300 rounded-md shadow-sm bg-white text-gray-700 hover:bg-gray-50 font-medium" %>
+    </div>
+  </div>
+</div>

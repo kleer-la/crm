@@ -21,14 +21,14 @@
 
 ## 3. Authentication & Authorization
 
-- [ ] 3.1 Install omniauth-google-oauth2 gem and configure OmniAuth middleware with Google credentials
-- [ ] 3.2 Create SessionsController with Google OAuth callback: find or create User by google_uid/email, set session
-- [ ] 3.3 Implement pending user flow: redirect users with no role to a "waiting for approval" page
-- [ ] 3.4 Implement deactivated user flow: deny login and show deactivation message
-- [ ] 3.5 Add `require_authenticated_user` and `require_active_role` before_action filters in ApplicationController
-- [ ] 3.6 Add `require_admin` before_action filter for admin-only controllers
-- [ ] 3.7 Create login page with Google sign-in button and error states
-- [ ] 3.8 Create "waiting for approval" page for pending users
+- [x] 3.1 Install omniauth-google-oauth2 gem and configure OmniAuth middleware with Google credentials
+- [x] 3.2 Create SessionsController with Google OAuth callback: find or create User by google_uid/email, set session
+- [x] 3.3 Implement pending user flow: redirect users with no role to a "waiting for approval" page
+- [x] 3.4 Implement deactivated user flow: deny login and show deactivation message
+- [x] 3.5 Add `require_authenticated_user` and `require_active_role` before_action filters in ApplicationController
+- [x] 3.6 Add `require_admin` before_action filter for admin-only controllers
+- [x] 3.7 Create login page with Google sign-in button and error states
+- [x] 3.8 Create "waiting for approval" page for pending users
 
 ## 4. User Management (Admin)
 
