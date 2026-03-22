@@ -1,0 +1,53 @@
+<%= form_with(model: customer, class: "space-y-0") do |f| %>
+  <%= render "shared/error_summary", record: customer %>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6">
+    <%= render "shared/form_field", form: f, field: :company_name, label: "Company Name", required: true %>
+    <%= render "shared/form_field", form: f, field: :industry, label: "Industry" %>
+    <%= render "shared/form_field", form: f, field: :status, label: "Status", type: :select, options: { choices: Customer.statuses.keys.map { |s| [s.titleize, s] } } %>
+    <%= render "shared/form_field", form: f, field: :date_became_customer, label: "Customer Since", type: :date_field, required: true %>
+  </div>
+
+  <%= render "shared/consultant_select", form: f, field: :responsible_consultant_id, label: "Responsible Consultant", required: true %>
+  <%= render "shared/consultant_multi_select", form: f, field: :collaborating_consultant_ids, label: "Collaborating Consultants" %>
+
+  <div class="mt-6">
+    <h3 class="text-sm font-semibold text-gray-900 mb-3">Contacts</h3>
+    <div id="contacts-fields">
+      <%= f.fields_for :contacts do |cf| %>
+        <%= render "customers/contact_fields", form: cf %>
+      <% end %>
+    </div>
+    <template id="contact-template">
+      <%= f.fields_for :contacts, Contact.new, child_index: "NEW_RECORD" do |cf| %>
+        <%= render "customers/contact_fields", form: cf %>
+      <% end %>
+    </template>
+    <button type="button" class="mt-2 px-3 py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-md hover:bg-blue-100"
+            onclick="addContact()">
+      + Add Contact
+    </button>
+  </div>
+
+  <%= render "shared/form_actions", form: f, cancel_path: customer.persisted? ? customer_path(customer) : customers_path %>
+<% end %>
+
+<script>
+  function addContact() {
+    var template = document.getElementById('contact-template');
+    var container = document.getElementById('contacts-fields');
+    var content = template.innerHTML.replace(/NEW_RECORD/g, new Date().getTime());
+    container.insertAdjacentHTML('beforeend', content);
+  }
+
+  function removeContact(button) {
+    var fieldset = button.closest('.contact-fieldset');
+    var destroyInput = fieldset.querySelector('input[name*="_destroy"]');
+    if (destroyInput) {
+      destroyInput.value = '1';
+      fieldset.style.display = 'none';
+    } else {
+      fieldset.remove();
+    }
+  }
+</script>

@@ -25,6 +25,11 @@ Rails.application.routes.draw do
     end
   end
 
+  # Customers
+  resources :customers do
+    resources :contacts, only: [ :new, :create, :edit, :update, :destroy ]
+  end
+
   # Touchpoints
   resources :touchpoints, only: [ :create ]
 

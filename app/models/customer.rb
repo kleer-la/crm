@@ -7,6 +7,7 @@ class Customer < ApplicationRecord
   has_many :consultant_assignments, as: :assignable, dependent: :destroy
   has_many :collaborating_consultants, through: :consultant_assignments, source: :user
   has_many :contacts, dependent: :destroy
+  accepts_nested_attributes_for :contacts, allow_destroy: true, reject_if: :all_blank
   has_many :proposals, as: :linkable, dependent: :restrict_with_error
   has_many :tasks, as: :linkable, dependent: :restrict_with_error
 
@@ -16,6 +17,9 @@ class Customer < ApplicationRecord
   validates :date_became_customer, presence: true
   validates :last_activity_date, presence: true
 
+  validate :company_name_unique_across_prospects
+  validate :must_have_at_least_one_contact, on: :update
+
   after_commit :log_creation, on: :create
   after_commit :log_changes, on: :update
 
@@ -24,6 +28,20 @@ class Customer < ApplicationRecord
   end
 
   private
+
+  def company_name_unique_across_prospects
+    return if company_name.blank?
+
+    if Prospect.where(company_name: company_name).where.not(status: :converted).exists?
+      errors.add(:company_name, "is already taken by an existing prospect")
+    end
+  end
+
+  def must_have_at_least_one_contact
+    if contacts.reject(&:marked_for_destruction?).empty?
+      errors.add(:base, "Customer must have at least one contact")
+    end
+  end
 
   def log_creation
     log_system_event("Customer created: #{company_name}")

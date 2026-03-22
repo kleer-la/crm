@@ -68,14 +68,14 @@
 
 ## 8. Customers Module
 
-- [ ] 8.1 Create Customer model validations: required fields, company_name uniqueness, at least one contact
-- [ ] 8.2 Build CustomersController with full CRUD actions
-- [ ] 8.3 Create Customer list view with filtering and sorting
-- [ ] 8.4 Create Customer show/edit views with all fields and status management
-- [ ] 8.5 Build nested ContactsController: add/edit/remove contacts, primary flag enforcement (exactly one primary), prevent deleting last contact
-- [ ] 8.6 Implement auto-calculated total_revenue (sum of final_value from Won proposals) via callback/query
-- [ ] 8.7 Build Customer full history timeline partial (linked Proposals, Tasks, activity log in chronological order)
-- [ ] 8.8 Add touchpoint logging on Customer show page
+- [x] 8.1 Create Customer model validations: required fields, company_name uniqueness, at least one contact
+- [x] 8.2 Build CustomersController with full CRUD actions
+- [x] 8.3 Create Customer list view with filtering and sorting
+- [x] 8.4 Create Customer show/edit views with all fields and status management
+- [x] 8.5 Build nested ContactsController: add/edit/remove contacts, primary flag enforcement (exactly one primary), prevent deleting last contact
+- [x] 8.6 Implement auto-calculated total_revenue (sum of final_value from Won proposals) via callback/query
+- [x] 8.7 Build Customer full history timeline partial (linked Proposals, Tasks, activity log in chronological order)
+- [x] 8.8 Add touchpoint logging on Customer show page
 
 ## 9. Proposals Module
 

@@ -21,6 +21,7 @@ class Proposal < ApplicationRecord
 
   after_commit :log_creation, on: :create
   after_commit :log_changes, on: :update
+  after_commit :recalculate_customer_revenue, on: [ :create, :update ]
 
   private
 
@@ -55,5 +56,12 @@ class Proposal < ApplicationRecord
     else
       log_system_event("Document link updated from #{old_url} to #{new_url}")
     end
+  end
+
+  def recalculate_customer_revenue
+    return unless linkable.is_a?(Customer)
+    return unless previous_changes.key?("status") || previous_changes.key?("final_value")
+
+    linkable.recalculate_total_revenue!
   end
 end

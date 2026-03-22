@@ -1,0 +1,19 @@
+<%= form_with(model: [@customer, contact], class: "space-y-0") do |f| %>
+  <%= render "shared/error_summary", record: contact %>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6">
+    <%= render "shared/form_field", form: f, field: :name, label: "Name", required: true %>
+    <%= render "shared/form_field", form: f, field: :email, label: "Email", type: :email_field, required: true %>
+    <%= render "shared/form_field", form: f, field: :phone, label: "Phone" %>
+    <%= render "shared/form_field", form: f, field: :role_title, label: "Role / Title" %>
+  </div>
+
+  <div class="mb-4">
+    <label class="flex items-center gap-2 text-sm text-gray-700">
+      <%= f.check_box :primary, class: "rounded border-gray-300 text-blue-600 focus:ring-blue-500" %>
+      Primary contact
+    </label>
+  </div>
+
+  <%= render "shared/form_actions", form: f, cancel_path: customer_path(@customer) %>
+<% end %>
