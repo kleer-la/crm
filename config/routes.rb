@@ -36,6 +36,15 @@ Rails.application.routes.draw do
     end
   end
 
+  # Tasks
+  resources :tasks do
+    member do
+      patch :mark_done
+      patch :cancel
+      patch :reassign
+    end
+  end
+
   # Customers
   resources :customers do
     resources :contacts, only: [ :new, :create, :edit, :update, :destroy ]

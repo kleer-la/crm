@@ -92,13 +92,13 @@
 
 ## 10. Tasks Module
 
-- [ ] 10.1 Create Task model validations: due_date not in past on creation, cancellation_reason required for Cancelled
-- [ ] 10.2 Build TasksController with CRUD, status transitions, and reassignment
-- [ ] 10.3 Create Task list view with filtering, sorting, and overdue visual flagging (Stimulus controller for highlight)
-- [ ] 10.4 Create Task show/edit views with status transitions (Open → In Progress → Done/Cancelled)
-- [ ] 10.5 Implement Mark as Done with automatic completed_at timestamp
-- [ ] 10.6 Implement Cancel with required reason validation
-- [ ] 10.7 Add task creation from Prospect, Customer, and Proposal show pages (Turbo Frame form)
+- [x] 10.1 Create Task model validations: due_date not in past on creation, cancellation_reason required for Cancelled
+- [x] 10.2 Build TasksController with CRUD, status transitions, and reassignment
+- [x] 10.3 Create Task list view with filtering, sorting, and overdue visual flagging (Stimulus controller for highlight)
+- [x] 10.4 Create Task show/edit views with status transitions (Open → In Progress → Done/Cancelled)
+- [x] 10.5 Implement Mark as Done with automatic completed_at timestamp
+- [x] 10.6 Implement Cancel with required reason validation
+- [x] 10.7 Add task creation from Prospect, Customer, and Proposal show pages (Turbo Frame form)
 
 ## 11. Pipeline View
 
