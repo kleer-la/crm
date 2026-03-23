@@ -102,10 +102,10 @@
 
 ## 11. Pipeline View
 
-- [ ] 11.1 Create PipelineController with index action: query active Prospects + open Proposals, apply combined AND filters
-- [ ] 11.2 Build Pipeline list view with summary bar (total pipeline value, open proposal count, active prospect count)
-- [ ] 11.3 Implement filter controls (consultant, status, date range, value range) with Stimulus controller
-- [ ] 11.4 Add overdue expected close date highlighting and click-through links to detail records
+- [x] 11.1 Create PipelineController with index action: query active Prospects + open Proposals, apply combined AND filters
+- [x] 11.2 Build Pipeline list view with summary bar (total pipeline value, open proposal count, active prospect count)
+- [x] 11.3 Implement filter controls (consultant, status, date range, value range) with Stimulus controller
+- [x] 11.4 Add overdue expected close date highlighting and click-through links to detail records
 
 ## 12. Dashboard
 
