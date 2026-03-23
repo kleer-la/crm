@@ -18,6 +18,7 @@ context: |
     Test models for validations, associations, callbacks, and scopes.
     Test controllers for CRUD actions, authorization, and edge cases.
     Test service objects for happy path and error scenarios.
+    Run bin/ci after completing each task group to verify tests, style, and security checks pass.
 
   Domain:
     Internal consulting CRM for a small team (6-15 people)
