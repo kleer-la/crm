@@ -10,9 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_22_215804) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_23_213306) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+  enable_extension "pg_trgm"
 
   create_table "activity_logs", force: :cascade do |t|
     t.text "content", null: false
@@ -63,6 +64,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_22_215804) do
     t.decimal "total_revenue", precision: 12, scale: 2, default: "0.0"
     t.datetime "updated_at", null: false
     t.index ["company_name"], name: "index_customers_on_company_name", unique: true
+    t.index ["company_name"], name: "index_customers_on_company_name_trgm", opclass: :gin_trgm_ops, using: :gin
     t.index ["responsible_consultant_id"], name: "index_customers_on_responsible_consultant_id"
     t.index ["status"], name: "index_customers_on_status"
   end
@@ -109,6 +111,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_22_215804) do
     t.index ["linkable_type", "linkable_id"], name: "index_proposals_on_linkable"
     t.index ["responsible_consultant_id"], name: "index_proposals_on_responsible_consultant_id"
     t.index ["status"], name: "index_proposals_on_status"
+    t.index ["title"], name: "index_proposals_on_title_trgm", opclass: :gin_trgm_ops, using: :gin
   end
 
   create_table "prospects", force: :cascade do |t|
@@ -128,6 +131,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_22_215804) do
     t.integer "status", default: 0, null: false
     t.datetime "updated_at", null: false
     t.index ["company_name"], name: "index_prospects_on_company_name", unique: true
+    t.index ["company_name"], name: "index_prospects_on_company_name_trgm", opclass: :gin_trgm_ops, using: :gin
     t.index ["converted_customer_id"], name: "index_prospects_on_converted_customer_id"
     t.index ["primary_contact_email"], name: "index_prospects_on_primary_contact_email", unique: true
     t.index ["responsible_consultant_id"], name: "index_prospects_on_responsible_consultant_id"

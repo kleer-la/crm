@@ -118,9 +118,9 @@
 
 ## 13. Global Search
 
-- [ ] 13.1 Add pg_search gem, configure trigram indexes on Prospect (company_name), Customer (company_name), Proposal (title)
-- [ ] 13.2 Create SearchController with cross-model search action returning typed results
-- [ ] 13.3 Build search UI in top bar with Stimulus controller: input field, results dropdown with record type labels and linked company
+- [x] 13.1 Add pg_search gem, configure trigram indexes on Prospect (company_name), Customer (company_name), Proposal (title)
+- [x] 13.2 Create SearchController with cross-model search action returning typed results
+- [x] 13.3 Build search UI in top bar with Stimulus controller: input field, results dropdown with record type labels and linked company
 
 ## 14. Notifications
 

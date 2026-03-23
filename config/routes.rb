@@ -50,6 +50,9 @@ Rails.application.routes.draw do
     resources :contacts, only: [ :new, :create, :edit, :update, :destroy ]
   end
 
+  # Search
+  get "search", to: "search#index", as: :search
+
   # Pipeline
   get "pipeline", to: "pipeline#index", as: :pipeline
 

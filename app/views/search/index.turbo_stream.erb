@@ -1,0 +1,26 @@
+<%= turbo_stream.update "search-results" do %>
+  <% if @query.length < 2 %>
+    <div class="px-4 py-3 text-sm text-gray-500">Type at least 2 characters...</div>
+  <% elsif @results.empty? %>
+    <div class="px-4 py-3 text-sm text-gray-500">No results found.</div>
+  <% else %>
+    <div class="divide-y divide-gray-100">
+      <% @results.each do |result| %>
+        <%= link_to polymorphic_path(result[:record]), class: "block px-4 py-3 hover:bg-gray-50", data: { action: "mousedown->search#navigate" } do %>
+          <div class="flex items-center justify-between">
+            <div>
+              <span class="text-sm font-medium text-gray-900"><%= result[:name] %></span>
+              <% if result[:type] == "Proposal" %>
+                <span class="text-sm text-gray-400 ml-1">— <%= result[:company] %></span>
+              <% end %>
+            </div>
+            <% type_colors = { "Prospect" => "bg-blue-100 text-blue-800", "Customer" => "bg-green-100 text-green-800", "Proposal" => "bg-purple-100 text-purple-800" } %>
+            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium <%= type_colors[result[:type]] %>">
+              <%= result[:type] %>
+            </span>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  <% end %>
+<% end %>

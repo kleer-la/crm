@@ -1,0 +1,29 @@
+<div class="px-4 sm:px-6 lg:px-8 py-8">
+  <h1 class="text-2xl font-bold text-gray-900 mb-6">Search Results</h1>
+
+  <% if @query.length < 2 %>
+    <p class="text-sm text-gray-500">Enter at least 2 characters to search.</p>
+  <% elsif @results.empty? %>
+    <p class="text-sm text-gray-500">No results found for "<%= @query %>".</p>
+  <% else %>
+    <p class="text-sm text-gray-500 mb-4"><%= @results.size %> result(s) for "<%= @query %>"</p>
+    <div class="bg-white shadow rounded-lg divide-y divide-gray-200">
+      <% @results.each do |result| %>
+        <%= link_to polymorphic_path(result[:record]), class: "block px-6 py-4 hover:bg-gray-50" do %>
+          <div class="flex items-center justify-between">
+            <div>
+              <span class="text-sm font-medium text-gray-900"><%= result[:name] %></span>
+              <% if result[:type] == "Proposal" %>
+                <span class="text-sm text-gray-500 ml-2">— <%= result[:company] %></span>
+              <% end %>
+            </div>
+            <% type_colors = { "Prospect" => "bg-blue-100 text-blue-800", "Customer" => "bg-green-100 text-green-800", "Proposal" => "bg-purple-100 text-purple-800" } %>
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= type_colors[result[:type]] %>">
+              <%= result[:type] %>
+            </span>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  <% end %>
+</div>

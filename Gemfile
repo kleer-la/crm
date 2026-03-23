@@ -46,6 +46,9 @@ gem "image_processing", "~> 1.2"
 gem "omniauth-google-oauth2"
 gem "omniauth-rails_csrf_protection"
 
+# Full-text search
+gem "pg_search"
+
 group :development, :test do
   # Load environment variables from .env
   gem "dotenv-rails"

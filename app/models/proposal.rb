@@ -1,5 +1,8 @@
 class Proposal < ApplicationRecord
   include Loggable
+  include PgSearch::Model
+
+  pg_search_scope :search_by_title, against: :title, using: { trigram: { threshold: 0.1 } }
 
   enum :status, { draft: 0, sent: 1, under_review: 2, won: 3, lost: 4, cancelled: 5 }
 
