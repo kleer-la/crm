@@ -13,8 +13,6 @@ The consulting team (6-15 people) currently manages customer relationships, prop
 - Add personal and admin Dashboards with open tasks, proposals, activity feeds, key metrics, and a team alert widget for pending conversions and stale proposals
 - Add an immutable Activity Log on every record (system events + manual touchpoints)
 - Add global search across Prospects, Customers, and Proposals with partial string matching
-- Add email notifications (task due reminders, proposal status changes) and an in-app notification bell (90-day window)
-- Add four reports (Proposals by status, Won vs Lost, Pipeline by consultant, Customer revenue) with CSV export
 - All monetary values in USD only
 - No Google Drive API integration (links stored as plain URLs)
 
@@ -31,8 +29,6 @@ The consulting team (6-15 people) currently manages customer relationships, prop
 - `dashboard`: Personal dashboard (my tasks, proposals, prospects, activity, metrics, stale alerts), team alert widget, admin dashboard
 - `activity-log`: Immutable chronological activity log on every record — system events and manual touchpoints
 - `search-filters`: Global cross-entity search with partial matching; module-level filtering and sorting on all list views
-- `notifications`: Email notifications (task due, proposal status change) with opt-out; in-app notification bell with 90-day window
-- `reports`: Four standard reports (Proposals by status, Won vs Lost, Pipeline by consultant, Customer revenue) with date filtering and CSV export
 
 ### Modified Capabilities
 
@@ -42,6 +38,6 @@ _None — this is the initial feature set with no pre-existing capabilities._
 
 - **New web application**: Full-stack browser-based app with mobile-responsive layout (tech stack TBD)
 - **Database**: New relational schema for users, prospects, customers, contacts, proposals, tasks, activity logs, notifications, and alerts
-- **External dependencies**: Google OAuth API for authentication; SMTP/email service for notifications
+- **External dependencies**: Google OAuth API for authentication
 - **No Google Drive API**: Document links stored as plain URLs only
 - **Scale**: Designed for up to 15 concurrent users; no high-scale requirements
