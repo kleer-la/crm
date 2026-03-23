@@ -16,14 +16,51 @@ class Proposal < ApplicationRecord
   validates :win_loss_reason, presence: true, if: -> { won? || lost? }
   validates :current_document_url, format: { with: URI::DEFAULT_PARSER.make_regexp(%w[http https]), message: "must be a valid URL" }, allow_blank: true
 
+  validate :cannot_win_if_prospect_disqualified, if: :won?
+
   scope :open, -> { where(status: [ :draft, :sent, :under_review ]) }
   scope :closed, -> { where(status: [ :won, :lost, :cancelled ]) }
+  scope :pending_conversion, -> {
+    joins("INNER JOIN prospects ON proposals.linkable_type = 'Prospect' AND proposals.linkable_id = prospects.id")
+      .where(status: :won)
+      .where.not(prospects: { status: Prospect.statuses[:converted] })
+  }
+
+  before_validation :auto_set_dates
 
   after_commit :log_creation, on: :create
   after_commit :log_changes, on: :update
   after_commit :recalculate_customer_revenue, on: [ :create, :update ]
 
+  def duplicate
+    Proposal.new(
+      title: title,
+      linkable: linkable,
+      responsible_consultant: responsible_consultant,
+      estimated_value: estimated_value,
+      notes: notes,
+      status: :draft
+    )
+  end
+
+  def pending_conversion?
+    won? && linkable.is_a?(Prospect) && !linkable.converted?
+  end
+
   private
+
+  def auto_set_dates
+    if status_changed?
+      self.date_sent ||= Date.current if sent?
+      self.actual_close_date ||= Date.current if won? || lost? || cancelled?
+    end
+  end
+
+  def cannot_win_if_prospect_disqualified
+    if linkable.is_a?(Prospect) && linkable.disqualified?
+      errors.add(:base, "Cannot mark as Won when linked Prospect is disqualified. Change the Prospect's status first.")
+    end
+  end
 
   def log_creation
     log_system_event("Proposal created: #{title}")
@@ -60,7 +97,7 @@ class Proposal < ApplicationRecord
 
   def recalculate_customer_revenue
     return unless linkable.is_a?(Customer)
-    return unless previous_changes.key?("status") || previous_changes.key?("final_value")
+    return unless previous_changes.key?("status") || previous_changes.key?("estimated_value")
 
     linkable.recalculate_total_revenue!
   end

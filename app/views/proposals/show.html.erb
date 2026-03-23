@@ -1,0 +1,231 @@
+<div class="px-4 sm:px-6 lg:px-8 py-8">
+  <div class="sm:flex sm:items-center sm:justify-between mb-6">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900"><%= @proposal.title %></h1>
+      <div class="mt-1 flex items-center gap-2">
+        <%= status_badge(@proposal.status) %>
+        <span class="text-sm text-gray-500">
+          linked to
+          <%= link_to @proposal.linkable.company_name, @proposal.linkable, class: "text-blue-600 hover:text-blue-900" %>
+          (<%= @proposal.linkable_type %>)
+        </span>
+      </div>
+    </div>
+
+    <div class="mt-4 sm:mt-0 flex gap-2">
+      <% unless @proposal.won? || @proposal.lost? || @proposal.cancelled? %>
+        <%= link_to "Edit", edit_proposal_path(@proposal), class: "px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50" %>
+      <% end %>
+
+      <% unless @proposal.won? || @proposal.lost? || @proposal.cancelled? %>
+        <button type="button" class="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700"
+                onclick="document.getElementById('won-modal').classList.remove('hidden')">
+          Mark as Won
+        </button>
+        <button type="button" class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700"
+                onclick="document.getElementById('lost-modal').classList.remove('hidden')">
+          Mark as Lost
+        </button>
+      <% end %>
+
+      <%= button_to "Duplicate", duplicate_proposal_path(@proposal), method: :post, class: "px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50" %>
+    </div>
+  </div>
+
+  <% if @proposal.won? && @proposal.linkable.is_a?(Prospect) && !@proposal.linkable.converted? %>
+    <div class="mb-6 bg-yellow-50 border border-yellow-200 rounded-md p-4 flex items-center justify-between">
+      <p class="text-sm text-yellow-800">
+        This proposal is Won but the linked Prospect has not been converted to a Customer.
+      </p>
+      <%= button_to "Convert Prospect", convert_prospect_path(@proposal.linkable), method: :patch, class: "px-3 py-1 text-sm font-medium text-white bg-yellow-600 rounded-md hover:bg-yellow-700" %>
+    </div>
+  <% end %>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <%# Details column %>
+    <div class="lg:col-span-2 space-y-6">
+      <div class="bg-white shadow rounded-lg p-6">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Details</h2>
+        <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
+          <div>
+            <dt class="text-sm font-medium text-gray-500">Estimated Value</dt>
+            <dd class="mt-1 text-sm text-gray-900"><%= currency(@proposal.estimated_value) %></dd>
+          </div>
+          <div>
+            <dt class="text-sm font-medium text-gray-500">Date Sent</dt>
+            <dd class="mt-1 text-sm text-gray-900"><%= @proposal.date_sent&.strftime("%b %d, %Y") || "—" %></dd>
+          </div>
+          <div>
+            <dt class="text-sm font-medium text-gray-500">Expected Close Date</dt>
+            <dd class="mt-1 text-sm text-gray-900"><%= @proposal.expected_close_date&.strftime("%b %d, %Y") || "—" %></dd>
+          </div>
+          <div>
+            <dt class="text-sm font-medium text-gray-500">Actual Close Date</dt>
+            <dd class="mt-1 text-sm text-gray-900"><%= @proposal.actual_close_date&.strftime("%b %d, %Y") || "—" %></dd>
+          </div>
+          <% if @proposal.win_loss_reason.present? %>
+            <div class="sm:col-span-2">
+              <dt class="text-sm font-medium text-gray-500">Win/Loss Reason</dt>
+              <dd class="mt-1 text-sm text-gray-900"><%= @proposal.win_loss_reason %></dd>
+            </div>
+          <% end %>
+          <% if @proposal.notes.present? %>
+            <div class="sm:col-span-2">
+              <dt class="text-sm font-medium text-gray-500">Notes</dt>
+              <dd class="mt-1 text-sm text-gray-900 whitespace-pre-wrap"><%= @proposal.notes %></dd>
+            </div>
+          <% end %>
+        </dl>
+      </div>
+
+      <div class="bg-white shadow rounded-lg p-6">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Consultants</h2>
+        <dl class="space-y-3">
+          <div>
+            <dt class="text-sm font-medium text-gray-500">Responsible</dt>
+            <dd class="mt-1 text-sm text-gray-900"><%= @proposal.responsible_consultant.display_name %></dd>
+          </div>
+          <% if @proposal.collaborating_consultants.any? %>
+            <div>
+              <dt class="text-sm font-medium text-gray-500">Collaborators</dt>
+              <dd class="mt-1 text-sm text-gray-900">
+                <%= @proposal.collaborating_consultants.map(&:display_name).join(", ") %>
+              </dd>
+            </div>
+          <% end %>
+        </dl>
+      </div>
+
+      <%# Document Link Management %>
+      <div class="bg-white shadow rounded-lg p-6">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Document</h2>
+        <% if @proposal.current_document_url.present? %>
+          <div class="flex items-center justify-between mb-4">
+            <a href="<%= @proposal.current_document_url %>" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-900 text-sm truncate">
+              <%= @proposal.current_document_url %>
+            </a>
+            <button type="button" class="ml-4 text-sm text-gray-500 hover:text-gray-700"
+                    onclick="document.getElementById('archive-modal').classList.remove('hidden')">
+              Replace & Archive
+            </button>
+          </div>
+        <% else %>
+          <p class="text-sm text-gray-500 mb-4">No document link set.</p>
+        <% end %>
+
+        <%# Document Version History %>
+        <% if @document_versions.any? %>
+          <h3 class="text-sm font-semibold text-gray-700 mt-4 mb-2">Version History</h3>
+          <div class="space-y-2">
+            <% @document_versions.each do |version| %>
+              <div class="flex items-center justify-between text-sm border-b border-gray-100 pb-2">
+                <div>
+                  <span class="font-medium text-gray-900"><%= version.label %></span>
+                  <span class="text-gray-500 ml-2"><%= version.archived_at.strftime("%b %d, %Y") %></span>
+                  <span class="text-gray-400 ml-1">by <%= version.archived_by.display_name %></span>
+                </div>
+                <a href="<%= version.url %>" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-900 truncate ml-4" style="max-width: 200px;">
+                  <%= version.url %>
+                </a>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <%# Sidebar column %>
+    <div class="space-y-6">
+      <%= render "shared/touchpoint_form", record: @proposal %>
+
+      <div class="bg-white shadow rounded-lg p-4">
+        <h3 class="text-sm font-semibold text-gray-900 mb-3">Activity</h3>
+        <%= render "shared/activity_timeline", activity_logs: @proposal.activity_logs.includes(:user).order(created_at: :desc) %>
+      </div>
+    </div>
+  </div>
+
+  <%# Mark as Won Modal %>
+  <% unless @proposal.won? || @proposal.lost? || @proposal.cancelled? %>
+    <div id="won-modal" class="hidden fixed inset-0 z-50 overflow-y-auto">
+      <div class="flex items-center justify-center min-h-screen px-4">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75" onclick="document.getElementById('won-modal').classList.add('hidden')"></div>
+        <div class="relative bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4">Mark Proposal as Won</h3>
+          <%= form_with url: mark_won_proposal_path(@proposal), method: :patch, class: "space-y-4" do |f| %>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Reason <span class="text-red-500">*</span></label>
+              <%= f.text_area "proposal[win_loss_reason]", rows: 3, required: true,
+                class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm",
+                placeholder: "Why was this proposal won?" %>
+            </div>
+            <div class="flex justify-end gap-3">
+              <button type="button" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+                      onclick="document.getElementById('won-modal').classList.add('hidden')">
+                Cancel
+              </button>
+              <%= f.submit "Mark as Won", class: "px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700 cursor-pointer" %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <%# Mark as Lost Modal %>
+    <div id="lost-modal" class="hidden fixed inset-0 z-50 overflow-y-auto">
+      <div class="flex items-center justify-center min-h-screen px-4">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75" onclick="document.getElementById('lost-modal').classList.add('hidden')"></div>
+        <div class="relative bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4">Mark Proposal as Lost</h3>
+          <%= form_with url: mark_lost_proposal_path(@proposal), method: :patch, class: "space-y-4" do |f| %>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Reason <span class="text-red-500">*</span></label>
+              <%= f.text_area "proposal[win_loss_reason]", rows: 3, required: true,
+                class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm",
+                placeholder: "Why was this proposal lost?" %>
+            </div>
+            <div class="flex justify-end gap-3">
+              <button type="button" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+                      onclick="document.getElementById('lost-modal').classList.add('hidden')">
+                Cancel
+              </button>
+              <%= f.submit "Mark as Lost", class: "px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700 cursor-pointer" %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <%# Archive Document Modal %>
+  <% if @proposal.current_document_url.present? %>
+    <div id="archive-modal" class="hidden fixed inset-0 z-50 overflow-y-auto">
+      <div class="flex items-center justify-center min-h-screen px-4">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75" onclick="document.getElementById('archive-modal').classList.add('hidden')"></div>
+        <div class="relative bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4">Replace Document Link</h3>
+          <p class="text-sm text-gray-500 mb-4">The current link will be archived to version history.</p>
+          <%= form_with url: archive_document_proposal_path(@proposal), method: :post, class: "space-y-4" do |f| %>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Archive Label</label>
+              <%= f.text_field :label, placeholder: "e.g., Version 1.0",
+                class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" %>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">New Document URL <span class="text-red-500">*</span></label>
+              <%= f.url_field :new_url, required: true, placeholder: "https://...",
+                class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" %>
+            </div>
+            <div class="flex justify-end gap-3">
+              <button type="button" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+                      onclick="document.getElementById('archive-modal').classList.add('hidden')">
+                Cancel
+              </button>
+              <%= f.submit "Archive & Replace", class: "px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 cursor-pointer" %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>

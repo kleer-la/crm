@@ -31,8 +31,8 @@ class CustomerTest < ActiveSupport::TestCase
 
   test "recalculate_total_revenue sums won proposals" do
     customer = create(:customer)
-    create(:proposal, :won, linkable: customer, final_value: 10000)
-    create(:proposal, :won, linkable: customer, final_value: 25000)
+    create(:proposal, :won, linkable: customer, estimated_value: 10000)
+    create(:proposal, :won, linkable: customer, estimated_value: 25000)
     create(:proposal, :lost, linkable: customer) # should not count
 
     customer.recalculate_total_revenue!

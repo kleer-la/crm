@@ -1,0 +1,51 @@
+<%= form_with(model: proposal, class: "space-y-0") do |f| %>
+  <%= render "shared/error_summary", record: proposal %>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6">
+    <%= render "shared/form_field", form: f, field: :title, label: "Title", required: true %>
+
+    <div class="py-3">
+      <label class="block text-sm font-medium text-gray-700 mb-1">Linked To <span class="text-red-500">*</span></label>
+      <div class="flex gap-2">
+        <%= f.select :linkable_type, [["Prospect", "Prospect"], ["Customer", "Customer"]],
+          { include_blank: "Select type..." },
+          class: "block w-1/3 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" %>
+        <% if proposal.linkable_type == "Prospect" %>
+          <%= f.select :linkable_id, Prospect.where.not(status: :converted).order(:company_name).map { |p| [p.company_name, p.id] },
+            { include_blank: "Select prospect..." },
+            class: "block w-2/3 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" %>
+        <% elsif proposal.linkable_type == "Customer" %>
+          <%= f.select :linkable_id, Customer.order(:company_name).map { |c| [c.company_name, c.id] },
+            { include_blank: "Select customer..." },
+            class: "block w-2/3 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" %>
+        <% else %>
+          <%= f.select :linkable_id, [], { include_blank: "Select type first..." },
+            disabled: true,
+            class: "block w-2/3 rounded-md border-gray-300 shadow-sm sm:text-sm bg-gray-50" %>
+        <% end %>
+      </div>
+    </div>
+
+    <%= render "shared/form_field", form: f, field: :estimated_value, label: "Estimated Value (USD)", type: :number_field %>
+    <%= render "shared/form_field", form: f, field: :expected_close_date, label: "Expected Close Date", type: :date_field %>
+    <%= render "shared/form_field", form: f, field: :date_sent, label: "Date Sent", type: :date_field %>
+    <%= render "shared/form_field", form: f, field: :current_document_url, label: "Document Link (URL)" %>
+  </div>
+
+  <%= render "shared/consultant_select", form: f, field: :responsible_consultant_id, label: "Responsible Consultant", required: true %>
+  <%= render "shared/consultant_multi_select", form: f, field: :collaborating_consultant_ids, label: "Collaborating Consultants" %>
+
+  <div class="py-3">
+    <label class="block text-sm font-medium text-gray-700 mb-1">Notes</label>
+    <%= f.text_area :notes, rows: 4, class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" %>
+  </div>
+
+  <% if proposal.persisted? %>
+    <%= render "shared/form_field", form: f, field: :status, label: "Status", type: :select, options: { choices: Proposal.statuses.keys.map { |s| [s.titleize, s] } } %>
+    <% if proposal.won? || proposal.lost? %>
+      <%= render "shared/form_field", form: f, field: :win_loss_reason, label: "Win/Loss Reason", required: true %>
+    <% end %>
+  <% end %>
+
+  <%= render "shared/form_actions", form: f, cancel_path: proposal.persisted? ? proposal_path(proposal) : proposals_path %>
+<% end %>

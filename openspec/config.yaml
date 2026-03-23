@@ -26,7 +26,7 @@ context: |
     Customers have many Contacts (with primary flag enforcement)
     Prospects can be converted to Customers (becomes read-only), but not vice versa
     Proposals are polymorphically linked to Prospects or Customers
-    Customer total_revenue is auto-calculated from Won proposal final_values
+    Customer total_revenue is auto-calculated from Won proposal estimated_values (final_value field removed)
     Tasks are polymorphically linked to Prospects, Customers, or Proposals
     ActivityLog is append-only (immutable after creation)
     Admin users can manage all users; consultants can manage their assigned records

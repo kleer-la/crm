@@ -48,22 +48,22 @@ class CustomerCallbackLoggingTest < ActiveSupport::TestCase
     assert_equal 0, @customer.total_revenue
 
     proposal = create(:proposal, :draft, linkable: @customer, estimated_value: 50000)
-    proposal.update!(status: :won, final_value: 50000, win_loss_reason: "Strong fit")
+    proposal.update!(status: :won, estimated_value: 50000, win_loss_reason: "Strong fit")
 
     assert_equal 50000, @customer.reload.total_revenue
   end
 
   test "total_revenue includes multiple won proposals" do
-    create(:proposal, :won, linkable: @customer, final_value: 25000)
-    create(:proposal, :won, linkable: @customer, final_value: 35000)
-    create(:proposal, :lost, linkable: @customer, final_value: 10000)
+    create(:proposal, :won, linkable: @customer, estimated_value: 25000)
+    create(:proposal, :won, linkable: @customer, estimated_value: 35000)
+    create(:proposal, :lost, linkable: @customer, estimated_value: 10000)
 
     @customer.recalculate_total_revenue!
     assert_equal 60000, @customer.reload.total_revenue
   end
 
   test "total_revenue recalculates when won proposal reverts to draft" do
-    proposal = create(:proposal, :won, linkable: @customer, final_value: 50000)
+    proposal = create(:proposal, :won, linkable: @customer, estimated_value: 50000)
     @customer.recalculate_total_revenue!
     assert_equal 50000, @customer.total_revenue
 

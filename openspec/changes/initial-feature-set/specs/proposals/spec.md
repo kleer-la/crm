@@ -1,7 +1,7 @@
 ## ADDED Requirements
 
 ### Requirement: Proposal record management
-The system SHALL allow users to create and edit Proposal records with: title (required), linked company (Prospect or Customer reference, required), responsible consultant (required), collaborating consultants (multi-select), status (Draft|Sent|Under Review|Won|Lost|Cancelled, required), estimated value (USD), final value (USD, filled when Won), date created (auto-set), date sent (auto-set when status moves to Sent, editable), expected close date, actual close date (auto-set on Won/Lost/Cancelled, editable), win/loss reason (required for Won/Lost), notes, current document link (URL), and document version history.
+The system SHALL allow users to create and edit Proposal records with: title (required), linked company (Prospect or Customer reference, required), responsible consultant (required), collaborating consultants (multi-select), status (Draft|Sent|Under Review|Won|Lost|Cancelled, required), estimated value (USD), date created (auto-set), date sent (auto-set when status moves to Sent, editable), expected close date, actual close date (auto-set on Won/Lost/Cancelled, editable), win/loss reason (required for Won/Lost), notes, current document link (URL), and document version history.
 
 #### Scenario: Create a Proposal from a Customer record
 - **WHEN** a user creates a Proposal from a Customer's detail page
@@ -15,8 +15,8 @@ The system SHALL allow users to create and edit Proposal records with: title (re
 The system SHALL require a non-empty win/loss reason when setting status to Won or Lost.
 
 #### Scenario: Mark Proposal as Won with reason
-- **WHEN** a user sets a Proposal's status to Won and provides a reason and final value
-- **THEN** the system saves the status, records the reason, sets actual close date to today, and recalculates the linked Customer's revenue
+- **WHEN** a user sets a Proposal's status to Won and provides a reason
+- **THEN** the system saves the status, records the reason, sets actual close date to today, and recalculates the linked Customer's revenue (based on estimated_value)
 
 #### Scenario: Mark Proposal as Won without reason
 - **WHEN** a user sets a Proposal's status to Won without providing a reason

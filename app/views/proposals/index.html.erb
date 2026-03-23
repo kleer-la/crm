@@ -1,0 +1,79 @@
+<div class="px-4 sm:px-6 lg:px-8 py-8">
+  <div class="sm:flex sm:items-center sm:justify-between mb-6">
+    <h1 class="text-2xl font-bold text-gray-900">Proposals</h1>
+    <%= link_to "New Proposal", new_proposal_path, class: "mt-4 sm:mt-0 inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700" %>
+  </div>
+
+  <%= render "shared/filter_bar", url: proposals_path do |f| %>
+    <div>
+      <label class="block text-xs font-medium text-gray-700 mb-1">Search</label>
+      <%= f.text_field :search, value: params[:search], placeholder: "Title...", class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" %>
+    </div>
+    <div>
+      <label class="block text-xs font-medium text-gray-700 mb-1">Status</label>
+      <%= f.select :status, Proposal.statuses.keys.map { |s| [s.titleize, s] }, { include_blank: "All" }, value: params[:status], class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" %>
+    </div>
+    <div>
+      <label class="block text-xs font-medium text-gray-700 mb-1">Linked To</label>
+      <%= f.select :linkable_type, [["Prospect", "Prospect"], ["Customer", "Customer"]], { include_blank: "All" }, value: params[:linkable_type], class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" %>
+    </div>
+    <div>
+      <label class="block text-xs font-medium text-gray-700 mb-1">Consultant</label>
+      <%= f.select :consultant_id, User.assignable.order(:name).map { |u| [u.display_name, u.id] }, { include_blank: "All" }, value: params[:consultant_id], class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" %>
+    </div>
+  <% end %>
+
+  <turbo-frame id="results">
+    <div class="bg-white shadow rounded-lg overflow-hidden">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <%= render "shared/sortable_header", label: "Title", field: "title", current_sort: params[:sort], current_dir: params[:dir], url: proposals_path %>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Linked To</th>
+            <%= render "shared/sortable_header", label: "Status", field: "status", current_sort: params[:sort], current_dir: params[:dir], url: proposals_path %>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Consultant</th>
+            <%= render "shared/sortable_header", label: "Est. Value", field: "estimated_value", current_sort: params[:sort], current_dir: params[:dir], url: proposals_path %>
+            <%= render "shared/sortable_header", label: "Sent", field: "date_sent", current_sort: params[:sort], current_dir: params[:dir], url: proposals_path %>
+            <%= render "shared/sortable_header", label: "Expected Close", field: "expected_close_date", current_sort: params[:sort], current_dir: params[:dir], url: proposals_path %>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <% @proposals.each do |proposal| %>
+            <tr class="hover:bg-gray-50">
+              <td class="px-6 py-4 whitespace-nowrap">
+                <%= link_to proposal.title, proposal, class: "text-blue-600 hover:text-blue-900 font-medium" %>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <%= link_to proposal.linkable.company_name, proposal.linkable, class: "text-blue-600 hover:text-blue-900" %>
+                <span class="text-xs text-gray-400">(<%= proposal.linkable_type %>)</span>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <%= status_badge(proposal.status) %>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <%= proposal.responsible_consultant.display_name %>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                <%= currency(proposal.estimated_value) %>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <%= proposal.date_sent&.strftime("%b %d, %Y") || "—" %>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <%= proposal.expected_close_date&.strftime("%b %d, %Y") || "—" %>
+              </td>
+            </tr>
+          <% end %>
+
+          <% if @proposals.empty? %>
+            <tr>
+              <td colspan="8" class="px-6 py-8 text-center text-sm text-gray-500">
+                No proposals found.
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </turbo-frame>
+</div>

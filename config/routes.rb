@@ -26,6 +26,16 @@ Rails.application.routes.draw do
     end
   end
 
+  # Proposals
+  resources :proposals do
+    member do
+      patch :mark_won
+      patch :mark_lost
+      post :duplicate
+      post :archive_document
+    end
+  end
+
   # Customers
   resources :customers do
     resources :contacts, only: [ :new, :create, :edit, :update, :destroy ]

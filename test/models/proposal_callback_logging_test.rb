@@ -85,7 +85,8 @@ class ProposalCallbackLoggingTest < ActiveSupport::TestCase
     @customer.recalculate_total_revenue!
     assert_equal 0, @customer.total_revenue
 
-    @proposal.update!(status: :won, final_value: 50000, win_loss_reason: "Strong fit")
+    @proposal.update!(estimated_value: 50000)
+    @proposal.update!(status: :won, win_loss_reason: "Strong fit")
 
     assert_equal 50000, @customer.reload.total_revenue
   end
@@ -96,11 +97,11 @@ class ProposalCallbackLoggingTest < ActiveSupport::TestCase
     assert_equal 0, @customer.reload.total_revenue
   end
 
-  test "changing won proposal final_value updates customer revenue" do
-    @proposal.update!(status: :won, final_value: 30000, win_loss_reason: "Great fit")
+  test "changing won proposal estimated_value updates customer revenue" do
+    @proposal.update!(estimated_value: 30000, status: :won, win_loss_reason: "Great fit")
     assert_equal 30000, @customer.reload.total_revenue
 
-    @proposal.update!(final_value: 50000)
+    @proposal.update!(estimated_value: 50000)
     assert_equal 50000, @customer.reload.total_revenue
   end
 end

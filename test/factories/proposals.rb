@@ -14,7 +14,7 @@ FactoryBot.define do
     trait :won do
       status { :won }
       win_loss_reason { "Best proposal" }
-      final_value { 50000.00 }
+      estimated_value { 50000.00 }
       actual_close_date { Date.current }
     end
 

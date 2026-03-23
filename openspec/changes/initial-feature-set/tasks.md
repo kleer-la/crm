@@ -79,16 +79,16 @@
 
 ## 9. Proposals Module
 
-- [ ] 9.1 Create Proposal model validations: required fields, win/loss reason required for Won/Lost, URL format for document link
-- [ ] 9.2 Build ProposalsController with full CRUD and status transition actions
-- [ ] 9.3 Create Proposal list view with filtering and sorting
-- [ ] 9.4 Create Proposal show/edit views with all fields and status workflow
-- [ ] 9.5 Implement Mark as Won: require reason + final value, prompt Prospect conversion via Turbo modal if linked to Prospect, create pending-conversion condition if skipped
-- [ ] 9.6 Implement Mark as Lost: require reason, auto-set actual close date
-- [ ] 9.7 Implement document link management: URL validation, archive prompt (Turbo Frame) when replacing existing link
-- [ ] 9.8 Build document version history display (immutable entries)
-- [ ] 9.9 Implement Duplicate Proposal action (copy fields except status, dates, document links → new Draft)
-- [ ] 9.10 Implement guard: cannot set Won on Proposal linked to Disqualified Prospect
+- [x] 9.1 Create Proposal model validations: required fields, win/loss reason required for Won/Lost, URL format for document link
+- [x] 9.2 Build ProposalsController with full CRUD and status transition actions
+- [x] 9.3 Create Proposal list view with filtering and sorting
+- [x] 9.4 Create Proposal show/edit views with all fields and status workflow
+- [x] 9.5 Implement Mark as Won: require reason, prompt Prospect conversion via Turbo modal if linked to Prospect, create pending-conversion condition if skipped
+- [x] 9.6 Implement Mark as Lost: require reason, auto-set actual close date
+- [x] 9.7 Implement document link management: URL validation, archive prompt (Turbo Frame) when replacing existing link
+- [x] 9.8 Build document version history display (immutable entries)
+- [x] 9.9 Implement Duplicate Proposal action (copy fields except status, dates, document links → new Draft)
+- [x] 9.10 Implement guard: cannot set Won on Proposal linked to Disqualified Prospect
 
 ## 10. Tasks Module
 
