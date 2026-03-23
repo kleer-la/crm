@@ -20,6 +20,13 @@ class Proposal < ApplicationRecord
 
   scope :open, -> { where(status: [ :draft, :sent, :under_review ]) }
   scope :closed, -> { where(status: [ :won, :lost, :cancelled ]) }
+  scope :stale, -> {
+    open.where.not(
+      id: ActivityLog.where(loggable_type: "Proposal")
+                     .where("created_at >= ?", 30.days.ago)
+                     .select(:loggable_id)
+    )
+  }
   scope :pending_conversion, -> {
     joins("INNER JOIN prospects ON proposals.linkable_type = 'Prospect' AND proposals.linkable_id = prospects.id")
       .where(status: :won)

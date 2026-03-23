@@ -159,4 +159,28 @@ class ProposalTest < ActiveSupport::TestCase
     proposal.update!(status: :won, win_loss_reason: "Best bid")
     assert_equal 20000, customer.reload.total_revenue
   end
+
+  test "stale scope includes open proposals with no recent activity" do
+    customer = create(:customer)
+    proposal = create(:proposal, linkable: customer)
+    proposal.activity_logs.update_all(created_at: 31.days.ago)
+
+    assert_includes Proposal.stale, proposal
+  end
+
+  test "stale scope excludes proposals with recent activity" do
+    customer = create(:customer)
+    proposal = create(:proposal, linkable: customer)
+    # Factory creates activity log via callback — it's recent
+
+    assert_not_includes Proposal.stale, proposal
+  end
+
+  test "stale scope excludes won proposals" do
+    customer = create(:customer)
+    proposal = create(:proposal, :won, linkable: customer)
+    proposal.activity_logs.update_all(created_at: 31.days.ago)
+
+    assert_not_includes Proposal.stale, proposal
+  end
 end

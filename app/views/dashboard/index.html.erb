@@ -1,2 +1,196 @@
-<h1 class="text-2xl font-bold">Dashboard</h1>
-<p class="mt-2 text-gray-600">Welcome, <%= current_user.display_name %>!</p>
+<div class="px-4 sm:px-6 lg:px-8 py-8">
+  <div class="mb-6">
+    <h1 class="text-2xl font-bold text-gray-900">Dashboard</h1>
+    <p class="mt-1 text-sm text-gray-500">Welcome, <%= current_user.display_name %>!</p>
+  </div>
+
+  <%# Personal Metrics %>
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+    <div class="bg-white shadow rounded-lg p-4">
+      <dt class="text-sm font-medium text-gray-500">My Pipeline Value</dt>
+      <dd class="mt-1 text-2xl font-semibold text-gray-900"><%= currency(@my_pipeline_value) %></dd>
+    </div>
+    <div class="bg-white shadow rounded-lg p-4">
+      <dt class="text-sm font-medium text-gray-500">Proposals Sent This Month</dt>
+      <dd class="mt-1 text-2xl font-semibold text-gray-900"><%= @proposals_sent_this_month %></dd>
+    </div>
+    <div class="bg-white shadow rounded-lg p-4">
+      <dt class="text-sm font-medium text-gray-500">Proposals Won This Month</dt>
+      <dd class="mt-1 text-2xl font-semibold text-gray-900"><%= @proposals_won_this_month %></dd>
+    </div>
+  </div>
+
+  <%# Team Alerts %>
+  <% if @pending_conversions.any? || @team_stale_proposals.any? %>
+    <div class="mb-6 space-y-3">
+      <h2 class="text-lg font-semibold text-gray-900">Team Alerts</h2>
+      <% @pending_conversions.each do |proposal| %>
+        <div class="bg-yellow-50 border border-yellow-200 rounded-md p-4">
+          <p class="text-sm text-yellow-800">
+            <span class="font-semibold">Pending Conversion:</span>
+            <%= link_to proposal.title, proposal, class: "text-yellow-900 underline hover:text-yellow-700" %>
+            is Won but linked Prospect
+            <%= link_to proposal.linkable.company_name, proposal.linkable, class: "text-yellow-900 underline hover:text-yellow-700" %>
+            has not been converted.
+            <span class="text-xs text-yellow-600 ml-1">(<%= proposal.responsible_consultant.display_name %>)</span>
+          </p>
+        </div>
+      <% end %>
+      <% @team_stale_proposals.each do |proposal| %>
+        <div class="bg-orange-50 border border-orange-200 rounded-md p-4">
+          <p class="text-sm text-orange-800">
+            <span class="font-semibold">Stale Proposal:</span>
+            <%= link_to proposal.title, proposal, class: "text-orange-900 underline hover:text-orange-700" %>
+            has had no activity in 30+ days.
+            <span class="text-xs text-orange-600 ml-1">(<%= proposal.responsible_consultant.display_name %>)</span>
+          </p>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+
+  <%# My Stale Proposals %>
+  <% if @my_stale_proposals.any? %>
+    <div class="mb-6 bg-orange-50 border border-orange-200 rounded-md p-4">
+      <h3 class="text-sm font-semibold text-orange-800 mb-2">Your Stale Proposals (no activity in 30+ days)</h3>
+      <ul class="space-y-1">
+        <% @my_stale_proposals.each do |proposal| %>
+          <li class="text-sm text-orange-700">
+            <%= link_to proposal.title, proposal, class: "underline hover:text-orange-900" %>
+            — <%= proposal.linkable.respond_to?(:company_name) ? proposal.linkable.company_name : proposal.linkable.title %>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <%# Main column %>
+    <div class="lg:col-span-2 space-y-6">
+      <%# My Open Tasks %>
+      <div class="bg-white shadow rounded-lg p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-lg font-semibold text-gray-900">My Open Tasks</h2>
+          <%= link_to "View All", tasks_path(consultant_id: current_user.id), class: "text-sm text-blue-600 hover:text-blue-900" %>
+        </div>
+        <% if @my_tasks.any? %>
+          <div class="space-y-2">
+            <% @my_tasks.each do |task| %>
+              <% overdue = task.due_date < Date.current %>
+              <div class="flex items-center justify-between text-sm border-b border-gray-100 pb-2 <%= overdue ? 'bg-red-50 -mx-2 px-2 rounded' : '' %>">
+                <div>
+                  <%= link_to task.title, task, class: "text-blue-600 hover:text-blue-900 font-medium" %>
+                  <span class="text-gray-400 ml-1">due <%= task.due_date.strftime("%b %d") %></span>
+                  <% if overdue %>
+                    <span class="text-red-500 text-xs ml-1">(overdue)</span>
+                  <% end %>
+                </div>
+                <%= status_badge(task.status) %>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <p class="text-sm text-gray-500">No open tasks.</p>
+        <% end %>
+      </div>
+
+      <%# My Open Proposals %>
+      <div class="bg-white shadow rounded-lg p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-lg font-semibold text-gray-900">My Open Proposals</h2>
+          <%= link_to "View All", proposals_path(consultant_id: current_user.id), class: "text-sm text-blue-600 hover:text-blue-900" %>
+        </div>
+        <% if @my_proposals.any? %>
+          <% @my_proposals.group_by(&:status).each do |status, proposals| %>
+            <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mt-3 mb-2"><%= status.titleize %> (<%= proposals.size %>)</h3>
+            <div class="space-y-2">
+              <% proposals.each do |proposal| %>
+                <div class="flex items-center justify-between text-sm border-b border-gray-100 pb-2">
+                  <div>
+                    <%= link_to proposal.title, proposal, class: "text-blue-600 hover:text-blue-900 font-medium" %>
+                    <span class="text-gray-400 ml-1">— <%= proposal.linkable.company_name %></span>
+                  </div>
+                  <span class="text-sm text-gray-500"><%= currency(proposal.estimated_value) %></span>
+                </div>
+              <% end %>
+            </div>
+          <% end %>
+        <% else %>
+          <p class="text-sm text-gray-500">No open proposals.</p>
+        <% end %>
+      </div>
+
+      <%# My Active Prospects %>
+      <div class="bg-white shadow rounded-lg p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-lg font-semibold text-gray-900">My Active Prospects</h2>
+          <%= link_to "View All", prospects_path(consultant_id: current_user.id), class: "text-sm text-blue-600 hover:text-blue-900" %>
+        </div>
+        <% if @my_prospects.any? %>
+          <div class="space-y-2">
+            <% @my_prospects.each do |prospect| %>
+              <div class="flex items-center justify-between text-sm border-b border-gray-100 pb-2">
+                <div>
+                  <%= link_to prospect.company_name, prospect, class: "text-blue-600 hover:text-blue-900 font-medium" %>
+                </div>
+                <%= status_badge(prospect.status) %>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <p class="text-sm text-gray-500">No active prospects.</p>
+        <% end %>
+      </div>
+    </div>
+
+    <%# Sidebar column %>
+    <div class="space-y-6">
+      <div class="bg-white shadow rounded-lg p-4">
+        <h3 class="text-sm font-semibold text-gray-900 mb-3">Recent Activity</h3>
+        <%= render "shared/activity_timeline", activity_logs: @recent_activity %>
+      </div>
+    </div>
+  </div>
+
+  <%# Admin Dashboard Section %>
+  <% if current_user.admin? %>
+    <div class="mt-8 border-t border-gray-200 pt-8">
+      <h2 class="text-xl font-bold text-gray-900 mb-4">Admin: Team Overview</h2>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+        <div class="bg-white shadow rounded-lg p-4">
+          <dt class="text-sm font-medium text-gray-500">Team Pipeline Value</dt>
+          <dd class="mt-1 text-2xl font-semibold text-gray-900"><%= currency(@team_pipeline_value) %></dd>
+        </div>
+        <div class="bg-white shadow rounded-lg p-4">
+          <dt class="text-sm font-medium text-gray-500">Team Proposals Sent This Month</dt>
+          <dd class="mt-1 text-2xl font-semibold text-gray-900"><%= @team_proposals_sent %></dd>
+        </div>
+        <div class="bg-white shadow rounded-lg p-4">
+          <dt class="text-sm font-medium text-gray-500">Team Proposals Won This Month</dt>
+          <dd class="mt-1 text-2xl font-semibold text-gray-900"><%= @team_proposals_won %></dd>
+        </div>
+      </div>
+
+      <div class="bg-white shadow rounded-lg p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">All Overdue Tasks</h3>
+        <% if @all_overdue_tasks.any? %>
+          <div class="space-y-2">
+            <% @all_overdue_tasks.each do |task| %>
+              <div class="flex items-center justify-between text-sm border-b border-gray-100 pb-2 bg-red-50 -mx-2 px-2 rounded">
+                <div>
+                  <%= link_to task.title, task, class: "text-blue-600 hover:text-blue-900 font-medium" %>
+                  <span class="text-gray-400 ml-1">due <%= task.due_date.strftime("%b %d") %></span>
+                  <span class="text-red-500 text-xs ml-1">(overdue)</span>
+                </div>
+                <span class="text-sm text-gray-500"><%= task.assigned_to.display_name %></span>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <p class="text-sm text-gray-500">No overdue tasks.</p>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>

@@ -109,12 +109,12 @@
 
 ## 12. Dashboard
 
-- [ ] 12.1 Create DashboardController: query personal metrics (my pipeline value, proposals sent/won this month)
-- [ ] 12.2 Build personal dashboard view: my open tasks (overdue first), my proposals by status, my active prospects, recent activity
-- [ ] 12.3 Implement stale proposal scopes (open proposals with no activity in 30 days) and display on personal dashboard
-- [ ] 12.4 Build team alert widget partial: pending-conversion alerts (Won Proposal + unconverted Prospect) and team-wide stale proposals, computed via scopes
-- [ ] 12.5 Ensure alerts link to relevant records and cannot be manually dismissed
-- [ ] 12.6 Build Admin dashboard section: team-wide metrics and all overdue tasks, conditionally rendered for Admin role
+- [x] 12.1 Create DashboardController: query personal metrics (my pipeline value, proposals sent/won this month)
+- [x] 12.2 Build personal dashboard view: my open tasks (overdue first), my proposals by status, my active prospects, recent activity
+- [x] 12.3 Implement stale proposal scopes (open proposals with no activity in 30 days) and display on personal dashboard
+- [x] 12.4 Build team alert widget partial: pending-conversion alerts (Won Proposal + unconverted Prospect) and team-wide stale proposals, computed via scopes
+- [x] 12.5 Ensure alerts link to relevant records and cannot be manually dismissed
+- [x] 12.6 Build Admin dashboard section: team-wide metrics and all overdue tasks, conditionally rendered for Admin role
 
 ## 13. Global Search
 
