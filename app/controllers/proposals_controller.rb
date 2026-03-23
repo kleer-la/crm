@@ -6,7 +6,7 @@ class ProposalsController < ApplicationController
   SORT_FIELDS = %i[title status estimated_value date_sent expected_close_date actual_close_date].freeze
 
   def index
-    @proposals = Proposal.includes(:linkable, :responsible_consultant)
+    @proposals = Proposal.preload(:linkable).includes(:responsible_consultant)
     @proposals = apply_filters(@proposals)
     @proposals = apply_sort(@proposals, allowed_fields: SORT_FIELDS, default_field: :created_at)
   end

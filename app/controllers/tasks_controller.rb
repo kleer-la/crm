@@ -6,7 +6,7 @@ class TasksController < ApplicationController
   SORT_FIELDS = %i[title status priority due_date assigned_to_id completed_at].freeze
 
   def index
-    @tasks = Task.includes(:linkable, :assigned_to)
+    @tasks = Task.preload(:linkable).includes(:assigned_to)
     @tasks = apply_filters(@tasks)
     @tasks = apply_sort(@tasks, allowed_fields: SORT_FIELDS, default_field: :due_date, default_dir: :asc)
   end

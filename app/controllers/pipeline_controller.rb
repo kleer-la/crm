@@ -24,7 +24,7 @@ class PipelineController < ApplicationController
   end
 
   def open_proposals
-    Proposal.includes(:linkable, :responsible_consultant)
+    Proposal.includes(:responsible_consultant)
             .where(status: [ :draft, :sent, :under_review ])
   end
 

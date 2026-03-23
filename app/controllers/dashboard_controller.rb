@@ -22,7 +22,7 @@ class DashboardController < ApplicationController
                     .limit(20)
 
     # My proposals by status
-    @my_proposals = my_record_ids(Proposal).open.includes(:linkable).order(expected_close_date: :asc)
+    @my_proposals = my_record_ids(Proposal).open.preload(:linkable).order(expected_close_date: :asc)
 
     # My active prospects
     @my_prospects = my_record_ids(Prospect)
@@ -43,7 +43,7 @@ class DashboardController < ApplicationController
       my_proposal_ids.presence || [ 0 ],
       my_prospect_ids.presence || [ 0 ],
       my_customer_ids.presence || [ 0 ]
-    ).includes(:user, :loggable).order(created_at: :desc).limit(15)
+    ).preload(:loggable).includes(:user).order(created_at: :desc).limit(15)
 
     # Personal metrics
     @my_pipeline_value = my_record_ids(Proposal).open.sum(:estimated_value)
@@ -57,7 +57,7 @@ class DashboardController < ApplicationController
                                   .count
 
     # My stale proposals
-    @my_stale_proposals = my_record_ids(Proposal).stale.includes(:linkable)
+    @my_stale_proposals = my_record_ids(Proposal).stale.preload(:linkable)
   end
 
   def load_team_alerts
@@ -73,6 +73,6 @@ class DashboardController < ApplicationController
     @team_proposals_won = Proposal.where(status: :won)
                                   .where("actual_close_date >= ?", Date.current.beginning_of_month)
                                   .count
-    @all_overdue_tasks = Task.overdue.includes(:assigned_to, :linkable).order(due_date: :asc)
+    @all_overdue_tasks = Task.overdue.preload(:linkable).includes(:assigned_to).order(due_date: :asc)
   end
 end

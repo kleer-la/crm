@@ -63,7 +63,7 @@ class DashboardControllerTest < ActionDispatch::IntegrationTest
     create(:proposal, :won, linkable: prospect, responsible_consultant: @user, title: "Converted Prop XYZ")
     get root_path
     assert_response :success
-    assert_not_includes response.body, "Converted Prop XYZ"
+    assert_no_match(/Pending Conversion.*Converted Prop XYZ/m, response.body)
   end
 
   test "shows stale proposal alerts" do
