@@ -41,10 +41,10 @@
           <% @proposals.each do |proposal| %>
             <tr class="hover:bg-gray-50">
               <td class="px-6 py-4 whitespace-nowrap">
-                <%= link_to proposal.title, proposal, class: "text-blue-600 hover:text-blue-900 font-medium" %>
+                <%= link_to proposal.title, proposal, class: "text-blue-600 hover:text-blue-900 font-medium", data: { turbo_frame: "_top" } %>
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                <%= link_to proposal.linkable.company_name, proposal.linkable, class: "text-blue-600 hover:text-blue-900" %>
+                <%= link_to proposal.linkable.company_name, proposal.linkable, class: "text-blue-600 hover:text-blue-900", data: { turbo_frame: "_top" } %>
                 <span class="text-xs text-gray-400">(<%= proposal.linkable_type %>)</span>
               </td>
               <td class="px-6 py-4 whitespace-nowrap">

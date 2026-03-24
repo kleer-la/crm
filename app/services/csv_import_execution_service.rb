@@ -50,16 +50,19 @@ class CsvImportExecutionService
 
   def import_customer(row)
     consultant = find_consultant(row[:responsible_consultant_name])
+    historical_date = row[:last_activity_date] || Date.current
 
-    Customer.create!(
+    customer = Customer.create!(
       company_name: row[:company_name],
       industry: row[:industry],
       status: :active,
       responsible_consultant: consultant,
       date_became_customer: Date.current,
-      last_activity_date: row[:last_activity_date] || Date.current,
+      last_activity_date: historical_date,
       total_revenue: 0
     )
+    # Restore historical date — the log_creation callback overwrites it with Time.current
+    customer.update_column(:last_activity_date, historical_date)
     @created_count += 1
   end
 
@@ -72,7 +75,7 @@ class CsvImportExecutionService
     consultant = find_consultant(row[:responsible_consultant_name])
     status = row[:status] || "draft"
 
-    proposal = Proposal.create!(
+    Proposal.create!(
       title: row[:title],
       linkable: linkable,
       responsible_consultant: consultant,
