@@ -81,14 +81,9 @@ class Admin::ImportsControllerTest < ActionDispatch::IntegrationTest
 
   test "create imports users successfully" do
     csv = "name,email,role\nAlice,alice@example.com,consultant\n"
-    file = fixture_csv(csv)
-
-    # First preview to populate session
-    post preview_admin_imports_path, params: { record_type: "user", file: file }
-    assert_response :success
 
     assert_difference "User.count", 1 do
-      post admin_imports_path
+      post admin_imports_path, params: { record_type: "user", csv_content: csv }
     end
     assert_response :success
     assert_includes response.body, "Created"
@@ -96,32 +91,23 @@ class Admin::ImportsControllerTest < ActionDispatch::IntegrationTest
 
   test "create imports customers successfully" do
     csv = "CLIENTE\tSector\nImported Co\tTech\n"
-    file = fixture_csv(csv)
-
-    post preview_admin_imports_path, params: { record_type: "customer", file: file }
 
     assert_difference "Customer.count", 1 do
-      post admin_imports_path
+      post admin_imports_path, params: { record_type: "customer", csv_content: csv }
     end
     assert_response :success
     assert_includes response.body, "Created"
   end
 
   test "create shows errors for invalid data" do
-    customer = create(:customer, company_name: "Existing Co")
-    create(:contact, customer: customer, primary: true)
-
     csv = "Propuesta\tCliente\tEstado\nTest\tNonExistent\tGanado\n"
-    file = fixture_csv(csv)
 
-    post preview_admin_imports_path, params: { record_type: "proposal", file: file }
-
-    post admin_imports_path
+    post admin_imports_path, params: { record_type: "proposal", csv_content: csv }
     assert_response :success
     assert_includes response.body, "Errors"
   end
 
-  test "create redirects if no session data" do
+  test "create redirects if no csv_content param" do
     post admin_imports_path
     assert_redirected_to new_admin_import_path
     assert_match(/No import data/, flash[:alert])

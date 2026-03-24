@@ -19,7 +19,7 @@ class CsvImportFlowTest < ActionDispatch::IntegrationTest
     assert_includes response.body, "Alice Smith"
 
     assert_difference "User.count", 1 do
-      post admin_imports_path
+      post admin_imports_path, params: { record_type: "user", csv_content: csv }
     end
     assert_response :success
 
@@ -41,7 +41,7 @@ class CsvImportFlowTest < ActionDispatch::IntegrationTest
 
     assert_difference "Customer.count", 1 do
       assert_no_difference "Contact.count" do
-        post admin_imports_path
+        post admin_imports_path, params: { record_type: "customer", csv_content: csv }
       end
     end
     assert_response :success
@@ -66,7 +66,7 @@ class CsvImportFlowTest < ActionDispatch::IntegrationTest
 
     assert_difference "Proposal.count", 1 do
       assert_difference "Contact.count", 1 do
-        post admin_imports_path
+        post admin_imports_path, params: { record_type: "proposal", csv_content: csv }
       end
     end
     assert_response :success
@@ -86,12 +86,9 @@ class CsvImportFlowTest < ActionDispatch::IntegrationTest
 
   test "proposal import with unmatched linkable records an error and shows details" do
     csv = "Propuesta\tCliente\tEstado\nMystery Deal\tUnknown Corp\tGanado\n"
-    file = fixture_csv(csv)
-
-    post preview_admin_imports_path, params: { record_type: "proposal", file: file }
 
     assert_no_difference "Proposal.count" do
-      post admin_imports_path
+      post admin_imports_path, params: { record_type: "proposal", csv_content: csv }
     end
     assert_response :success
     assert_includes response.body, "Unknown Corp"
@@ -111,12 +108,9 @@ class CsvImportFlowTest < ActionDispatch::IntegrationTest
     create(:customer, company_name: "Zeta Corp")
 
     csv = "Propuesta\tCliente\tEstado\tResponsable\nFallback Deal\tZeta Corp\tBUN\tNonExistentConsultant\n"
-    file = fixture_csv(csv)
-
-    post preview_admin_imports_path, params: { record_type: "proposal", file: file }
 
     assert_difference "Proposal.count", 1 do
-      post admin_imports_path
+      post admin_imports_path, params: { record_type: "proposal", csv_content: csv }
     end
 
     proposal = Proposal.find_by(title: "Fallback Deal")
