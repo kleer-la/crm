@@ -7,7 +7,7 @@ class CustomerHistoryTimelineTest < ActionDispatch::IntegrationTest
     @customer = create(:customer, :with_contact, responsible_consultant: @user)
   end
 
-  test "customer show displays activity log entries chronologically" do
+  test "customer show displays activity log entries in reverse chronological order" do
     @customer.log_system_event("First event")
     travel 1.hour
     @customer.log_system_event("Second event")
@@ -21,6 +21,13 @@ class CustomerHistoryTimelineTest < ActionDispatch::IntegrationTest
     assert_includes response.body, "First event"
     assert_includes response.body, "Second event"
     assert_includes response.body, "Third event"
+
+    # Newest first (desc order) — Third should appear before First
+    third_pos = response.body.index("Third event")
+    second_pos = response.body.index("Second event")
+    first_pos = response.body.index("First event")
+    assert third_pos < second_pos, "Third event (newest) should appear before Second event"
+    assert second_pos < first_pos, "Second event should appear before First event (oldest)"
   end
 
   test "customer history includes linked proposals in associations" do

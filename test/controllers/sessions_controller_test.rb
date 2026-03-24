@@ -44,7 +44,7 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "Updated Name", user.reload.name
   end
 
-  test "oauth callback rejects deactivated user" do
+  test "oauth callback rejects deactivated user with flash message" do
     user = create(:user, :deactivated, google_uid: "deactivated_uid")
 
     OmniAuth.config.mock_auth[:google_oauth2] = OmniAuth::AuthHash.new(
@@ -55,6 +55,22 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
     get "/auth/google_oauth2/callback"
 
     assert_redirected_to login_path
+    assert_match(/deactivated/i, flash[:alert])
+  end
+
+  test "reactivated user can log in again" do
+    user = create(:user, :deactivated, google_uid: "reactivated_uid")
+    user.update!(active: true)
+
+    OmniAuth.config.mock_auth[:google_oauth2] = OmniAuth::AuthHash.new(
+      provider: "google_oauth2",
+      uid: "reactivated_uid",
+      info: { email: user.email, name: user.name, image: nil }
+    )
+    get "/auth/google_oauth2/callback"
+
+    assert_redirected_to root_path
+    assert_equal user.id, session[:user_id]
   end
 
   test "oauth callback redirects pending user to pending page" do

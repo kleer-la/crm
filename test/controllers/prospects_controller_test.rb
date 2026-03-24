@@ -204,6 +204,28 @@ class ProspectsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to prospect_path(@prospect)
   end
 
+  # Collaborating consultants
+  test "update adds collaborating consultants" do
+    collaborator = create(:user)
+    patch prospect_path(@prospect), params: {
+      prospect: { collaborating_consultant_ids: [ collaborator.id ] }
+    }
+    assert_redirected_to prospect_path(@prospect)
+    assert_includes @prospect.reload.collaborating_consultants, collaborator
+  end
+
+  test "update removes collaborating consultants" do
+    collaborator = create(:user)
+    @prospect.collaborating_consultants << collaborator
+    assert_includes @prospect.collaborating_consultants, collaborator
+
+    patch prospect_path(@prospect), params: {
+      prospect: { collaborating_consultant_ids: [ "" ] }
+    }
+    assert_redirected_to prospect_path(@prospect)
+    assert_empty @prospect.reload.collaborating_consultants
+  end
+
   # Auth
   test "unauthenticated user cannot access prospects" do
     delete logout_path
