@@ -5,11 +5,11 @@
 	"dockerComposeFile": "docker-compose.yml",
 	"service": "web",
 	"workspaceFolder": "/app",
+	"containerEnv": {
+		"CLAUDE_CONFIG_DIR": "/app/.claude"
+	},
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	"features": {
-		// "ghcr.io/devcontainers/features/docker-in-docker:2": {
-		// 	"version": "latest"
-		// },
 		"ghcr.io/devcontainers/features/sshd:1": {
 			"version": "latest"
 		}

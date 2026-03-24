@@ -14,10 +14,18 @@ RUN addgroup --gid $USER_GID $USER_NAME && adduser --disabled-password --gecos '
 # [Optional] Uncomment this section to install additional OS packages.
 RUN export DEBIAN_FRONTEND=noninteractive && \
     apt-get -y update && \
-    apt-get -y --no-install-recommends install ca-certificates curl git unzip make gcc libc6-dev ripgrep fd-find xclip tree-sitter-cli && \
+    apt-get -y --no-install-recommends install ca-certificates curl git gh unzip make gcc libc6-dev ripgrep fd-find xclip tree-sitter-cli && \
     curl -fsSL https://deb.nodesource.com/setup_lts.x | bash - && apt-get -y install nodejs && \
     apt-get -y autoremove && apt-get clean && rm -rf /var/lib/apt/lists/* && \
     npm install -g @fission-ai/openspec@latest
+
+# Docker CLI (uses host docker via mounted socket)
+RUN curl -fsSL https://download.docker.com/linux/debian/gpg | dd of=/usr/share/keyrings/docker-archive-keyring.gpg && \
+    chmod go+r /usr/share/keyrings/docker-archive-keyring.gpg && \
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian bookworm stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null && \
+    apt-get update && apt-get -y install docker-ce-cli && \
+    rm -rf /var/lib/apt/lists/* && \
+    groupadd -g 999 docker || true && usermod -aG docker $USER_NAME
 
 # Neovim
 RUN cd /tmp && \
