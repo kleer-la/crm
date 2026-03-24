@@ -62,7 +62,9 @@ class CsvImportExecutionService
       total_revenue: 0
     )
     # Restore historical date — the log_creation callback overwrites it with Time.current
+    # Also clear date_became_customer — not available in the spreadsheet
     customer.update_column(:last_activity_date, historical_date)
+    customer.update_column(:date_became_customer, nil)
     @created_count += 1
   end
 
