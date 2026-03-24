@@ -8,21 +8,20 @@ class SessionsController < ApplicationController
 
   def create
     auth = request.env["omniauth.auth"]
-    user = User.find_or_initialize_by(google_uid: auth.uid)
+    user = User.find_by(google_uid: auth.uid)
 
-    if user.new_record?
-      user.assign_attributes(
+    if user
+      user.update!(name: auth.info.name, avatar_url: auth.info.image)
+    elsif (user = User.find_by(email: auth.info.email))
+      user.update!(google_uid: auth.uid, name: auth.info.name, avatar_url: auth.info.image)
+    else
+      user = User.create!(
+        google_uid: auth.uid,
         email: auth.info.email,
         name: auth.info.name,
         avatar_url: auth.info.image,
         role: :pending,
         active: true
-      )
-      user.save!
-    else
-      user.update!(
-        name: auth.info.name,
-        avatar_url: auth.info.image
       )
     end
 

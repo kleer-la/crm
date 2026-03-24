@@ -86,6 +86,59 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to pending_approval_path
   end
 
+  test "oauth callback links imported user by email when no google_uid" do
+    imported_user = create(:user, email: "imported@example.com", google_uid: nil, role: :consultant)
+
+    OmniAuth.config.mock_auth[:google_oauth2] = OmniAuth::AuthHash.new(
+      provider: "google_oauth2",
+      uid: "new_google_uid_456",
+      info: { email: "imported@example.com", name: "Updated Name", image: "http://example.com/avatar.png" }
+    )
+
+    assert_no_difference "User.count" do
+      get "/auth/google_oauth2/callback"
+    end
+
+    imported_user.reload
+    assert_equal "new_google_uid_456", imported_user.google_uid
+    assert_equal "Updated Name", imported_user.name
+    assert_equal "consultant", imported_user.role
+    assert_redirected_to root_path
+  end
+
+  test "oauth callback creates new user when no google_uid or email match" do
+    OmniAuth.config.mock_auth[:google_oauth2] = OmniAuth::AuthHash.new(
+      provider: "google_oauth2",
+      uid: "brand_new_uid",
+      info: { email: "brand_new@example.com", name: "Brand New", image: nil }
+    )
+
+    assert_difference "User.count", 1 do
+      get "/auth/google_oauth2/callback"
+    end
+
+    user = User.find_by(email: "brand_new@example.com")
+    assert_equal "brand_new_uid", user.google_uid
+    assert_equal "pending", user.role
+  end
+
+  test "oauth callback still works for existing user with google_uid" do
+    user = create(:user, google_uid: "known_uid", email: "known@example.com")
+
+    OmniAuth.config.mock_auth[:google_oauth2] = OmniAuth::AuthHash.new(
+      provider: "google_oauth2",
+      uid: "known_uid",
+      info: { email: "known@example.com", name: "Known User Updated", image: nil }
+    )
+
+    assert_no_difference "User.count" do
+      get "/auth/google_oauth2/callback"
+    end
+
+    assert_equal "Known User Updated", user.reload.name
+    assert_redirected_to root_path
+  end
+
   test "auth failure redirects to login with alert" do
     get "/auth/failure"
     assert_redirected_to login_path

@@ -20,9 +20,9 @@
 
 ## 3. OAuth Email-Linking Fallback
 
-- [ ] 3.1 Update SessionsController#create to fall back to email matching when no google_uid match is found: after `User.find_or_initialize_by(google_uid: auth.uid)` returns a new record, check `User.find_by(email: auth.info.email)`. If found, set google_uid and update name/avatar on the existing user instead of creating a new one.
-- [ ] 3.2 Write tests: OAuth login links to existing imported user (no google_uid) by email; OAuth login still creates new user when no email match; existing OAuth flow unchanged for users with google_uid.
-- [ ] 3.3 Run bin/ci to verify.
+- [x] 3.1 Update SessionsController#create to fall back to email matching when no google_uid match is found: after `User.find_or_initialize_by(google_uid: auth.uid)` returns a new record, check `User.find_by(email: auth.info.email)`. If found, set google_uid and update name/avatar on the existing user instead of creating a new one.
+- [x] 3.2 Write tests: OAuth login links to existing imported user (no google_uid) by email; OAuth login still creates new user when no email match; existing OAuth flow unchanged for users with google_uid.
+- [x] 3.3 Run bin/ci to verify.
 
 ## 4. Controller, Routes, and Views
 
