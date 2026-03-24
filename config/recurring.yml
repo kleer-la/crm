@@ -10,10 +10,10 @@
 #     schedule: at 5am every day
 
 default: &default
-  task_due_reminders:
-    class: TaskDueReminderJob
-    queue: default
-    schedule: at 8am every day
+  # task_due_reminders:
+  #   class: TaskDueReminderJob
+  #   queue: default
+  #   schedule: at 8am every day
 
 development:
   <<: *default
