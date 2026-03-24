@@ -15,19 +15,40 @@ class CustomersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "index filters by status" do
-    get customers_path(status: "active")
+    inactive = create(:customer, :with_contact, status: :inactive, company_name: "Inactive Corp")
+    get customers_path(status: "inactive")
     assert_response :success
+    assert_includes response.body, "Inactive Corp"
+    assert_not_includes response.body, @customer.company_name
   end
 
   test "index filters by search" do
+    other = create(:customer, :with_contact, company_name: "Unrelated Customer")
     get customers_path(search: @customer.company_name)
     assert_response :success
     assert_includes response.body, @customer.company_name
+    assert_not_includes response.body, "Unrelated Customer"
   end
 
   test "index sorts by company_name" do
+    create(:customer, :with_contact, company_name: "Alpha Customer")
+    create(:customer, :with_contact, company_name: "Zulu Customer")
     get customers_path(sort: "company_name", dir: "asc")
     assert_response :success
+    alpha_pos = response.body.index("Alpha Customer")
+    zulu_pos = response.body.index("Zulu Customer")
+    assert alpha_pos < zulu_pos, "Alpha should appear before Zulu in ascending order"
+  end
+
+  test "index combines filter and sort" do
+    create(:customer, :with_contact, status: :inactive, company_name: "Zulu Inactive")
+    create(:customer, :with_contact, status: :inactive, company_name: "Alpha Inactive")
+    get customers_path(status: "inactive", sort: "company_name", dir: "asc")
+    assert_response :success
+    assert_includes response.body, "Alpha Inactive"
+    assert_includes response.body, "Zulu Inactive"
+    assert_not_includes response.body, @customer.company_name
+    assert response.body.index("Alpha Inactive") < response.body.index("Zulu Inactive")
   end
 
   # Show

@@ -79,6 +79,21 @@ class PipelineControllerTest < ActionDispatch::IntegrationTest
     assert_not_includes response.body, "Later Deal"
   end
 
+  test "index combines multiple filters with AND logic" do
+    other_user = create(:user)
+    # Matches both filters: correct consultant AND value >= 50000
+    match = create(:proposal, linkable: @customer, responsible_consultant: @user, estimated_value: 75000, title: "Match Both")
+    # Wrong consultant
+    wrong_consultant = create(:proposal, linkable: @customer, responsible_consultant: other_user, estimated_value: 75000, title: "Wrong Consultant")
+    # Too low value
+    low_value = create(:proposal, linkable: @customer, responsible_consultant: @user, estimated_value: 5000, title: "Too Low Value")
+    get pipeline_path(consultant_id: @user.id, value_min: 50000)
+    assert_response :success
+    assert_includes response.body, "Match Both"
+    assert_not_includes response.body, "Wrong Consultant"
+    assert_not_includes response.body, "Too Low Value"
+  end
+
   test "index highlights overdue expected close dates" do
     create(:proposal, linkable: @customer, responsible_consultant: @user, expected_close_date: 5.days.ago.to_date, title: "Overdue Proposal")
     get pipeline_path

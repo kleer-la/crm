@@ -66,6 +66,22 @@ class TouchpointsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "Record not found.", flash[:alert]
   end
 
+  test "create touchpoint with empty content redirects with error" do
+    customer = create(:customer)
+
+    assert_no_difference "ActivityLog.count" do
+      post touchpoints_path, params: {
+        loggable_type: "Customer",
+        loggable_id: customer.id,
+        touchpoint_type: "call",
+        content: ""
+      }
+    end
+
+    assert_redirected_to root_path
+    assert flash[:alert].present?
+  end
+
   test "create touchpoint with invalid type redirects with error" do
     customer = create(:customer)
 

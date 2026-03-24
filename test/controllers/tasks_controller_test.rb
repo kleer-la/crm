@@ -16,23 +16,48 @@ class TasksControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "index filters by status" do
-    get tasks_path(status: "open")
+    done_task = create(:task, linkable: @customer, assigned_to: @user, status: :done, title: "Done Task", completed_at: Time.current)
+    get tasks_path(status: "done")
     assert_response :success
+    assert_includes response.body, "Done Task"
+    assert_not_includes response.body, @task.title
   end
 
   test "index filters by priority" do
+    high_task = create(:task, linkable: @customer, assigned_to: @user, priority: :high, title: "High Priority Task")
     get tasks_path(priority: "high")
     assert_response :success
+    assert_includes response.body, "High Priority Task"
   end
 
   test "index filters by search" do
+    other = create(:task, linkable: @customer, assigned_to: @user, title: "Unrelated Task")
     get tasks_path(search: @task.title)
     assert_response :success
+    assert_includes response.body, @task.title
+    assert_not_includes response.body, "Unrelated Task"
   end
 
   test "index sorts by due_date" do
+    early = create(:task, linkable: @customer, assigned_to: @user, title: "Early Task", due_date: 1.day.from_now)
+    late = create(:task, linkable: @customer, assigned_to: @user, title: "Late Task", due_date: 30.days.from_now)
     get tasks_path(sort: "due_date", dir: "asc")
     assert_response :success
+    early_pos = response.body.index("Early Task")
+    late_pos = response.body.index("Late Task")
+    assert early_pos < late_pos, "Early Task should appear before Late Task in ascending order"
+  end
+
+  test "index combines filter and sort" do
+    create(:task, linkable: @customer, assigned_to: @user, priority: :high, title: "Zulu High", due_date: 30.days.from_now)
+    create(:task, linkable: @customer, assigned_to: @user, priority: :high, title: "Alpha High", due_date: 1.day.from_now)
+    create(:task, linkable: @customer, assigned_to: @user, priority: :low, title: "Low Excluded", due_date: 2.days.from_now)
+    get tasks_path(priority: "high", sort: "due_date", dir: "asc")
+    assert_response :success
+    assert_includes response.body, "Alpha High"
+    assert_includes response.body, "Zulu High"
+    assert_not_includes response.body, "Low Excluded"
+    assert response.body.index("Alpha High") < response.body.index("Zulu High")
   end
 
   test "index filters overdue only" do

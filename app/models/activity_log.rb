@@ -12,6 +12,7 @@ class ActivityLog < ApplicationRecord
   after_create_commit :update_parent_last_activity_date
 
   before_update { raise ActiveRecord::ReadOnlyRecord, "ActivityLog records are immutable" }
+  before_destroy { throw :abort unless destroyed_by_association }
 
   def readonly?
     false

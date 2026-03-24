@@ -16,18 +16,40 @@ class ProposalsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "index filters by status" do
-    get proposals_path(status: "draft")
+    sent_proposal = create(:proposal, linkable: @customer, responsible_consultant: @user, status: :sent, title: "Sent Proposal")
+    get proposals_path(status: "sent")
     assert_response :success
+    assert_includes response.body, "Sent Proposal"
+    assert_not_includes response.body, @proposal.title
   end
 
   test "index filters by search" do
+    other = create(:proposal, linkable: @customer, responsible_consultant: @user, title: "Unrelated Prop")
     get proposals_path(search: @proposal.title)
     assert_response :success
+    assert_includes response.body, @proposal.title
+    assert_not_includes response.body, "Unrelated Prop"
   end
 
   test "index sorts by title" do
+    create(:proposal, linkable: @customer, responsible_consultant: @user, title: "Alpha Proposal")
+    create(:proposal, linkable: @customer, responsible_consultant: @user, title: "Zulu Proposal")
     get proposals_path(sort: "title", dir: "asc")
     assert_response :success
+    alpha_pos = response.body.index("Alpha Proposal")
+    zulu_pos = response.body.index("Zulu Proposal")
+    assert alpha_pos < zulu_pos, "Alpha should appear before Zulu in ascending order"
+  end
+
+  test "index combines filter and sort" do
+    create(:proposal, linkable: @customer, responsible_consultant: @user, status: :sent, title: "Zulu Sent")
+    create(:proposal, linkable: @customer, responsible_consultant: @user, status: :sent, title: "Alpha Sent")
+    get proposals_path(status: "sent", sort: "title", dir: "asc")
+    assert_response :success
+    assert_includes response.body, "Alpha Sent"
+    assert_includes response.body, "Zulu Sent"
+    assert_not_includes response.body, @proposal.title
+    assert response.body.index("Alpha Sent") < response.body.index("Zulu Sent")
   end
 
   # Show

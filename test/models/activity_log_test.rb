@@ -28,6 +28,12 @@ class ActivityLogTest < ActiveSupport::TestCase
     assert_raises(ActiveRecord::ReadOnlyRecord) { log.update!(content: "changed") }
   end
 
+  test "immutable after persisted - cannot destroy standalone" do
+    log = create(:activity_log)
+    assert_not log.destroy
+    assert log.persisted?, "ActivityLog should not be deleted standalone"
+  end
+
   test "can be destroyed via parent cascade" do
     prospect = create(:prospect)
     prospect.log_system_event("Test event")

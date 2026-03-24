@@ -15,26 +15,50 @@ class ProspectsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "index filters by status" do
-    qualified = create(:prospect, :qualified)
+    qualified = create(:prospect, :qualified, company_name: "Qualified Corp")
     get prospects_path(status: "qualified")
     assert_response :success
+    assert_includes response.body, "Qualified Corp"
+    assert_not_includes response.body, @prospect.company_name
   end
 
   test "index filters by source" do
-    create(:prospect, source: :referral)
+    referral = create(:prospect, source: :referral, company_name: "Referral Inc")
     get prospects_path(source: "referral")
     assert_response :success
+    assert_includes response.body, "Referral Inc"
   end
 
   test "index filters by search" do
+    other = create(:prospect, company_name: "Unrelated LLC")
     get prospects_path(search: @prospect.company_name)
     assert_response :success
     assert_includes response.body, @prospect.company_name
+    assert_not_includes response.body, "Unrelated LLC"
   end
 
   test "index sorts by company_name" do
+    create(:prospect, company_name: "Alpha Co")
+    create(:prospect, company_name: "Zulu Co")
     get prospects_path(sort: "company_name", dir: "asc")
     assert_response :success
+    alpha_pos = response.body.index("Alpha Co")
+    zulu_pos = response.body.index("Zulu Co")
+    assert alpha_pos < zulu_pos, "Alpha Co should appear before Zulu Co in ascending order"
+  end
+
+  test "index combines filter and sort" do
+    create(:prospect, :qualified, company_name: "Zulu Qualified")
+    create(:prospect, :qualified, company_name: "Alpha Qualified")
+    create(:prospect, company_name: "New Prospect Excluded")
+    get prospects_path(status: "qualified", sort: "company_name", dir: "asc")
+    assert_response :success
+    assert_includes response.body, "Alpha Qualified"
+    assert_includes response.body, "Zulu Qualified"
+    assert_not_includes response.body, "New Prospect Excluded"
+    alpha_pos = response.body.index("Alpha Qualified")
+    zulu_pos = response.body.index("Zulu Qualified")
+    assert alpha_pos < zulu_pos, "Filtered results should be sorted ascending"
   end
 
   # Show
