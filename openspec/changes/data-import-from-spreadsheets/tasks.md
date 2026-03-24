@@ -9,14 +9,14 @@
 
 ## 2. CSV Import Execution Service
 
-- [ ] 2.1 Create CsvImportExecutionService that accepts parsed rows, record_type, and the importing user. Returns { created_count:, skipped_count:, error_count:, errors: [{ row:, messages: }] }.
-- [ ] 2.2 Implement user import: create User with name, email, and role (default consultant). Skip rows where email matches an existing User (count as skipped, not error). No google_uid set — linked on first OAuth login.
-- [ ] 2.3 Implement consultant matching: match responsible_consultant_name to User by exact name first, then ILIKE partial match. Fall back to importing admin if no match, log warning.
-- [ ] 2.4 Implement customer import: create Customer with status "active", date_became_customer = today, matched responsible_consultant. Skip contact validation (customers sheet has no contact data). Log ActivityLog entry.
-- [ ] 2.5 Implement proposal import: match linkable_company_name to Customer first, then Prospect (case-insensitive). Map status. Set responsible_consultant. Skip unmatched linkables with error. Set win_loss_reason to "Imported" for won/lost proposals. Log ActivityLog entry.
-- [ ] 2.6 Implement contact extraction during proposal import: when linked to a Customer, find-or-create Contact from parsed Contacto data (name + email). Mark as primary if it's the customer's first contact. Skip for Prospect linkables.
-- [ ] 2.7 Write tests: user creation with email-duplicate skip, customer creation, proposal creation with linkable matching, consultant matching (exact, partial, fallback), contact extraction and find-or-create, validation error collection, ActivityLog entries.
-- [ ] 2.8 Run bin/ci to verify.
+- [x] 2.1 Create CsvImportExecutionService that accepts parsed rows, record_type, and the importing user. Returns { created_count:, skipped_count:, error_count:, errors: [{ row:, messages: }] }.
+- [x] 2.2 Implement user import: create User with name, email, and role (default consultant). Skip rows where email matches an existing User (count as skipped, not error). No google_uid set — linked on first OAuth login.
+- [x] 2.3 Implement consultant matching: match responsible_consultant_name to User by exact name first, then ILIKE partial match. Fall back to importing admin if no match, log warning.
+- [x] 2.4 Implement customer import: create Customer with status "active", date_became_customer = today, matched responsible_consultant. Skip contact validation (customers sheet has no contact data). Log ActivityLog entry.
+- [x] 2.5 Implement proposal import: match linkable_company_name to Customer first, then Prospect (case-insensitive). Map status. Set responsible_consultant. Skip unmatched linkables with error. Set win_loss_reason to "Imported" for won/lost proposals. Log ActivityLog entry.
+- [x] 2.6 Implement contact extraction during proposal import: when linked to a Customer, find-or-create Contact from parsed Contacto data (name + email). Mark as primary if it's the customer's first contact. Skip for Prospect linkables.
+- [x] 2.7 Write tests: user creation with email-duplicate skip, customer creation, proposal creation with linkable matching, consultant matching (exact, partial, fallback), contact extraction and find-or-create, validation error collection, ActivityLog entries.
+- [x] 2.8 Run bin/ci to verify.
 
 ## 3. OAuth Email-Linking Fallback
 
