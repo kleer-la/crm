@@ -37,8 +37,8 @@
 
 ## 5. Integration Tests
 
-- [ ] 5.1 Write integration test for full user import flow: upload CSV → preview → confirm → verify User records created, existing emails skipped.
-- [ ] 5.2 Write integration test for full customer import flow: upload CSV → preview → confirm → verify Customer records created in database without contacts.
-- [ ] 5.3 Write integration test for full proposal import flow: upload CSV → preview → confirm → verify Proposal records linked to existing Customers, contacts created from Contacto column.
-- [ ] 5.4 Write integration test for error scenarios: unmatched proposal linkables, invalid status values, unmatched consultant names, existing data warning display.
-- [ ] 5.5 Run bin/ci for final verification.
+- [x] 5.1 Write integration test for full user import flow: upload CSV → preview → confirm → verify User records created, existing emails skipped.
+- [x] 5.2 Write integration test for full customer import flow: upload CSV → preview → confirm → verify Customer records created in database without contacts.
+- [x] 5.3 Write integration test for full proposal import flow: upload CSV → preview → confirm → verify Proposal records linked to existing Customers, contacts created from Contacto column.
+- [x] 5.4 Write integration test for error scenarios: unmatched proposal linkables, invalid status values, unmatched consultant names, existing data warning display.
+- [x] 5.5 Run bin/ci for final verification.
