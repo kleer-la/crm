@@ -16,6 +16,11 @@ Rails.application.routes.draw do
         patch :reactivate
       end
     end
+    resources :imports, only: [ :new, :create ] do
+      collection do
+        post :preview
+      end
+    end
   end
 
   # Prospects

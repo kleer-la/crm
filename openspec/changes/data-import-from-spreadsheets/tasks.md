@@ -26,14 +26,14 @@
 
 ## 4. Controller, Routes, and Views
 
-- [ ] 4.1 Create ImportsController with admin-only access. Actions: new (upload form with record type selector), preview (parse CSV + show validation results), create (execute confirmed import + show results).
-- [ ] 4.2 Add routes: resources :imports, only: [:new, :create] with a collection POST for preview.
-- [ ] 4.3 Create new import view: record type selector (users/customers/proposals), file upload input, note about import order (1. users, 2. customers, 3. proposals), submit button.
-- [ ] 4.4 Create preview view: summary of valid/error counts, warning if existing records detected (suggesting wipe via console before import), error details table (row number, field, error), confirm button to proceed with valid rows, cancel to go back. Use Turbo Frame for the preview step.
-- [ ] 4.5 Create results view: counts of created, skipped, and failed records. Error details if any. Link to re-import.
-- [ ] 4.6 Add navigation link to imports in the admin section of the sidebar/nav.
-- [ ] 4.7 Write controller tests: admin access, non-admin rejection, valid upload flow for all three types, invalid file type, missing headers, preview with errors, successful import.
-- [ ] 4.8 Run bin/ci to verify.
+- [x] 4.1 Create ImportsController with admin-only access. Actions: new (upload form with record type selector), preview (parse CSV + show validation results), create (execute confirmed import + show results).
+- [x] 4.2 Add routes: resources :imports, only: [:new, :create] with a collection POST for preview.
+- [x] 4.3 Create new import view: record type selector (users/customers/proposals), file upload input, note about import order (1. users, 2. customers, 3. proposals), submit button.
+- [x] 4.4 Create preview view: summary of valid/error counts, warning if existing records detected (suggesting wipe via console before import), error details table (row number, field, error), confirm button to proceed with valid rows, cancel to go back. Use Turbo Frame for the preview step.
+- [x] 4.5 Create results view: counts of created, skipped, and failed records. Error details if any. Link to re-import.
+- [x] 4.6 Add navigation link to imports in the admin section of the sidebar/nav.
+- [x] 4.7 Write controller tests: admin access, non-admin rejection, valid upload flow for all three types, invalid file type, missing headers, preview with errors, successful import.
+- [x] 4.8 Run bin/ci to verify.
 
 ## 5. Integration Tests
 
