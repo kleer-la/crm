@@ -1,0 +1,88 @@
+## ADDED Requirements
+
+### Requirement: Deploy configuration targets production server
+The `config/deploy.yml` SHALL configure deployment to server `5.78.92.152` with service name `crm`, image `carlospeix/crm`, `amd64` architecture, and SSH user `appuser`.
+
+#### Scenario: Deploy config has correct server and image
+- **WHEN** `config/deploy.yml` is loaded
+- **THEN** `servers.web` SHALL contain `5.78.92.152`
+- **AND** `image` SHALL be `carlospeix/crm`
+- **AND** `service` SHALL be `crm`
+- **AND** `ssh.user` SHALL be `appuser`
+
+### Requirement: SSL proxy is enabled with domain
+The deploy configuration SHALL enable Kamal's proxy with SSL via Let's Encrypt for domain `crm.kleer.la`.
+
+#### Scenario: Proxy SSL configuration is present
+- **WHEN** `config/deploy.yml` is loaded
+- **THEN** `proxy.ssl` SHALL be `true`
+- **AND** `proxy.host` SHALL be `crm.kleer.la`
+
+### Requirement: Docker Hub registry is configured
+The deploy configuration SHALL use Docker Hub as the container registry with username `carlospeix` and password sourced from the `KAMAL_REGISTRY_PASSWORD` secret.
+
+#### Scenario: Registry points to Docker Hub
+- **WHEN** `config/deploy.yml` is loaded
+- **THEN** `registry.server` SHALL be absent or default (Docker Hub)
+- **AND** `registry.username` SHALL be `carlospeix`
+- **AND** `registry.password` SHALL reference `KAMAL_REGISTRY_PASSWORD`
+
+### Requirement: Container connects to PostgreSQL via DATABASE_URL
+The deploy configuration SHALL pass `DATABASE_URL` as a secret env var. The PostgreSQL container named `postgres` is reachable via Docker DNS on the shared `kamal` network. The connection string follows the pattern `postgresql://postgres:<password>@postgres:5432/<dbname>`.
+
+#### Scenario: Database connection via DATABASE_URL
+- **WHEN** the app container starts
+- **THEN** `DATABASE_URL` SHALL be passed as a secret env var
+- **AND** the connection string SHALL target the `postgres` container on the `kamal` Docker network
+
+### Requirement: Single database for all Solid gems
+All databases (primary, cache, queue, cable) SHALL use the same `DATABASE_URL`. Solid Queue, Solid Cache, and Solid Cable tables are created via regular migrations in `db/migrate/`, not via separate schema files or databases.
+
+#### Scenario: database.yml points all entries to same URL
+- **WHEN** Rails loads `database.yml` in production
+- **THEN** primary, cache, queue, and cable entries SHALL all resolve to `DATABASE_URL`
+
+#### Scenario: Solid gem tables exist as regular migrations
+- **WHEN** `db:prepare` runs
+- **THEN** Solid Queue, Solid Cache, and Solid Cable tables SHALL be created in the primary database via migrations
+
+### Requirement: Rails production enforces SSL
+`config/environments/production.rb` SHALL have `config.assume_ssl = true` and `config.force_ssl = true` enabled.
+
+#### Scenario: SSL settings are active in production
+- **WHEN** Rails boots in production environment
+- **THEN** `config.assume_ssl` SHALL be `true`
+- **AND** `config.force_ssl` SHALL be `true`
+
+### Requirement: DNS rebinding protection is enabled
+`config/environments/production.rb` SHALL restrict allowed hosts to `crm.kleer.la` and `qa.crm.kleer.la`, with the `/up` health check endpoint excluded.
+
+#### Scenario: Host authorization rejects unknown hosts
+- **WHEN** a request arrives with a `Host` header not matching `crm.kleer.la` or `qa.crm.kleer.la`
+- **THEN** Rails SHALL reject the request
+- **AND** requests to `/up` SHALL be excluded from host authorization
+
+### Requirement: Secrets sourced from environment variables
+`.kamal/secrets` SHALL read `KAMAL_REGISTRY_PASSWORD`, `RAILS_MASTER_KEY`, `DATABASE_URL`, `GOOGLE_CLIENT_ID`, and `GOOGLE_CLIENT_SECRET` from environment variables, never from hardcoded values. `DATABASE_URL` is mapped from `$DATABASE_URL_CRM` to support multiple apps on the same server.
+
+#### Scenario: Secrets file references environment
+- **WHEN** `.kamal/secrets` is evaluated
+- **THEN** `KAMAL_REGISTRY_PASSWORD` SHALL be read from `$KAMAL_REGISTRY_PASSWORD`
+- **AND** `RAILS_MASTER_KEY` SHALL be read from `$RAILS_MASTER_KEY`
+- **AND** `DATABASE_URL` SHALL be read from `$DATABASE_URL_CRM`
+- **AND** `GOOGLE_CLIENT_ID` SHALL be read from `$GOOGLE_CLIENT_ID`
+- **AND** `GOOGLE_CLIENT_SECRET` SHALL be read from `$GOOGLE_CLIENT_SECRET`
+
+### Requirement: QA destination deploys to same server with separate domain
+A Kamal destination file `config/deploy.qa.yml` SHALL exist that overrides the service name to `crm-qa` and proxy host to `qa.crm.kleer.la`. A separate secrets file `.kamal/secrets.qa` SHALL map `DATABASE_URL` from `$DATABASE_URL_CRM_QA`. Deployment via `kamal setup -d qa` / `kamal deploy -d qa`.
+
+#### Scenario: QA destination file overrides production values
+- **WHEN** `config/deploy.qa.yml` is loaded as a Kamal destination
+- **THEN** `service` SHALL be `crm-qa`
+- **AND** `proxy.host` SHALL be `qa.crm.kleer.la`
+- **AND** `proxy.ssl` SHALL be `true`
+
+#### Scenario: QA uses separate secrets file
+- **WHEN** deploying with `-d qa`
+- **THEN** `.kamal/secrets.qa` SHALL be loaded
+- **AND** `DATABASE_URL` SHALL be read from `$DATABASE_URL_CRM_QA`
