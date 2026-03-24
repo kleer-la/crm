@@ -49,6 +49,9 @@ gem "omniauth-rails_csrf_protection"
 # Full-text search
 gem "pg_search"
 
+# CSV parsing (removed from Ruby default gems in 3.4)
+gem "csv"
+
 group :development, :test do
   # Load environment variables from .env
   gem "dotenv-rails"
