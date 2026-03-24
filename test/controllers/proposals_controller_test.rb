@@ -226,6 +226,24 @@ class ProposalsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "No document link to archive.", flash[:alert]
   end
 
+  # Archive prompt
+  test "show displays archive prompt when document url exists" do
+    @proposal.update!(current_document_url: "https://docs.example.com/proposal")
+    get proposal_path(@proposal)
+    assert_response :success
+    assert_includes response.body, "Replace & Archive"
+    assert_includes response.body, "archive-modal"
+    assert_includes response.body, "Archive Label"
+  end
+
+  test "show does not display archive prompt when no document url" do
+    @proposal.update_column(:current_document_url, nil)
+    get proposal_path(@proposal)
+    assert_response :success
+    assert_includes response.body, "No document link set."
+    assert_not_includes response.body, "archive-modal"
+  end
+
   # Auth
   test "unauthenticated user cannot access proposals" do
     delete logout_path

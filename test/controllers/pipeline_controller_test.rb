@@ -101,6 +101,14 @@ class PipelineControllerTest < ActionDispatch::IntegrationTest
     assert_includes response.body, "(overdue)"
   end
 
+  test "pipeline items link to their detail pages" do
+    proposal = create(:proposal, linkable: @customer, responsible_consultant: @user, title: "Linked Proposal")
+    get pipeline_path
+    assert_response :success
+    assert_includes response.body, prospect_path(@prospect)
+    assert_includes response.body, proposal_path(proposal)
+  end
+
   test "requires authentication" do
     delete logout_path
     get pipeline_path

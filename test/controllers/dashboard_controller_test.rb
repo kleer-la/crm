@@ -104,6 +104,39 @@ class DashboardControllerTest < ActionDispatch::IntegrationTest
     assert_includes response.body, "Team Overdue XYZ"
   end
 
+  test "pending conversion alert links to proposal and prospect" do
+    prospect = create(:prospect, responsible_consultant: @user)
+    proposal = create(:proposal, :won, linkable: prospect, responsible_consultant: @user, title: "Alert Link Prop")
+    get root_path
+    assert_response :success
+    assert_includes response.body, proposal_path(proposal)
+    assert_includes response.body, prospect_path(prospect)
+  end
+
+  test "stale proposal alert links to proposal" do
+    proposal = create(:proposal, linkable: @customer, responsible_consultant: @user, title: "Stale Link Prop")
+    proposal.activity_logs.update_all(created_at: 31.days.ago)
+    get root_path
+    assert_response :success
+    assert_includes response.body, proposal_path(proposal)
+  end
+
+  test "team alerts have no dismiss buttons" do
+    prospect = create(:prospect, responsible_consultant: @user)
+    create(:proposal, :won, linkable: prospect, responsible_consultant: @user, title: "Non-Dismissable Alert")
+    stale = create(:proposal, linkable: @customer, responsible_consultant: @user, title: "Stale Non-Dismissable")
+    stale.activity_logs.update_all(created_at: 31.days.ago)
+    get root_path
+    assert_response :success
+    assert_includes response.body, "Non-Dismissable Alert"
+    assert_includes response.body, "Stale Non-Dismissable"
+    # Alerts are purely data-driven — no dismiss/close controls
+    team_alerts_section = response.body[/Team Alerts.*?(?=<h2|<div class="grid|\z)/m]
+    assert_not_includes team_alerts_section, "dismiss"
+    assert_not_includes team_alerts_section, "close"
+    assert_no_match(/<button[^>]*>.*?[Dd]ismiss/m, team_alerts_section)
+  end
+
   test "consultant does not see admin section" do
     get root_path
     assert_response :success
