@@ -46,6 +46,9 @@
 !/.claude/commands/
 !/.claude/CLAUDE.md
 
+# MCP configuration file (contains API keys, etc.)
+.mcp.json
+
 # IDE / Editor
 .idea/
 .vscode/
