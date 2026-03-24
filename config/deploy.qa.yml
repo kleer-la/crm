@@ -1,0 +1,18 @@
+# QA destination — deploy with: kamal setup -d qa / kamal deploy -d qa
+# Only overrides that differ from config/deploy.yml
+
+service: crm-qa
+
+proxy:
+  ssl: true
+  host: qa.crm.kleer.la
+
+env:
+  secret:
+    - RAILS_MASTER_KEY
+    - DATABASE_URL
+    - GOOGLE_CLIENT_ID
+    - GOOGLE_CLIENT_SECRET
+
+volumes:
+  - "crm_qa_storage:/rails/storage"
