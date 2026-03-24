@@ -20,19 +20,33 @@ default: &default
   max_connections: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
 
 
-development:
-  <<: *default
-  database: crm_development
-  username: postgres
-  password: postgres
-  host: db
+development: &development
+  primary: &primary_development
+    <<: *default
+    database: crm_development
+    username: postgres
+    password: postgres
+    host: db
+  cache:
+    <<: *primary_development
+  queue:
+    <<: *primary_development
+  cable:
+    <<: *primary_development
 
-test:
-  <<: *default
-  database: crm_test
-  username: postgres
-  password: postgres
-  host: db
+test: &test
+  primary: &primary_test
+    <<: *default
+    database: crm_test
+    username: postgres
+    password: postgres
+    host: db
+  cache:
+    <<: *primary_test
+  queue:
+    <<: *primary_test
+  cable:
+    <<: *primary_test
 
 # As with config/credentials.yml, you never want to store sensitive information,
 # like your database password, in your source code. If your source code is
@@ -61,6 +75,12 @@ test:
 # for a full overview on how database connection configuration can be specified.
 #
 production:
-  primary:
+  primary: &primary_production
     <<: *default
     url: <%= ENV["DATABASE_URL"] %>
+  cache:
+    <<: *primary_production
+  queue:
+    <<: *primary_production
+  cable:
+    <<: *primary_production
