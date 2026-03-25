@@ -21,7 +21,7 @@ class CsvImportParserService
       "$ Oportunidad" => :estimated_value,
       "Enlace Propuesta" => :current_document_url,
       "Comentarios" => :notes,
-      "Fecha del pedido" => :date_sent,
+      "Fecha del pedido" => :date_asked,
       "Valor factura" => :final_value,
       "Fecha de factura" => :actual_close_date,
       "Contacto" => :contact_raw
@@ -48,7 +48,7 @@ class CsvImportParserService
   }.freeze
 
   MONETARY_FIELDS = %i[estimated_value final_value].freeze
-  DATE_FIELDS = %i[last_activity_date date_sent actual_close_date].freeze
+  DATE_FIELDS = %i[last_activity_date date_asked actual_close_date].freeze
 
   def initialize(csv_content, record_type)
     @csv_content = strip_bom(csv_content)

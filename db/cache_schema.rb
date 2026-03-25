@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_24_224117) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_25_104404) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -95,6 +95,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_24_224117) do
     t.date "actual_close_date"
     t.datetime "created_at", null: false
     t.string "current_document_url"
+    t.date "date_asked"
     t.date "date_sent"
     t.decimal "estimated_value", precision: 12, scale: 2
     t.date "expected_close_date"

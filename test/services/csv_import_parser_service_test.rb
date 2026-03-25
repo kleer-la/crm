@@ -53,7 +53,7 @@ class CsvImportParserServiceTest < ActiveSupport::TestCase
     assert_equal "Pablo Lis", row[:responsible_consultant_name]
     assert_equal "lost", row[:status]
     assert_equal BigDecimal("2500"), row[:estimated_value]
-    assert_equal Date.new(2024, 3, 11), row[:date_sent]
+    assert_equal Date.new(2024, 3, 11), row[:date_asked]
     assert_equal({ name: "Lucila Sasías", email: "lsasias@ute.com.uy" }, row[:contact])
     assert_nil row[:status_raw]
     assert_nil row[:contact_raw]
@@ -155,7 +155,7 @@ class CsvImportParserServiceTest < ActiveSupport::TestCase
           "Test\tAcme\t2024/03/11\n"
     result = CsvImportParserService.new(csv, :proposal).call
 
-    assert_equal Date.new(2024, 3, 11), result[:rows].first[:date_sent]
+    assert_equal Date.new(2024, 3, 11), result[:rows].first[:date_asked]
   end
 
   test "returns nil for blank dates" do
@@ -163,7 +163,7 @@ class CsvImportParserServiceTest < ActiveSupport::TestCase
           "Test\tAcme\t\n"
     result = CsvImportParserService.new(csv, :proposal).call
 
-    assert_nil result[:rows].first[:date_sent]
+    assert_nil result[:rows].first[:date_asked]
   end
 
   test "raises error for invalid dates" do

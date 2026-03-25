@@ -61,8 +61,8 @@ class CsvImportExecutionServiceTest < ActiveSupport::TestCase
     assert customer.active?
     assert_equal consultant, customer.responsible_consultant
     assert_equal "Tech", customer.industry
-    assert_equal Date.current, customer.last_activity_date # ActivityLog callback updates this on creation
-    assert_equal Date.current, customer.date_became_customer
+    assert_equal Date.new(2024, 3, 11), customer.last_activity_date # restored via update_column after callback
+    assert_nil customer.date_became_customer # cleared by import
   end
 
   test "customer defaults last_activity_date to today when nil" do
@@ -70,7 +70,7 @@ class CsvImportExecutionServiceTest < ActiveSupport::TestCase
 
     CsvImportExecutionService.new(rows, :customer, @admin).call
 
-    assert_equal Date.current, Customer.find_by(company_name: "Acme").last_activity_date
+    assert_nil Customer.find_by(company_name: "Acme").last_activity_date # nil preserved via update_column
   end
 
   test "customer falls back to importing admin when consultant not matched" do
@@ -121,7 +121,7 @@ class CsvImportExecutionServiceTest < ActiveSupport::TestCase
         row_number: 2, title: "Curso Agilidad", linkable_company_name: "UTE UY",
         responsible_consultant_name: "Pablo Lis", status: "lost",
         estimated_value: BigDecimal("2500"), final_value: nil,
-        current_document_url: nil, notes: nil, date_sent: Date.new(2024, 3, 11),
+        current_document_url: nil, notes: nil, date_asked: Date.new(2024, 3, 11),
         actual_close_date: nil, contact: { name: "Lucila", email: "lucila@ute.com" }
       }
     ]
@@ -146,7 +146,7 @@ class CsvImportExecutionServiceTest < ActiveSupport::TestCase
         row_number: 2, title: "Won Deal", linkable_company_name: "WinCo",
         responsible_consultant_name: nil, status: "won",
         estimated_value: BigDecimal("5000"), final_value: nil,
-        current_document_url: nil, notes: nil, date_sent: nil,
+        current_document_url: nil, notes: nil, date_asked: nil,
         actual_close_date: nil, contact: nil
       }
     ]
@@ -165,7 +165,7 @@ class CsvImportExecutionServiceTest < ActiveSupport::TestCase
         row_number: 2, title: "Draft Deal", linkable_company_name: "DraftCo",
         responsible_consultant_name: nil, status: "draft",
         estimated_value: nil, final_value: nil,
-        current_document_url: nil, notes: nil, date_sent: nil,
+        current_document_url: nil, notes: nil, date_asked: nil,
         actual_close_date: nil, contact: nil
       }
     ]
@@ -181,7 +181,7 @@ class CsvImportExecutionServiceTest < ActiveSupport::TestCase
         row_number: 2, title: "Orphan Proposal", linkable_company_name: "NonExistent Corp",
         responsible_consultant_name: nil, status: "draft",
         estimated_value: nil, final_value: nil,
-        current_document_url: nil, notes: nil, date_sent: nil,
+        current_document_url: nil, notes: nil, date_asked: nil,
         actual_close_date: nil, contact: nil
       }
     ]
@@ -202,7 +202,7 @@ class CsvImportExecutionServiceTest < ActiveSupport::TestCase
         row_number: 2, title: "Case Test", linkable_company_name: "acme corp",
         responsible_consultant_name: nil, status: "draft",
         estimated_value: nil, final_value: nil,
-        current_document_url: nil, notes: nil, date_sent: nil,
+        current_document_url: nil, notes: nil, date_asked: nil,
         actual_close_date: nil, contact: nil
       }
     ]
@@ -224,7 +224,7 @@ class CsvImportExecutionServiceTest < ActiveSupport::TestCase
         row_number: 2, title: "Contact Test", linkable_company_name: "ContactCo",
         responsible_consultant_name: nil, status: "draft",
         estimated_value: nil, final_value: nil,
-        current_document_url: nil, notes: nil, date_sent: nil,
+        current_document_url: nil, notes: nil, date_asked: nil,
         actual_close_date: nil, contact: { name: "New Person", email: "new@contactco.com" }
       }
     ]
@@ -245,7 +245,7 @@ class CsvImportExecutionServiceTest < ActiveSupport::TestCase
         row_number: 2, title: "First Contact", linkable_company_name: "NoCo",
         responsible_consultant_name: nil, status: "draft",
         estimated_value: nil, final_value: nil,
-        current_document_url: nil, notes: nil, date_sent: nil,
+        current_document_url: nil, notes: nil, date_asked: nil,
         actual_close_date: nil, contact: { name: "First Person", email: "first@noco.com" }
       }
     ]
@@ -265,7 +265,7 @@ class CsvImportExecutionServiceTest < ActiveSupport::TestCase
         row_number: 2, title: "Dup Contact", linkable_company_name: "DupCo",
         responsible_consultant_name: nil, status: "draft",
         estimated_value: nil, final_value: nil,
-        current_document_url: nil, notes: nil, date_sent: nil,
+        current_document_url: nil, notes: nil, date_asked: nil,
         actual_close_date: nil, contact: { name: "Existing", email: "existing@dupco.com" }
       }
     ]
@@ -283,7 +283,7 @@ class CsvImportExecutionServiceTest < ActiveSupport::TestCase
         row_number: 2, title: "No Email", linkable_company_name: "PlaceholderCo",
         responsible_consultant_name: nil, status: "draft",
         estimated_value: nil, final_value: nil,
-        current_document_url: nil, notes: nil, date_sent: nil,
+        current_document_url: nil, notes: nil, date_asked: nil,
         actual_close_date: nil, contact: { name: "Juan Pérez", email: nil }
       }
     ]
@@ -333,7 +333,7 @@ class CsvImportExecutionServiceTest < ActiveSupport::TestCase
         row_number: 2, title: "Logged Proposal", linkable_company_name: "LogPropCo",
         responsible_consultant_name: nil, status: "draft",
         estimated_value: nil, final_value: nil,
-        current_document_url: nil, notes: nil, date_sent: nil,
+        current_document_url: nil, notes: nil, date_asked: nil,
         actual_close_date: nil, contact: nil
       }
     ]

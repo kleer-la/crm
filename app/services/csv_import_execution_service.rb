@@ -86,7 +86,7 @@ class CsvImportExecutionService
       final_value: row[:final_value],
       current_document_url: row[:current_document_url].presence,
       notes: row[:notes],
-      date_sent: row[:date_sent],
+      date_asked: row[:date_asked],
       actual_close_date: row[:actual_close_date],
       win_loss_reason: win_loss_reason_for(status)
     )

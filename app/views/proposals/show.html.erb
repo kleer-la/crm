@@ -52,6 +52,10 @@
             <dd class="mt-1 text-sm text-gray-900"><%= currency(@proposal.estimated_value) %></dd>
           </div>
           <div>
+            <dt class="text-sm font-medium text-gray-500">Date Asked</dt>
+            <dd class="mt-1 text-sm text-gray-900"><%= @proposal.date_asked&.strftime("%b %d, %Y") || "—" %></dd>
+          </div>
+          <div>
             <dt class="text-sm font-medium text-gray-500">Date Sent</dt>
             <dd class="mt-1 text-sm text-gray-900"><%= @proposal.date_sent&.strftime("%b %d, %Y") || "—" %></dd>
           </div>

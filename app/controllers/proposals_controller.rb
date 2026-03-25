@@ -3,7 +3,7 @@ class ProposalsController < ApplicationController
 
   before_action :set_proposal, only: [ :show, :edit, :update, :destroy, :mark_won, :mark_lost, :duplicate, :archive_document ]
 
-  SORT_FIELDS = %i[title status estimated_value date_sent expected_close_date actual_close_date].freeze
+  SORT_FIELDS = %i[title status estimated_value date_asked date_sent expected_close_date actual_close_date].freeze
 
   def index
     @proposals = Proposal.preload(:linkable).includes(:responsible_consultant)
@@ -113,7 +113,7 @@ class ProposalsController < ApplicationController
     params.require(:proposal).permit(
       :title, :linkable_type, :linkable_id,
       :status, :estimated_value,
-      :date_sent, :expected_close_date, :actual_close_date,
+      :date_asked, :date_sent, :expected_close_date, :actual_close_date,
       :win_loss_reason, :notes, :current_document_url,
       :responsible_consultant_id,
       collaborating_consultant_ids: []
