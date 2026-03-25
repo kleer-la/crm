@@ -17,7 +17,6 @@ class Customer < ApplicationRecord
   validates :company_name, presence: true, uniqueness: true
   validates :status, presence: true
   validates :responsible_consultant, presence: true
-  validates :last_activity_date, presence: true
 
   validate :company_name_unique_across_prospects
   validate :must_have_at_least_one_contact, on: :update

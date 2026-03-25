@@ -50,7 +50,7 @@ class CsvImportExecutionService
 
   def import_customer(row)
     consultant = find_consultant(row[:responsible_consultant_name])
-    historical_date = row[:last_activity_date] || Date.current
+    historical_date = row[:last_activity_date]
 
     customer = Customer.create!(
       company_name: row[:company_name],
@@ -58,11 +58,11 @@ class CsvImportExecutionService
       status: :active,
       responsible_consultant: consultant,
       date_became_customer: Date.current,
-      last_activity_date: historical_date,
+      last_activity_date: historical_date || Date.current,
       total_revenue: 0
     )
-    # Restore historical date — the log_creation callback overwrites it with Time.current
-    # Also clear date_became_customer — not available in the spreadsheet
+    # Restore historical dates — the log_creation callback overwrites last_activity_date with Time.current
+    # Both are cleared to nil if not present in the CSV
     customer.update_column(:last_activity_date, historical_date)
     customer.update_column(:date_became_customer, nil)
     @created_count += 1
