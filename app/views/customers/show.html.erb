@@ -1,90 +1,90 @@
 <div class="px-4 sm:px-6 lg:px-8 py-8">
   <div class="sm:flex sm:items-center sm:justify-between mb-6">
     <div>
-      <h1 class="text-2xl font-bold text-gray-900"><%= @customer.company_name %></h1>
+      <h1 class="text-2xl font-bold text-slate-900"><%= @customer.company_name %></h1>
       <div class="mt-1 flex items-center gap-2">
         <%= status_badge(@customer.status) %>
       </div>
     </div>
     <div class="mt-4 sm:mt-0 flex gap-2">
-      <%= link_to "Edit", edit_customer_path(@customer), class: "px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50" %>
+      <%= link_to "Edit", edit_customer_path(@customer), class: "px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50" %>
     </div>
   </div>
 
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
     <%# Details column %>
     <div class="lg:col-span-2 space-y-6">
-      <div class="bg-white shadow rounded-lg p-6">
-        <h2 class="text-lg font-semibold text-gray-900 mb-4">Details</h2>
+      <div class="bg-white ring-1 ring-slate-200 rounded-xl p-6">
+        <h2 class="text-lg font-semibold text-slate-900 mb-4">Details</h2>
         <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
           <div>
-            <dt class="text-sm font-medium text-gray-500">Industry</dt>
-            <dd class="mt-1 text-sm text-gray-900"><%= @customer.industry.presence || "—" %></dd>
+            <dt class="text-sm font-medium text-slate-500">Industry</dt>
+            <dd class="mt-1 text-sm text-slate-900"><%= @customer.industry.presence || "—" %></dd>
           </div>
           <div>
-            <dt class="text-sm font-medium text-gray-500">Total Revenue</dt>
-            <dd class="mt-1 text-sm text-gray-900 font-semibold"><%= currency(@customer.total_revenue) %></dd>
+            <dt class="text-sm font-medium text-slate-500">Total Revenue</dt>
+            <dd class="mt-1 text-sm text-slate-900 font-semibold"><%= currency(@customer.total_revenue) %></dd>
           </div>
           <div>
-            <dt class="text-sm font-medium text-gray-500">Customer Since</dt>
-            <dd class="mt-1 text-sm text-gray-900"><%= @customer.date_became_customer&.strftime("%b %d, %Y") %></dd>
+            <dt class="text-sm font-medium text-slate-500">Customer Since</dt>
+            <dd class="mt-1 text-sm text-slate-900"><%= @customer.date_became_customer&.strftime("%b %d, %Y") %></dd>
           </div>
           <div>
-            <dt class="text-sm font-medium text-gray-500">Last Activity</dt>
-            <dd class="mt-1 text-sm text-gray-900"><%= @customer.last_activity_date&.strftime("%b %d, %Y") %></dd>
+            <dt class="text-sm font-medium text-slate-500">Last Activity</dt>
+            <dd class="mt-1 text-sm text-slate-900"><%= @customer.last_activity_date&.strftime("%b %d, %Y") %></dd>
           </div>
         </dl>
       </div>
 
-      <div class="bg-white shadow rounded-lg p-6">
+      <div class="bg-white ring-1 ring-slate-200 rounded-xl p-6">
         <div class="flex items-center justify-between mb-4">
-          <h2 class="text-lg font-semibold text-gray-900">Contacts</h2>
-          <%= link_to "Add Contact", new_customer_contact_path(@customer), class: "text-sm text-blue-600 hover:text-blue-900" %>
+          <h2 class="text-lg font-semibold text-slate-900">Contacts</h2>
+          <%= link_to "Add Contact", new_customer_contact_path(@customer), class: "text-sm text-indigo-600 hover:text-indigo-900" %>
         </div>
         <% if @contacts.any? %>
           <div class="space-y-3">
             <% @contacts.each do |contact| %>
-              <div class="flex items-start justify-between border border-gray-200 rounded-md p-3">
+              <div class="flex items-start justify-between border border-slate-200 rounded-lg p-3">
                 <div>
-                  <p class="text-sm font-medium text-gray-900">
+                  <p class="text-sm font-medium text-slate-900">
                     <%= contact.name %>
                     <% if contact.primary? %>
-                      <span class="ml-1 inline-block px-2 py-0.5 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">Primary</span>
+                      <span class="ml-1 inline-block px-2 py-0.5 text-xs font-semibold rounded-full bg-indigo-100 text-indigo-700">Primary</span>
                     <% end %>
                   </p>
-                  <p class="text-sm text-gray-500"><%= contact.role_title %></p>
-                  <p class="text-sm text-gray-500">
-                    <%= mail_to contact.email, contact.email, class: "text-blue-600 hover:text-blue-900" %>
+                  <p class="text-sm text-slate-500"><%= contact.role_title %></p>
+                  <p class="text-sm text-slate-500">
+                    <%= mail_to contact.email, contact.email, class: "text-indigo-600 hover:text-indigo-900" %>
                     <% if contact.phone.present? %>
                       &middot; <%= contact.phone %>
                     <% end %>
                   </p>
                 </div>
                 <div class="flex gap-2">
-                  <%= link_to "Edit", edit_customer_contact_path(@customer, contact), class: "text-sm text-gray-600 hover:text-gray-900" %>
+                  <%= link_to "Edit", edit_customer_contact_path(@customer, contact), class: "text-sm text-slate-600 hover:text-slate-900" %>
                   <%= button_to "Remove", customer_contact_path(@customer, contact), method: :delete, class: "text-sm text-red-600 hover:text-red-800", form: { data: { turbo_confirm: "Remove this contact?" } } %>
                 </div>
               </div>
             <% end %>
           </div>
         <% else %>
-          <p class="text-sm text-gray-500">No contacts yet.</p>
+          <p class="text-sm text-slate-500">No contacts yet.</p>
         <% end %>
       </div>
 
-      <div class="bg-white shadow rounded-lg p-6">
+      <div class="bg-white ring-1 ring-slate-200 rounded-xl p-6">
         <div class="flex items-center justify-between mb-4">
-          <h2 class="text-lg font-semibold text-gray-900">Consultants</h2>
+          <h2 class="text-lg font-semibold text-slate-900">Consultants</h2>
         </div>
         <dl class="space-y-3">
           <div>
-            <dt class="text-sm font-medium text-gray-500">Responsible</dt>
-            <dd class="mt-1 text-sm text-gray-900"><%= @customer.responsible_consultant.display_name %></dd>
+            <dt class="text-sm font-medium text-slate-500">Responsible</dt>
+            <dd class="mt-1 text-sm text-slate-900"><%= @customer.responsible_consultant.display_name %></dd>
           </div>
           <% if @customer.collaborating_consultants.any? %>
             <div>
-              <dt class="text-sm font-medium text-gray-500">Collaborators</dt>
-              <dd class="mt-1 text-sm text-gray-900">
+              <dt class="text-sm font-medium text-slate-500">Collaborators</dt>
+              <dd class="mt-1 text-sm text-slate-900">
                 <%= @customer.collaborating_consultants.map(&:display_name).join(", ") %>
               </dd>
             </div>
@@ -93,24 +93,24 @@
       </div>
 
       <%# Full history timeline (8.7) %>
-      <div class="bg-white shadow rounded-lg p-6">
-        <h2 class="text-lg font-semibold text-gray-900 mb-4">History</h2>
+      <div class="bg-white ring-1 ring-slate-200 rounded-xl p-6">
+        <h2 class="text-lg font-semibold text-slate-900 mb-4">History</h2>
         <%= render "customers/history_timeline", customer: @customer %>
       </div>
 
-      <div class="bg-white shadow rounded-lg p-6">
+      <div class="bg-white ring-1 ring-slate-200 rounded-xl p-6">
         <div class="flex items-center justify-between mb-4">
-          <h2 class="text-lg font-semibold text-gray-900">Tasks</h2>
-          <%= link_to "New Task", new_task_path(linkable_type: "Customer", linkable_id: @customer.id), class: "text-sm text-blue-600 hover:text-blue-900" %>
+          <h2 class="text-lg font-semibold text-slate-900">Tasks</h2>
+          <%= link_to "New Task", new_task_path(linkable_type: "Customer", linkable_id: @customer.id), class: "text-sm text-indigo-600 hover:text-indigo-900" %>
         </div>
         <% tasks = @customer.tasks.where.not(status: [:done, :cancelled]).order(due_date: :asc) %>
         <% if tasks.any? %>
           <div class="space-y-2">
             <% tasks.each do |task| %>
-              <div class="flex items-center justify-between text-sm border-b border-gray-100 pb-2">
+              <div class="flex items-center justify-between text-sm border-b border-slate-100 pb-2">
                 <div>
-                  <%= link_to task.title, task, class: "text-blue-600 hover:text-blue-900 font-medium" %>
-                  <span class="text-gray-400 ml-1">due <%= task.due_date.strftime("%b %d") %></span>
+                  <%= link_to task.title, task, class: "text-indigo-600 hover:text-indigo-900 font-medium" %>
+                  <span class="text-slate-400 ml-1">due <%= task.due_date.strftime("%b %d") %></span>
                   <% if task.due_date < Date.current && (task.open? || task.in_progress?) %>
                     <span class="text-red-500 text-xs ml-1">(overdue)</span>
                   <% end %>
@@ -120,7 +120,7 @@
             <% end %>
           </div>
         <% else %>
-          <p class="text-sm text-gray-500">No active tasks.</p>
+          <p class="text-sm text-slate-500">No active tasks.</p>
         <% end %>
       </div>
     </div>
@@ -129,8 +129,134 @@
     <div class="space-y-6">
       <%= render "shared/touchpoint_form", record: @customer %>
 
-      <div class="bg-white shadow rounded-lg p-4">
-        <h3 class="text-sm font-semibold text-gray-900 mb-3">Recent Activity</h3>
+      <div class="bg-white ring-1 ring-slate-200 rounded-xl p-4">
+        <h3 class="text-sm font-semibold text-slate-900 mb-3">Recent Activity</h3>
+        <%= render "shared/activity_timeline", activity_logs: @customer.activity_logs.includes(:user).order(created_at: :desc).limit(20) %>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <%# Details column %>
+    <div class="lg:col-span-2 space-y-6">
+      <div class="bg-white ring-1 ring-slate-200 rounded-xl p-6">
+        <h2 class="text-lg font-semibold text-slate-900 mb-4">Details</h2>
+        <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
+          <div>
+            <dt class="text-sm font-medium text-slate-500">Industry</dt>
+            <dd class="mt-1 text-sm text-slate-900"><%= @customer.industry.presence || "—" %></dd>
+          </div>
+          <div>
+            <dt class="text-sm font-medium text-slate-500">Total Revenue</dt>
+            <dd class="mt-1 text-sm text-slate-900 font-semibold"><%= currency(@customer.total_revenue) %></dd>
+          </div>
+          <div>
+            <dt class="text-sm font-medium text-slate-500">Customer Since</dt>
+            <dd class="mt-1 text-sm text-slate-900"><%= @customer.date_became_customer&.strftime("%b %d, %Y") %></dd>
+          </div>
+          <div>
+            <dt class="text-sm font-medium text-slate-500">Last Activity</dt>
+            <dd class="mt-1 text-sm text-slate-900"><%= @customer.last_activity_date&.strftime("%b %d, %Y") %></dd>
+          </div>
+        </dl>
+      </div>
+
+      <div class="bg-white ring-1 ring-slate-200 rounded-xl p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-lg font-semibold text-slate-900">Contacts</h2>
+          <%= link_to "Add Contact", new_customer_contact_path(@customer), class: "text-sm text-indigo-600 hover:text-indigo-900" %>
+        </div>
+        <% if @contacts.any? %>
+          <div class="space-y-3">
+            <% @contacts.each do |contact| %>
+              <div class="flex items-start justify-between border border-slate-200 rounded-xl p-3">
+                <div>
+                  <p class="text-sm font-medium text-slate-900">
+                    <%= contact.name %>
+                    <% if contact.primary? %>
+                      <span class="ml-1 inline-block px-2 py-0.5 text-xs font-semibold rounded-full bg-indigo-100 text-indigo-800">Primary</span>
+                    <% end %>
+                  </p>
+                  <p class="text-sm text-slate-500"><%= contact.role_title %></p>
+                  <p class="text-sm text-slate-500">
+                    <%= mail_to contact.email, contact.email, class: "text-indigo-600 hover:text-indigo-900" %>
+                    <% if contact.phone.present? %>
+                      &middot; <%= contact.phone %>
+                    <% end %>
+                  </p>
+                </div>
+                <div class="flex gap-2">
+                  <%= link_to "Edit", edit_customer_contact_path(@customer, contact), class: "text-sm text-slate-600 hover:text-slate-900" %>
+                  <%= button_to "Remove", customer_contact_path(@customer, contact), method: :delete, class: "text-sm text-red-600 hover:text-red-800", form: { data: { turbo_confirm: "Remove this contact?" } } %>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <p class="text-sm text-slate-500">No contacts yet.</p>
+        <% end %>
+      </div>
+
+      <div class="bg-white ring-1 ring-slate-200 rounded-xl p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-lg font-semibold text-slate-900">Consultants</h2>
+        </div>
+        <dl class="space-y-3">
+          <div>
+            <dt class="text-sm font-medium text-slate-500">Responsible</dt>
+            <dd class="mt-1 text-sm text-slate-900"><%= @customer.responsible_consultant.display_name %></dd>
+          </div>
+          <% if @customer.collaborating_consultants.any? %>
+            <div>
+              <dt class="text-sm font-medium text-slate-500">Collaborators</dt>
+              <dd class="mt-1 text-sm text-slate-900">
+                <%= @customer.collaborating_consultants.map(&:display_name).join(", ") %>
+              </dd>
+            </div>
+          <% end %>
+        </dl>
+      </div>
+
+      <%# Full history timeline (8.7) %>
+      <div class="bg-white ring-1 ring-slate-200 rounded-xl p-6">
+        <h2 class="text-lg font-semibold text-slate-900 mb-4">History</h2>
+        <%= render "customers/history_timeline", customer: @customer %>
+      </div>
+
+      <div class="bg-white ring-1 ring-slate-200 rounded-xl p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-lg font-semibold text-slate-900">Tasks</h2>
+          <%= link_to "New Task", new_task_path(linkable_type: "Customer", linkable_id: @customer.id), class: "text-sm text-indigo-600 hover:text-indigo-900" %>
+        </div>
+        <% tasks = @customer.tasks.where.not(status: [:done, :cancelled]).order(due_date: :asc) %>
+        <% if tasks.any? %>
+          <div class="space-y-2">
+            <% tasks.each do |task| %>
+              <div class="flex items-center justify-between text-sm border-b border-slate-100 pb-2">
+                <div>
+                  <%= link_to task.title, task, class: "text-indigo-600 hover:text-indigo-900 font-medium" %>
+                  <span class="text-slate-400 ml-1">due <%= task.due_date.strftime("%b %d") %></span>
+                  <% if task.due_date < Date.current && (task.open? || task.in_progress?) %>
+                    <span class="text-red-500 text-xs ml-1">(overdue)</span>
+                  <% end %>
+                </div>
+                <%= status_badge(task.status) %>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <p class="text-sm text-slate-500">No active tasks.</p>
+        <% end %>
+      </div>
+    </div>
+
+    <%# Sidebar column %>
+    <div class="space-y-6">
+      <%= render "shared/touchpoint_form", record: @customer %>
+
+      <div class="bg-white ring-1 ring-slate-200 rounded-xl p-4">
+        <h3 class="text-sm font-semibold text-slate-900 mb-3">Recent Activity</h3>
         <%= render "shared/activity_timeline", activity_logs: @customer.activity_logs.includes(:user).order(created_at: :desc).limit(20) %>
       </div>
     </div>

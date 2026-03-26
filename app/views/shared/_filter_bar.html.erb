@@ -1,12 +1,12 @@
 <%# Usage: render "shared/filter_bar", url: prospects_path do |f| ... end %>
 <%# Yields a form builder for adding filter fields %>
-<div class="mb-6 bg-white shadow rounded-lg p-4" data-controller="filter">
+<div class="mb-6 border-b border-slate-200 pb-4" data-controller="filter">
   <%= form_with url: url, method: :get, data: { filter_target: "form", turbo_frame: "results" } do |f| %>
     <div class="flex flex-wrap items-end gap-4">
       <%= yield f if block_given? %>
       <div class="flex items-end gap-2">
-        <%= f.submit "Filter", class: "px-3 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 cursor-pointer" %>
-        <button type="button" class="px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50" data-action="filter#reset">
+        <%= f.submit "Filter", class: "px-3 py-2 text-sm font-medium text-white bg-slate-800 rounded-lg hover:bg-slate-700 cursor-pointer" %>
+        <button type="button" class="px-3 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50" data-action="filter#reset">
           Clear
         </button>
       </div>

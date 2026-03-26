@@ -5,28 +5,28 @@
 <% options ||= {} %>
 
 <div class="mb-4">
-  <%= form.label field, label, class: "block text-sm font-medium text-gray-700 mb-1" %>
+  <%= form.label field, label, class: "block text-sm font-medium text-slate-700 mb-1" %>
   <% if required %><span class="text-red-500 text-xs">*</span><% end %>
 
   <% case type.to_sym %>
   <% when :text_field %>
-    <%= form.text_field field, class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm #{'border-red-500' if form.object&.errors&.[](field)&.any?}", required: required, **options %>
+    <%= form.text_field field, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm placeholder:text-slate-400 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 #{'border-red-500' if form.object&.errors&.[](field)&.any?}", required: required, **options %>
   <% when :email_field %>
-    <%= form.email_field field, class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm #{'border-red-500' if form.object&.errors&.[](field)&.any?}", required: required, **options %>
+    <%= form.email_field field, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm placeholder:text-slate-400 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 #{'border-red-500' if form.object&.errors&.[](field)&.any?}", required: required, **options %>
   <% when :text_area %>
-    <%= form.text_area field, rows: options.delete(:rows) || 3, class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm #{'border-red-500' if form.object&.errors&.[](field)&.any?}", required: required, **options %>
+    <%= form.text_area field, rows: options.delete(:rows) || 3, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm placeholder:text-slate-400 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 #{'border-red-500' if form.object&.errors&.[](field)&.any?}", required: required, **options %>
   <% when :date_field %>
-    <%= form.date_field field, class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm #{'border-red-500' if form.object&.errors&.[](field)&.any?}", required: required, **options %>
+    <%= form.date_field field, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 #{'border-red-500' if form.object&.errors&.[](field)&.any?}", required: required, **options %>
   <% when :number_field %>
-    <%= form.number_field field, step: options.delete(:step) || "0.01", class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm #{'border-red-500' if form.object&.errors&.[](field)&.any?}", required: required, **options %>
+    <%= form.number_field field, step: options.delete(:step) || "0.01", class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm placeholder:text-slate-400 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 #{'border-red-500' if form.object&.errors&.[](field)&.any?}", required: required, **options %>
   <% when :url_field %>
-    <%= form.url_field field, class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm #{'border-red-500' if form.object&.errors&.[](field)&.any?}", required: required, placeholder: "https://...", **options %>
+    <%= form.url_field field, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm placeholder:text-slate-400 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 #{'border-red-500' if form.object&.errors&.[](field)&.any?}", required: required, placeholder: "https://...", **options %>
   <% when :select %>
-    <%= form.select field, options.delete(:choices) || [], { include_blank: options.delete(:include_blank) }, class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm #{'border-red-500' if form.object&.errors&.[](field)&.any?}", required: required, **options %>
+    <%= form.select field, options.delete(:choices) || [], { include_blank: options.delete(:include_blank) }, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 #{'border-red-500' if form.object&.errors&.[](field)&.any?}", required: required, **options %>
   <% end %>
 
   <% if hint %>
-    <p class="mt-1 text-xs text-gray-500"><%= hint %></p>
+    <p class="mt-1 text-xs text-slate-500"><%= hint %></p>
   <% end %>
 
   <% if form.object&.errors&.[](field)&.any? %>

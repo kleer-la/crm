@@ -48,12 +48,14 @@ This design document covers the UI modernization: a cohesive visual language app
 | Page bg | `bg-slate-50` | `<html>` background |
 | Card bg | `bg-white` | Cards, panels |
 | Card border | `ring-1 ring-slate-200` | Replace `shadow` with ring |
-| Primary button | `bg-indigo-600 hover:bg-indigo-700 text-white` | Main CTAs |
+| Primary button | `bg-slate-800 hover:bg-slate-700 text-white` | Main CTAs |
 | Secondary button | `bg-white border border-slate-300 text-slate-700 hover:bg-slate-50` | Edit, Cancel |
 | Danger button | `bg-red-600 hover:bg-red-700 text-white` | Destructive actions |
 | Table header | `bg-slate-50 text-slate-500 uppercase text-xs` | `<thead>` |
 | Table row hover | `hover:bg-indigo-50` | Row highlight |
 | Link color | `text-indigo-600 hover:text-indigo-900` | All links |
+| Input field | `border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 rounded-lg shadow-sm placeholder:text-slate-400` | Text inputs, selects, textareas |
+| Input focus | `focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20` | Focus state for all inputs |
 
 ---
 
@@ -124,7 +126,29 @@ The helper accepts the status/role as a string and maps it. Unknown values fall 
 
 ---
 
-### 8. Pilot on Customers, then standardize
+### 8. Primary buttons: slate-800, not indigo
+
+**Decision:** Primary action buttons use `bg-slate-800 hover:bg-slate-700` (dark neutral) rather than `bg-indigo-600`.
+
+**Rationale:** `indigo-600` reads as "default web blue" and doesn't feel distinctive. `slate-800` matches the sidebar palette, gives the UI a composed, professional look (similar to Linear/Vercel), and lets semantic colors (badges, status indicators) carry meaning rather than the chrome.
+
+**Scope:** All primary buttons: page CTAs (`New Customer`, `New Prospect`, etc.), form submit buttons, and filter submit buttons. The active nav pill in the sidebar keeps `bg-indigo-600` as an accent — that contrast against `slate-700` is intentional.
+
+---
+
+### 9. Input fields: always include `border`, `bg-white`, and explicit padding
+
+**Decision:** Every `<input>`, `<select>`, and `<textarea>` must include all of: `border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 rounded-lg shadow-sm`.
+
+**Rationale:** Tailwind v4's preflight reset strips all browser default styling from form elements — border, background, and padding are all removed. Specifying only `border-slate-300` (color) without `border` (width) produces an invisible hairline. Adding `bg-white` prevents inputs from inheriting the `bg-slate-50` page background. Padding must be explicit since the browser default is gone.
+
+**Focus state:** `focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20` — the `focus:ring-indigo-500/20` soft glow replaces the harsh solid ring from `focus:ring-indigo-500`.
+
+**Where enforced:** `_form_field.html.erb` (all 7 types), and any inline filter inputs in index views.
+
+---
+
+### 10. Pilot on Customers, then standardize
 
 **Decision:** Apply all changes to the Customers module first (index + show + form), verify visually, then apply the same patterns to Prospects, Proposals, Tasks, Pipeline, Dashboard, Admin, Search, and Sessions.
 

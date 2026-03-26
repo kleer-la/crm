@@ -50,7 +50,7 @@
                       </svg>
                     </span>
                   <% else %>
-                    <span class="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center ring-8 ring-white">
+                    <span class="h-8 w-8 rounded-full bg-indigo-500 flex items-center justify-center ring-8 ring-white">
                       <svg class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
                       </svg>
@@ -64,7 +64,7 @@
                   <% proposal = entry[:record] %>
                   <div class="text-sm text-gray-500">
                     <span class="font-medium text-gray-900">Proposal:</span>
-                    <%= link_to proposal.title, proposal, class: "text-blue-600 hover:text-blue-900" if defined?(proposal_path) %>
+                    <%= link_to proposal.title, proposal, class: "text-indigo-600 hover:text-indigo-900" if defined?(proposal_path) %>
                     <span class="inline-block px-2 py-0.5 text-xs font-semibold rounded-full bg-purple-100 text-purple-800 ml-1"><%= proposal.status.titleize %></span>
                     <span class="whitespace-nowrap ml-1"><%= time_ago_in_words(proposal.created_at) %> ago</span>
                   </div>

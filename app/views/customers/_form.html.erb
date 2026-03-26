@@ -12,7 +12,7 @@
   <%= render "shared/consultant_multi_select", form: f, field: :collaborating_consultant_ids, label: "Collaborating Consultants" %>
 
   <div class="mt-6">
-    <h3 class="text-sm font-semibold text-gray-900 mb-3">Contacts</h3>
+    <h3 class="text-sm font-semibold text-slate-900 mb-3">Contacts</h3>
     <div id="contacts-fields">
       <%= f.fields_for :contacts do |cf| %>
         <%= render "customers/contact_fields", form: cf %>
@@ -23,7 +23,7 @@
         <%= render "customers/contact_fields", form: cf %>
       <% end %>
     </template>
-    <button type="button" class="mt-2 px-3 py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-md hover:bg-blue-100"
+    <button type="button" class="mt-2 px-3 py-2 text-sm font-medium text-indigo-600 bg-indigo-50 rounded-lg hover:bg-indigo-100"
             onclick="addContact()">
       + Add Contact
     </button>
