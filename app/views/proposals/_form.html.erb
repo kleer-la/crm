@@ -5,7 +5,7 @@
     <%= render "shared/form_field", form: f, field: :title, label: "Title", required: true %>
 
     <div class="py-3">
-      <label class="block text-sm font-medium text-slate-700 mb-1">Linked To <span class="text-red-500">*</span></label>
+      <label class="block text-sm font-medium text-slate-700 mb-1">Linked To</label>
       <div class="flex gap-2">
         <%= f.select :linkable_type, [["Prospect", "Prospect"], ["Customer", "Customer"]],
           { include_blank: "Select type..." },

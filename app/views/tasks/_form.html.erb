@@ -5,7 +5,7 @@
     <%= render "shared/form_field", form: f, field: :title, label: "Title", required: true %>
 
     <div class="py-3">
-      <label class="block text-sm font-medium text-slate-700 mb-1">Linked To <span class="text-red-500">*</span></label>
+      <label class="block text-sm font-medium text-slate-700 mb-1">Linked To</label>
       <div class="flex gap-2">
         <%= f.select :linkable_type, [["Prospect", "Prospect"], ["Customer", "Customer"], ["Proposal", "Proposal"]],
           { include_blank: "Select type..." },
@@ -34,7 +34,7 @@
     <%= render "shared/form_field", form: f, field: :due_date, label: "Due Date", type: :date_field, required: true %>
 
     <div class="py-3">
-      <label class="block text-sm font-medium text-slate-700 mb-1">Priority <span class="text-red-500">*</span></label>
+      <label class="block text-sm font-medium text-slate-700 mb-1">Priority</label>
       <%= f.select :priority, Task.priorities.keys.map { |p| [p.titleize, p] },
         {},
         class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20" %>
