@@ -113,6 +113,45 @@ class CsvImportExecutionServiceTest < ActiveSupport::TestCase
 
   # --- Proposal import ---
 
+  test "strips invalid document URL and creates proposal successfully" do
+    customer = create(:customer, company_name: "URLCo")
+    create(:contact, customer: customer, primary: true)
+
+    rows = [
+      {
+        row_number: 2, title: "URL Test", linkable_company_name: "URLCo",
+        responsible_consultant_name: nil, status: "draft",
+        estimated_value: nil, final_value: nil,
+        current_document_url: "N/A", notes: nil, date_asked: nil,
+        actual_close_date: nil, contact: nil
+      }
+    ]
+
+    result = CsvImportExecutionService.new(rows, :proposal, @admin).call
+
+    assert_equal 1, result[:created_count]
+    assert_nil Proposal.find_by(title: "URL Test").current_document_url
+  end
+
+  test "preserves valid document URL on import" do
+    customer = create(:customer, company_name: "URLCo2")
+    create(:contact, customer: customer, primary: true)
+
+    rows = [
+      {
+        row_number: 2, title: "URL Valid", linkable_company_name: "URLCo2",
+        responsible_consultant_name: nil, status: "draft",
+        estimated_value: nil, final_value: nil,
+        current_document_url: "https://docs.google.com/proposal/123", notes: nil, date_asked: nil,
+        actual_close_date: nil, contact: nil
+      }
+    ]
+
+    CsvImportExecutionService.new(rows, :proposal, @admin).call
+
+    assert_equal "https://docs.google.com/proposal/123", Proposal.find_by(title: "URL Valid").current_document_url
+  end
+
   test "creates proposals linked to existing customers" do
     consultant = create(:user, name: "Pablo Lis")
     customer = create(:customer, company_name: "UTE UY", responsible_consultant: consultant)
@@ -215,6 +254,26 @@ class CsvImportExecutionServiceTest < ActiveSupport::TestCase
     assert_equal customer, Proposal.find_by(title: "Case Test").linkable
   end
 
+  test "matches linkable by trigram similarity when name differs slightly" do
+    customer = create(:customer, company_name: "Banco República Oriental")
+    create(:contact, customer: customer, primary: true)
+
+    rows = [
+      {
+        row_number: 2, title: "Fuzzy Match Deal", linkable_company_name: "Banco Republica Oriental",
+        responsible_consultant_name: nil, status: "draft",
+        estimated_value: nil, final_value: nil,
+        current_document_url: nil, notes: nil, date_asked: nil,
+        actual_close_date: nil, contact: nil
+      }
+    ]
+
+    result = CsvImportExecutionService.new(rows, :proposal, @admin).call
+
+    assert_equal 1, result[:created_count]
+    assert_equal customer, Proposal.find_by(title: "Fuzzy Match Deal").linkable
+  end
+
   # --- Contact extraction ---
 
   test "creates contact on customer during proposal import" do
@@ -300,7 +359,7 @@ class CsvImportExecutionServiceTest < ActiveSupport::TestCase
   # --- Customer type routing ---
 
   test "skips customer row with customer_type prospect and records error" do
-    rows = [ { row_number: 2, company_name: "Prospect Co", country: nil, industry: nil, responsible_consultant_name: nil, last_activity_date: nil, customer_type: :prospect, intention: nil, warnings: [] } ]
+    rows = [ { row_number: 2, company_name: "Prospect Co", country: nil, industry: nil, responsible_consultant_name: nil, last_activity_date: nil, customer_type: :prospect, strategy: nil, warnings: [] } ]
 
     result = CsvImportExecutionService.new(rows, :customer, @admin).call
 
@@ -311,7 +370,7 @@ class CsvImportExecutionServiceTest < ActiveSupport::TestCase
   end
 
   test "creates customer with inactive status when customer_type is inactive" do
-    rows = [ { row_number: 2, company_name: "Inactive Co", country: nil, industry: nil, responsible_consultant_name: nil, last_activity_date: nil, customer_type: :inactive, intention: nil, warnings: [] } ]
+    rows = [ { row_number: 2, company_name: "Inactive Co", country: nil, industry: nil, responsible_consultant_name: nil, last_activity_date: nil, customer_type: :inactive, strategy: nil, warnings: [] } ]
 
     CsvImportExecutionService.new(rows, :customer, @admin).call
 
@@ -321,27 +380,27 @@ class CsvImportExecutionServiceTest < ActiveSupport::TestCase
   end
 
   test "creates customer with active status when customer_type is active" do
-    rows = [ { row_number: 2, company_name: "Active Co", country: nil, industry: nil, responsible_consultant_name: nil, last_activity_date: nil, customer_type: :active, intention: nil, warnings: [] } ]
+    rows = [ { row_number: 2, company_name: "Active Co", country: nil, industry: nil, responsible_consultant_name: nil, last_activity_date: nil, customer_type: :active, strategy: nil, warnings: [] } ]
 
     CsvImportExecutionService.new(rows, :customer, @admin).call
 
     assert Customer.find_by(company_name: "Active Co").active?
   end
 
-  test "creates customer with intention keep" do
-    rows = [ { row_number: 2, company_name: "Keep Co", country: nil, industry: nil, responsible_consultant_name: nil, last_activity_date: nil, customer_type: nil, intention: :keep, warnings: [] } ]
+  test "creates customer with strategy keep" do
+    rows = [ { row_number: 2, company_name: "Keep Co", country: nil, industry: nil, responsible_consultant_name: nil, last_activity_date: nil, customer_type: nil, strategy: :keep, warnings: [] } ]
 
     CsvImportExecutionService.new(rows, :customer, @admin).call
 
-    assert_equal "keep", Customer.find_by(company_name: "Keep Co").intention
+    assert_equal "keep", Customer.find_by(company_name: "Keep Co").strategy
   end
 
-  test "creates customer with nil intention" do
-    rows = [ { row_number: 2, company_name: "No Intent Co", country: nil, industry: nil, responsible_consultant_name: nil, last_activity_date: nil, customer_type: nil, intention: nil, warnings: [] } ]
+  test "creates customer with nil strategy" do
+    rows = [ { row_number: 2, company_name: "No Intent Co", country: nil, industry: nil, responsible_consultant_name: nil, last_activity_date: nil, customer_type: nil, strategy: nil, warnings: [] } ]
 
     CsvImportExecutionService.new(rows, :customer, @admin).call
 
-    assert_nil Customer.find_by(company_name: "No Intent Co").intention
+    assert_nil Customer.find_by(company_name: "No Intent Co").strategy
   end
 
   # --- Proposal nil status ---

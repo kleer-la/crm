@@ -13,7 +13,7 @@ class CsvImportParserService
       "Sector" => :industry,
       "Responsables" => :responsible_consultant_name,
       "Tipo de cliente" => :customer_type_raw,
-      "Estrategia (KARE)" => :intention_raw,
+      "Estrategia (KARE)" => :strategy_raw,
       "Último contacto" => :last_activity_date
     },
     proposal: {
@@ -166,9 +166,9 @@ class CsvImportParserService
       end
     end
 
-    if row.key?(:intention_raw)
-      raw = row.delete(:intention_raw)
-      row[:intention] = raw.blank? ? nil : CUSTOMER_INTENTION_MAPPING[raw]
+    if row.key?(:strategy_raw)
+      raw = row.delete(:strategy_raw)
+      row[:strategy] = raw.blank? ? nil : CUSTOMER_INTENTION_MAPPING[raw]
     end
   end
 

@@ -6,6 +6,7 @@
     <%= render "shared/form_field", form: f, field: :industry, label: "Industry" %>
     <%= render "shared/form_field", form: f, field: :country, label: "Country" %>
     <%= render "shared/form_field", form: f, field: :status, label: "Status", type: :select, options: { choices: Customer.statuses.keys.map { |s| [s.titleize, s] } } %>
+    <%= render "shared/form_field", form: f, field: :strategy, label: "KARE Strategy", type: :select, options: { choices: Customer.strategies.keys.map { |i| [i.titleize, i] }, include_blank: "None" } %>
     <%= render "shared/form_field", form: f, field: :date_became_customer, label: "Customer Since", type: :date_field %>
   </div>
 

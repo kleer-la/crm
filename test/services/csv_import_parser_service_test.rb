@@ -296,9 +296,9 @@ class CsvImportParserServiceTest < ActiveSupport::TestCase
     assert_includes row[:warnings], "Desconocido"
   end
 
-  # Customer intention mapping
+  # Customer strategy mapping
 
-  test "maps all CUSTOMER_INTENTION_MAPPING entries to correct intention" do
+  test "maps all CUSTOMER_INTENTION_MAPPING entries to correct strategy" do
     {
       "Mantener"        => :keep,
       "Captar o atraer" => :attract,
@@ -308,25 +308,25 @@ class CsvImportParserServiceTest < ActiveSupport::TestCase
       csv = "CLIENTE\tEstrategia (KARE)\n" \
             "Acme\t#{spanish}\n"
       result = CsvImportParserService.new(csv, :customer).call
-      assert_equal expected, result[:rows].first[:intention], "Expected #{spanish} → #{expected}"
+      assert_equal expected, result[:rows].first[:strategy], "Expected #{spanish} → #{expected}"
     end
   end
 
-  test "blank Estrategia (KARE) returns nil intention with no warning" do
+  test "blank Estrategia (KARE) returns nil strategy with no warning" do
     csv = "CLIENTE\tEstrategia (KARE)\n" \
           "Acme\t\n"
     result = CsvImportParserService.new(csv, :customer).call
     row = result[:rows].first
-    assert_nil row[:intention]
+    assert_nil row[:strategy]
     assert_empty row[:warnings]
   end
 
-  test "unknown Estrategia (KARE) returns nil intention with no warning" do
+  test "unknown Estrategia (KARE) returns nil strategy with no warning" do
     csv = "CLIENTE\tEstrategia (KARE)\n" \
           "Acme\tAlgoRaro\n"
     result = CsvImportParserService.new(csv, :customer).call
     row = result[:rows].first
-    assert_nil row[:intention]
+    assert_nil row[:strategy]
     assert_empty row[:warnings]
   end
 

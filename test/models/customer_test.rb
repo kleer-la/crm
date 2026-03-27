@@ -58,13 +58,13 @@ class CustomerTest < ActiveSupport::TestCase
     assert customer.valid?
   end
 
-  test "intention enum has four valid values and nil is permitted" do
+  test "strategy enum has four valid values and nil is permitted" do
     customer = build(:customer)
     assert customer.valid?
-    assert_nil customer.intention
+    assert_nil customer.strategy
 
     %i[keep attract recapture expand].each do |val|
-      customer.intention = val
+      customer.strategy = val
       assert customer.valid?, "Expected #{val} to be valid"
     end
   end

@@ -70,7 +70,7 @@ class CsvImportExecutionService
       country: row[:country],
       industry: row[:industry],
       status: status,
-      intention: row[:intention],
+      strategy: row[:strategy],
       responsible_consultant: consultant,
       date_became_customer: Date.current,
       last_activity_date: historical_date || Date.current,
@@ -104,7 +104,7 @@ class CsvImportExecutionService
       status: status,
       estimated_value: row[:estimated_value],
       final_value: row[:final_value],
-      current_document_url: row[:current_document_url].presence,
+      current_document_url: valid_url(row[:current_document_url]),
       notes: row[:notes],
       date_asked: row[:date_asked],
       actual_close_date: row[:actual_close_date],
@@ -137,8 +137,15 @@ class CsvImportExecutionService
   def find_linkable(company_name, row_number)
     return log_error(row_number, "Missing company name") if company_name.blank?
 
+    # 1. Exact case-insensitive match
     linkable = Customer.where("company_name ILIKE ?", company_name).first
     linkable ||= Prospect.where("company_name ILIKE ?", company_name).first
+
+    # 2. Fuzzy trigram match — handles names written differently (e.g. "UTE" vs "UTE UY")
+    unless linkable
+      linkable = Customer.search_by_name(company_name).first
+      linkable ||= Prospect.search_by_name(company_name).first
+    end
 
     unless linkable
       log_error(row_number, "No matching Customer or Prospect found for '#{company_name}'")
@@ -170,6 +177,12 @@ class CsvImportExecutionService
 
   def win_loss_reason_for(status)
     %w[won lost].include?(status) ? "Imported" : nil
+  end
+
+  def valid_url(value)
+    url = value.presence
+    return nil unless url
+    url if url.match?(URI::DEFAULT_PARSER.make_regexp(%w[http https]))
   end
 
   def log_error(row_number, message)

@@ -60,7 +60,7 @@ class CustomersController < ApplicationController
 
   def customer_params
     params.require(:customer).permit(
-      :company_name, :industry, :country, :status,
+      :company_name, :industry, :country, :status, :strategy,
       :responsible_consultant_id, :date_became_customer, :last_activity_date,
       collaborating_consultant_ids: [],
       contacts_attributes: [ :id, :name, :email, :phone, :role_title, :primary, :_destroy ]
