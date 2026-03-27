@@ -46,6 +46,153 @@ class CsvImportExecutionServiceTest < ActiveSupport::TestCase
     assert_equal 1, result[:skipped_count]
   end
 
+  # --- Prospect import ---
+
+  test "creates prospects from parsed rows" do
+    consultant = create(:user, name: "Pablo Lis")
+    rows = [
+      {
+        row_number: 2,
+        company_name: "IConstruye",
+        country: "Uruguay",
+        industry: "Construcción",
+        primary_contact_name: "Juan López",
+        primary_contact_email: "jlopez@iconstruye.com",
+        primary_contact_phone: "+598 99 123 456",
+        source: :referral,
+        responsible_consultant_name: "Pablo Lis",
+        last_activity_date: Date.new(2024, 3, 11),
+        date_added: Date.new(2024, 1, 1)
+      }
+    ]
+
+    result = CsvImportExecutionService.new(rows, :prospect, @admin).call
+
+    assert_equal 1, result[:created_count]
+    assert_equal 0, result[:skipped_count]
+    prospect = Prospect.find_by(company_name: "IConstruye")
+    assert prospect.new_prospect?
+    assert_equal consultant, prospect.responsible_consultant
+    assert_equal "Uruguay", prospect.country
+    assert_equal "Construcción", prospect.industry
+    assert_equal "Juan López", prospect.primary_contact_name
+    assert_equal "jlopez@iconstruye.com", prospect.primary_contact_email
+    assert_equal "+598 99 123 456", prospect.primary_contact_phone
+    assert prospect.referral?
+    assert_equal Date.new(2024, 3, 11), prospect.last_activity_date
+    assert_equal Date.new(2024, 1, 1), prospect.date_added
+  end
+
+  test "prospect import skips duplicate company name" do
+    create(:prospect, company_name: "IConstruye")
+    rows = [
+      {
+        row_number: 2,
+        company_name: "IConstruye",
+        country: nil, industry: nil,
+        primary_contact_name: "Other Person",
+        primary_contact_email: "other@iconstruye.com",
+        primary_contact_phone: nil,
+        source: nil,
+        responsible_consultant_name: nil,
+        last_activity_date: nil, date_added: nil
+      }
+    ]
+
+    result = CsvImportExecutionService.new(rows, :prospect, @admin).call
+
+    assert_equal 0, result[:created_count]
+    assert_equal 1, result[:skipped_count]
+    assert_equal 1, Prospect.where(company_name: "IConstruye").count
+  end
+
+  test "prospect import defaults source to other when nil" do
+    rows = [
+      {
+        row_number: 2,
+        company_name: "DPWorld",
+        country: nil, industry: nil,
+        primary_contact_name: "Maria Gómez",
+        primary_contact_email: "mgomez@dpworld.com",
+        primary_contact_phone: nil,
+        source: nil,
+        responsible_consultant_name: nil,
+        last_activity_date: Date.current, date_added: Date.current
+      }
+    ]
+
+    CsvImportExecutionService.new(rows, :prospect, @admin).call
+
+    assert Prospect.find_by(company_name: "DPWorld").other?
+  end
+
+  test "prospect import falls back to importing admin when consultant not matched" do
+    rows = [
+      {
+        row_number: 2,
+        company_name: "RiserUp",
+        country: nil, industry: nil,
+        primary_contact_name: "Ana Pérez",
+        primary_contact_email: "ana@riserup.com",
+        primary_contact_phone: nil,
+        source: nil,
+        responsible_consultant_name: "Unknown Person",
+        last_activity_date: Date.current, date_added: Date.current
+      }
+    ]
+
+    CsvImportExecutionService.new(rows, :prospect, @admin).call
+
+    assert_equal @admin, Prospect.find_by(company_name: "RiserUp").responsible_consultant
+  end
+
+  test "prospect import preserves historical dates via update_column" do
+    rows = [
+      {
+        row_number: 2,
+        company_name: "DateCo",
+        country: nil, industry: nil,
+        primary_contact_name: "Test Contact",
+        primary_contact_email: "test@dateco.com",
+        primary_contact_phone: nil,
+        source: nil,
+        responsible_consultant_name: nil,
+        last_activity_date: Date.new(2023, 6, 15),
+        date_added: Date.new(2023, 1, 10)
+      }
+    ]
+
+    CsvImportExecutionService.new(rows, :prospect, @admin).call
+
+    prospect = Prospect.find_by(company_name: "DateCo")
+    assert_equal Date.new(2023, 6, 15), prospect.last_activity_date
+    assert_equal Date.new(2023, 1, 10), prospect.date_added
+  end
+
+  test "prospect import creates activity log" do
+    rows = [
+      {
+        row_number: 2,
+        company_name: "LogProspect",
+        country: nil, industry: nil,
+        primary_contact_name: "Log Contact",
+        primary_contact_email: "log@logprospect.com",
+        primary_contact_phone: nil,
+        source: nil,
+        responsible_consultant_name: nil,
+        last_activity_date: Date.current, date_added: Date.current
+      }
+    ]
+
+    assert_difference "ActivityLog.count" do
+      CsvImportExecutionService.new(rows, :prospect, @admin).call
+    end
+
+    log = ActivityLog.last
+    assert_equal "Prospect", log.loggable_type
+    assert_includes log.content, "LogProspect"
+  end
+
   # --- Customer import ---
 
   test "creates customers from parsed rows" do

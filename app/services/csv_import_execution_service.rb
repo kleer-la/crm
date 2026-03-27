@@ -21,6 +21,7 @@ class CsvImportExecutionService
   def import_row(row)
     case @record_type
     when :user then import_user(row)
+    when :prospect then import_prospect(row)
     when :customer then import_customer(row)
     when :proposal then import_proposal(row)
     end
@@ -43,6 +44,37 @@ class CsvImportExecutionService
       role: role,
       active: true
     )
+    @created_count += 1
+  end
+
+  # --- Prospect import ---
+
+  def import_prospect(row)
+    if Prospect.exists?(company_name: row[:company_name])
+      @skipped_count += 1
+      return
+    end
+
+    consultant = find_consultant(row[:responsible_consultant_name])
+    historical_last_activity = row[:last_activity_date]
+    historical_date_added = row[:date_added]
+
+    prospect = Prospect.create!(
+      company_name: row[:company_name],
+      country: row[:country],
+      industry: row[:industry],
+      primary_contact_name: row[:primary_contact_name].presence || "Unknown",
+      primary_contact_email: row[:primary_contact_email].presence || "#{row[:company_name].parameterize}@placeholder.import",
+      primary_contact_phone: row[:primary_contact_phone],
+      source: row[:source] || :other,
+      status: :new_prospect,
+      responsible_consultant: consultant,
+      date_added: historical_date_added || Date.current,
+      last_activity_date: historical_last_activity || Date.current
+    )
+    # Restore historical dates — the log_creation callback overwrites last_activity_date
+    prospect.update_column(:last_activity_date, historical_last_activity) if historical_last_activity
+    prospect.update_column(:date_added, historical_date_added) if historical_date_added
     @created_count += 1
   end
 

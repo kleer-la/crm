@@ -79,6 +79,76 @@ class CsvImportParserServiceTest < ActiveSupport::TestCase
     assert_nil row[:contact_raw]
   end
 
+  # Prospect CSV
+
+  test "parses valid prospect CSV" do
+    csv = "CLIENTE\tContacto\tEmail\tTeléfono\tPaís/es\tSector\tResponsables\tFuente\tÚltimo contacto\tFecha inicio\n" \
+          "IConstruye\tJuan López\tjlopez@iconstruye.com\t+598 99 123 456\tUruguay\tConstrucción\tPablo Lis\tReferido\t2024/03/11\t2024/01/01\n"
+    result = CsvImportParserService.new(csv, :prospect).call
+
+    assert_equal 1, result[:rows].size
+    row = result[:rows].first
+    assert_equal "IConstruye", row[:company_name]
+    assert_equal "Juan López", row[:primary_contact_name]
+    assert_equal "jlopez@iconstruye.com", row[:primary_contact_email]
+    assert_equal "+598 99 123 456", row[:primary_contact_phone]
+    assert_equal "Uruguay", row[:country]
+    assert_equal "Construcción", row[:industry]
+    assert_equal "Pablo Lis", row[:responsible_consultant_name]
+    assert_equal :referral, row[:source]
+    assert_equal Date.new(2024, 3, 11), row[:last_activity_date]
+    assert_equal Date.new(2024, 1, 1), row[:date_added]
+    assert_nil row[:source_raw]
+  end
+
+  test "prospect CSV with missing optional columns returns nil for those fields" do
+    csv = "CLIENTE\tContacto\tEmail\n" \
+          "DPWorld\tMaria Gómez\tmgomez@dpworld.com\n"
+    result = CsvImportParserService.new(csv, :prospect).call
+
+    row = result[:rows].first
+    assert_equal "DPWorld", row[:company_name]
+    assert_nil row[:country]
+    assert_nil row[:source]
+    assert_nil row[:last_activity_date]
+    assert_nil row[:date_added]
+  end
+
+  test "maps all PROSPECT_SOURCE_MAPPING entries" do
+    {
+      "Referido"  => :referral,
+      "Referral"  => :referral,
+      "Inbound"   => :inbound,
+      "Outbound"  => :outbound,
+      "Evento"    => :event,
+      "Event"     => :event,
+      "Otro"      => :other,
+      "Other"     => :other
+    }.each do |spanish, expected|
+      csv = "CLIENTE\tContacto\tEmail\tFuente\n" \
+            "Acme\tContact\tcontact@acme.com\t#{spanish}\n"
+      result = CsvImportParserService.new(csv, :prospect).call
+      assert_equal expected, result[:rows].first[:source], "Expected #{spanish} → #{expected}"
+    end
+  end
+
+  test "unknown Fuente returns nil source" do
+    csv = "CLIENTE\tContacto\tEmail\tFuente\n" \
+          "Acme\tContact\tcontact@acme.com\tDesconocido\n"
+    result = CsvImportParserService.new(csv, :prospect).call
+    assert_nil result[:rows].first[:source]
+  end
+
+  test "raises error for missing required prospect header" do
+    csv = "Fuente\n" \
+          "Referido\n"
+
+    error = assert_raises(CsvImportParserService::ParseError) do
+      CsvImportParserService.new(csv, :prospect).call
+    end
+    assert_includes error.message, "CLIENTE"
+  end
+
   # Header validation
 
   test "raises error for missing required customer header" do

@@ -1,9 +1,10 @@
 module Admin
   class ImportsController < BaseController
     def new
-      @record_types = [ [ "Users", "user" ], [ "Customers", "customer" ], [ "Proposals", "proposal" ] ]
+      @record_types = [ [ "Users", "user" ], [ "Prospects", "prospect" ], [ "Customers", "customer" ], [ "Proposals", "proposal" ] ]
       @existing_counts = {
         users: User.count,
+        prospects: Prospect.count,
         customers: Customer.count,
         proposals: Proposal.count
       }
@@ -32,7 +33,7 @@ module Admin
         return
       end
 
-      unless %w[user customer proposal].include?(record_type)
+      unless %w[user prospect customer proposal].include?(record_type)
         redirect_to new_admin_import_path, alert: "Invalid record type."
         return
       end
@@ -57,7 +58,7 @@ module Admin
         return false
       end
 
-      if params[:record_type].blank? || !%w[user customer proposal].include?(params[:record_type])
+      if params[:record_type].blank? || !%w[user prospect customer proposal].include?(params[:record_type])
         @upload_error = "Please select a valid record type."
         return false
       end

@@ -7,6 +7,18 @@ class CsvImportParserService
       "email" => :email,
       "role" => :role
     },
+    prospect: {
+      "CLIENTE" => :company_name,
+      "País/es" => :country,
+      "Sector" => :industry,
+      "Responsables" => :responsible_consultant_name,
+      "Contacto" => :primary_contact_name,
+      "Email" => :primary_contact_email,
+      "Teléfono" => :primary_contact_phone,
+      "Fuente" => :source_raw,
+      "Último contacto" => :last_activity_date,
+      "Fecha inicio" => :date_added
+    },
     customer: {
       "CLIENTE" => :company_name,
       "País/es" => :country,
@@ -33,6 +45,7 @@ class CsvImportParserService
 
   REQUIRED_HEADERS = {
     user: [ "name", "email" ],
+    prospect: [ "CLIENTE" ],
     customer: [ "CLIENTE" ],
     proposal: [ "Propuesta", "Cliente" ]
   }.freeze
@@ -66,6 +79,17 @@ class CsvImportParserService
     "Descartar"                      => :inactive
   }.freeze
 
+  PROSPECT_SOURCE_MAPPING = {
+    "Referido"        => :referral,
+    "Referral"        => :referral,
+    "Inbound"         => :inbound,
+    "Outbound"        => :outbound,
+    "Evento"          => :event,
+    "Event"           => :event,
+    "Otro"            => :other,
+    "Other"           => :other
+  }.freeze
+
   CUSTOMER_INTENTION_MAPPING = {
     "Mantener"        => :keep,
     "Captar o atraer" => :attract,
@@ -74,7 +98,7 @@ class CsvImportParserService
   }.freeze
 
   MONETARY_FIELDS = %i[estimated_value final_value].freeze
-  DATE_FIELDS = %i[last_activity_date date_asked actual_close_date].freeze
+  DATE_FIELDS = %i[last_activity_date date_asked actual_close_date date_added].freeze
 
   def initialize(csv_content, record_type)
     @csv_content = strip_bom(csv_content)
@@ -169,6 +193,11 @@ class CsvImportParserService
     if row.key?(:strategy_raw)
       raw = row.delete(:strategy_raw)
       row[:strategy] = raw.blank? ? nil : CUSTOMER_INTENTION_MAPPING[raw]
+    end
+
+    if row.key?(:source_raw)
+      raw = row.delete(:source_raw)
+      row[:source] = raw.blank? ? nil : PROSPECT_SOURCE_MAPPING[raw]
     end
   end
 

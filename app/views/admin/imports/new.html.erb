@@ -11,20 +11,22 @@
     <p class="font-semibold mb-1">Import order</p>
     <ol class="list-decimal list-inside text-sm space-y-1">
       <li>Users (consultants and admins)</li>
+      <li>Prospects (requires: CLIENTE column; Contacto/Email optional)</li>
       <li>Customers</li>
-      <li>Proposals (requires existing customers)</li>
+      <li>Proposals (requires existing customers or prospects)</li>
     </ol>
-    <p class="text-sm mt-2">User imports are additive — duplicate emails are skipped automatically. To re-import customers or proposals, clear existing records via rails console first.</p>
+    <p class="text-sm mt-2">User and prospect imports are additive — duplicates are skipped automatically. To re-import customers or proposals, clear existing records via rails console first.</p>
   </div>
 
-  <% if @existing_counts[:customers] > 0 || @existing_counts[:proposals] > 0 %>
+  <% if @existing_counts[:customers] > 0 || @existing_counts[:proposals] > 0 || @existing_counts[:prospects] > 0 %>
     <div class="bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-3 rounded mb-6">
       <p class="font-semibold mb-1">Existing records detected</p>
       <ul class="text-sm space-y-1">
+        <li>Prospects: <%= @existing_counts[:prospects] %></li>
         <li>Customers: <%= @existing_counts[:customers] %></li>
         <li>Proposals: <%= @existing_counts[:proposals] %></li>
       </ul>
-      <p class="text-sm mt-2">If re-importing customers or proposals, clear records first via rails console (e.g., <code class="bg-yellow-100 px-1 rounded">Customer.destroy_all</code>).</p>
+      <p class="text-sm mt-2">If re-importing customers or proposals, clear records first via rails console (e.g., <code class="bg-yellow-100 px-1 rounded">Customer.destroy_all</code>). Prospect imports skip existing records by company name.</p>
     </div>
   <% end %>
 
