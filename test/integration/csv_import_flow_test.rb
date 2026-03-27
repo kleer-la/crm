@@ -95,13 +95,13 @@ class CsvImportFlowTest < ActionDispatch::IntegrationTest
     assert_includes response.body, "Error Details"
   end
 
-  test "preview with invalid status value redirects with error" do
+  test "preview with unknown status value succeeds and shows preview" do
     csv = "Propuesta\tCliente\tEstado\nBad Deal\tAcme\tArchivedOld\n"
     file = fixture_csv(csv)
 
     post preview_admin_imports_path, params: { record_type: "proposal", file: file }
-    assert_redirected_to new_admin_import_path
-    assert_match(/Unknown status/, flash[:alert])
+    assert_response :success
+    assert_includes response.body, "Bad Deal"
   end
 
   test "unmatched consultant name falls back to importing admin and import succeeds" do

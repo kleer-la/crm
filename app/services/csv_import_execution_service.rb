@@ -49,14 +49,28 @@ class CsvImportExecutionService
   # --- Customer import ---
 
   def import_customer(row)
+    customer_type = row[:customer_type]
+
+    if customer_type == :prospect
+      log_error(row[:row_number], "'#{row[:company_name]}' is a Prospect-type account ('Potencial'/'Prospecto') and must be imported via the Prospects CSV (contact data required)")
+      return
+    end
+
+    if row[:warnings]&.any?
+      log_error(row[:row_number], "Unknown 'Tipo de cliente' value: #{row[:warnings].join(', ')}")
+      return
+    end
+
     consultant = find_consultant(row[:responsible_consultant_name])
     historical_date = row[:last_activity_date]
+    status = customer_type || :active
 
     customer = Customer.create!(
       company_name: row[:company_name],
       country: row[:country],
       industry: row[:industry],
-      status: :active,
+      status: status,
+      intention: row[:intention],
       responsible_consultant: consultant,
       date_became_customer: Date.current,
       last_activity_date: historical_date || Date.current,
@@ -75,8 +89,13 @@ class CsvImportExecutionService
     linkable = find_linkable(row[:linkable_company_name], row[:row_number])
     return unless linkable
 
+    if row[:status].nil?
+      log_error(row[:row_number], "Row #{row[:row_number]}: missing or unrecognised proposal status")
+      return
+    end
+
     consultant = find_consultant(row[:responsible_consultant_name])
-    status = row[:status] || "draft"
+    status = row[:status]
 
     Proposal.create!(
       title: row[:title],

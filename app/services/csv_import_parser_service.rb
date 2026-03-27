@@ -12,6 +12,8 @@ class CsvImportParserService
       "País/es" => :country,
       "Sector" => :industry,
       "Responsables" => :responsible_consultant_name,
+      "Tipo de cliente" => :customer_type_raw,
+      "Estrategia (KARE)" => :intention_raw,
       "Último contacto" => :last_activity_date
     },
     proposal: {
@@ -45,7 +47,30 @@ class CsvImportParserService
     "Perdido" => "lost",
     "No por ahora" => "lost",
     "Declinamos" => "cancelled",
-    "No contesta" => "lost"
+    "No contesta" => "lost",
+    "En espera" => "under_review",
+    "Revisión" => "under_review",
+    "Aprobado" => "won",
+    "Rechazado" => "lost",
+    "Cancelado" => "cancelled"
+  }.freeze
+
+  CUSTOMER_TYPE_MAPPING = {
+    "Potencial"                      => :prospect,
+    "Prospecto"                      => :prospect,
+    "Cliente activo"                 => :active,
+    "Nuevo facturado"                => :active,
+    "Cliente inactivo por recuperar" => :inactive,
+    "Cliente recuperado"             => :active,
+    "No contesta"                    => :inactive,
+    "Descartar"                      => :inactive
+  }.freeze
+
+  CUSTOMER_INTENTION_MAPPING = {
+    "Mantener"        => :keep,
+    "Captar o atraer" => :attract,
+    "Recuperar"       => :recapture,
+    "Expandir"        => :expand
   }.freeze
 
   MONETARY_FIELDS = %i[estimated_value final_value].freeze
@@ -111,6 +136,8 @@ class CsvImportParserService
   end
 
   def clean_values!(row)
+    row[:warnings] ||= []
+
     MONETARY_FIELDS.each do |field|
       row[field] = parse_monetary(row[field]) if row.key?(field)
     end
@@ -120,11 +147,28 @@ class CsvImportParserService
     end
 
     if row.key?(:status_raw)
-      row[:status] = map_status(row.delete(:status_raw))
+      row[:status] = map_status(row, row.delete(:status_raw))
     end
 
     if row.key?(:contact_raw)
       row[:contact] = parse_contact(row.delete(:contact_raw))
+    end
+
+    if row.key?(:customer_type_raw)
+      raw = row.delete(:customer_type_raw)
+      if raw.blank?
+        row[:customer_type] = nil
+      elsif CUSTOMER_TYPE_MAPPING.key?(raw)
+        row[:customer_type] = CUSTOMER_TYPE_MAPPING[raw]
+      else
+        row[:customer_type] = nil
+        row[:warnings] << raw
+      end
+    end
+
+    if row.key?(:intention_raw)
+      raw = row.delete(:intention_raw)
+      row[:intention] = raw.blank? ? nil : CUSTOMER_INTENTION_MAPPING[raw]
     end
   end
 
@@ -145,9 +189,14 @@ class CsvImportParserService
     raise ParseError, "Invalid date: #{value}"
   end
 
-  def map_status(value)
+  def map_status(row, value)
     return nil if value.blank?
-    STATUS_MAPPING[value] || raise(ParseError, "Unknown status: #{value}")
+    if STATUS_MAPPING.key?(value)
+      STATUS_MAPPING[value]
+    else
+      row[:warnings] << value
+      nil
+    end
   end
 
   def parse_contact(value)

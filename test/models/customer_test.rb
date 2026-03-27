@@ -58,6 +58,17 @@ class CustomerTest < ActiveSupport::TestCase
     assert customer.valid?
   end
 
+  test "intention enum has four valid values and nil is permitted" do
+    customer = build(:customer)
+    assert customer.valid?
+    assert_nil customer.intention
+
+    %i[keep attract recapture expand].each do |val|
+      customer.intention = val
+      assert customer.valid?, "Expected #{val} to be valid"
+    end
+  end
+
   test "associations" do
     customer = create(:customer)
     assert_respond_to customer, :responsible_consultant

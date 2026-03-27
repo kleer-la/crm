@@ -5,6 +5,7 @@ class Customer < ApplicationRecord
   pg_search_scope :search_by_name, against: :company_name, using: { trigram: { threshold: 0.1 } }
 
   enum :status, { active: 0, inactive: 1, at_risk: 2 }
+  enum :intention, { keep: 0, attract: 1, recapture: 2, expand: 3 }
 
   belongs_to :responsible_consultant, class_name: "User"
   has_many :consultant_assignments, as: :assignable, dependent: :destroy

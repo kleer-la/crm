@@ -297,6 +297,76 @@ class CsvImportExecutionServiceTest < ActiveSupport::TestCase
     assert_equal "juan-perez@placeholder.import", contact.email
   end
 
+  # --- Customer type routing ---
+
+  test "skips customer row with customer_type prospect and records error" do
+    rows = [ { row_number: 2, company_name: "Prospect Co", country: nil, industry: nil, responsible_consultant_name: nil, last_activity_date: nil, customer_type: :prospect, intention: nil, warnings: [] } ]
+
+    result = CsvImportExecutionService.new(rows, :customer, @admin).call
+
+    assert_equal 0, result[:created_count]
+    assert_equal 1, result[:error_count]
+    assert_includes result[:errors].first[:messages].first, "Prospect-type"
+    assert_nil Customer.find_by(company_name: "Prospect Co")
+  end
+
+  test "creates customer with inactive status when customer_type is inactive" do
+    rows = [ { row_number: 2, company_name: "Inactive Co", country: nil, industry: nil, responsible_consultant_name: nil, last_activity_date: nil, customer_type: :inactive, intention: nil, warnings: [] } ]
+
+    CsvImportExecutionService.new(rows, :customer, @admin).call
+
+    customer = Customer.find_by(company_name: "Inactive Co")
+    assert_not_nil customer
+    assert customer.inactive?
+  end
+
+  test "creates customer with active status when customer_type is active" do
+    rows = [ { row_number: 2, company_name: "Active Co", country: nil, industry: nil, responsible_consultant_name: nil, last_activity_date: nil, customer_type: :active, intention: nil, warnings: [] } ]
+
+    CsvImportExecutionService.new(rows, :customer, @admin).call
+
+    assert Customer.find_by(company_name: "Active Co").active?
+  end
+
+  test "creates customer with intention keep" do
+    rows = [ { row_number: 2, company_name: "Keep Co", country: nil, industry: nil, responsible_consultant_name: nil, last_activity_date: nil, customer_type: nil, intention: :keep, warnings: [] } ]
+
+    CsvImportExecutionService.new(rows, :customer, @admin).call
+
+    assert_equal "keep", Customer.find_by(company_name: "Keep Co").intention
+  end
+
+  test "creates customer with nil intention" do
+    rows = [ { row_number: 2, company_name: "No Intent Co", country: nil, industry: nil, responsible_consultant_name: nil, last_activity_date: nil, customer_type: nil, intention: nil, warnings: [] } ]
+
+    CsvImportExecutionService.new(rows, :customer, @admin).call
+
+    assert_nil Customer.find_by(company_name: "No Intent Co").intention
+  end
+
+  # --- Proposal nil status ---
+
+  test "proposal row with nil status fails validation and records error" do
+    customer = create(:customer, company_name: "StatusNilCo")
+    create(:contact, customer: customer, primary: true)
+
+    rows = [
+      {
+        row_number: 2, title: "No Status Proposal", linkable_company_name: "StatusNilCo",
+        responsible_consultant_name: nil, status: nil,
+        estimated_value: nil, final_value: nil,
+        current_document_url: nil, notes: nil, date_asked: nil,
+        actual_close_date: nil, contact: nil
+      }
+    ]
+
+    result = CsvImportExecutionService.new(rows, :proposal, @admin).call
+
+    assert_equal 0, result[:created_count]
+    assert_equal 1, result[:error_count]
+    assert_equal 2, result[:errors].first[:row]
+  end
+
   # --- Validation error collection ---
 
   test "collects validation errors without stopping" do

@@ -214,22 +214,120 @@ class CsvImportParserServiceTest < ActiveSupport::TestCase
     end
   end
 
-  test "raises error for unknown status value" do
+  test "unknown status value returns nil status and adds warning" do
     csv = "Propuesta\tCliente\tEstado\n" \
           "Test\tAcme\tDesconocido\n"
 
-    error = assert_raises(CsvImportParserService::ParseError) do
-      CsvImportParserService.new(csv, :proposal).call
-    end
-    assert_includes error.message, "Unknown status"
+    result = CsvImportParserService.new(csv, :proposal).call
+    row = result[:rows].first
+    assert_nil row[:status]
+    assert_includes row[:warnings], "Desconocido"
   end
 
   test "returns nil status for blank estado" do
     csv = "Propuesta\tCliente\tEstado\n" \
           "Test\tAcme\t\n"
     result = CsvImportParserService.new(csv, :proposal).call
+    row = result[:rows].first
+    assert_nil row[:status]
+    assert_empty row[:warnings]
+  end
 
-    assert_nil result[:rows].first[:status]
+  test "maps new proposal status synonyms" do
+    {
+      "En espera" => "under_review",
+      "Revisión" => "under_review",
+      "Aprobado" => "won",
+      "Rechazado" => "lost",
+      "Cancelado" => "cancelled"
+    }.each do |spanish, english|
+      csv = "Propuesta\tCliente\tEstado\n" \
+            "Test\tAcme\t#{spanish}\n"
+      result = CsvImportParserService.new(csv, :proposal).call
+      assert_equal english, result[:rows].first[:status], "Expected #{spanish} → #{english}"
+    end
+  end
+
+  test "one unknown-status row and one valid row both parse without abort" do
+    csv = "Propuesta\tCliente\tEstado\n" \
+          "Test1\tAcme\tDesconocido\n" \
+          "Test2\tAcme\tGanado\n"
+    result = CsvImportParserService.new(csv, :proposal).call
+    assert_equal 2, result[:rows].size
+    assert_nil result[:rows][0][:status]
+    assert_includes result[:rows][0][:warnings], "Desconocido"
+    assert_equal "won", result[:rows][1][:status]
+    assert_empty result[:rows][1][:warnings]
+  end
+
+  # Customer type mapping
+
+  test "maps all CUSTOMER_TYPE_MAPPING entries to correct customer_type" do
+    {
+      "Potencial"                      => :prospect,
+      "Prospecto"                      => :prospect,
+      "Cliente activo"                 => :active,
+      "Nuevo facturado"                => :active,
+      "Cliente inactivo por recuperar" => :inactive,
+      "Cliente recuperado"             => :active,
+      "No contesta"                    => :inactive,
+      "Descartar"                      => :inactive
+    }.each do |spanish, expected|
+      csv = "CLIENTE\tTipo de cliente\n" \
+            "Acme\t#{spanish}\n"
+      result = CsvImportParserService.new(csv, :customer).call
+      assert_equal expected, result[:rows].first[:customer_type], "Expected #{spanish} → #{expected}"
+    end
+  end
+
+  test "blank Tipo de cliente leaves customer_type as nil" do
+    csv = "CLIENTE\tTipo de cliente\n" \
+          "Acme\t\n"
+    result = CsvImportParserService.new(csv, :customer).call
+    assert_nil result[:rows].first[:customer_type]
+  end
+
+  test "unknown Tipo de cliente sets customer_type to nil and adds warning" do
+    csv = "CLIENTE\tTipo de cliente\n" \
+          "Acme\tDesconocido\n"
+    result = CsvImportParserService.new(csv, :customer).call
+    row = result[:rows].first
+    assert_nil row[:customer_type]
+    assert_includes row[:warnings], "Desconocido"
+  end
+
+  # Customer intention mapping
+
+  test "maps all CUSTOMER_INTENTION_MAPPING entries to correct intention" do
+    {
+      "Mantener"        => :keep,
+      "Captar o atraer" => :attract,
+      "Recuperar"       => :recapture,
+      "Expandir"        => :expand
+    }.each do |spanish, expected|
+      csv = "CLIENTE\tEstrategia (KARE)\n" \
+            "Acme\t#{spanish}\n"
+      result = CsvImportParserService.new(csv, :customer).call
+      assert_equal expected, result[:rows].first[:intention], "Expected #{spanish} → #{expected}"
+    end
+  end
+
+  test "blank Estrategia (KARE) returns nil intention with no warning" do
+    csv = "CLIENTE\tEstrategia (KARE)\n" \
+          "Acme\t\n"
+    result = CsvImportParserService.new(csv, :customer).call
+    row = result[:rows].first
+    assert_nil row[:intention]
+    assert_empty row[:warnings]
+  end
+
+  test "unknown Estrategia (KARE) returns nil intention with no warning" do
+    csv = "CLIENTE\tEstrategia (KARE)\n" \
+          "Acme\tAlgoRaro\n"
+    result = CsvImportParserService.new(csv, :customer).call
+    row = result[:rows].first
+    assert_nil row[:intention]
+    assert_empty row[:warnings]
   end
 
   # Contacto parsing
