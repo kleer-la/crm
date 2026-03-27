@@ -27,6 +27,8 @@ class Prospect < ApplicationRecord
   validate :company_name_unique_across_customers
   validate :email_unique_across_customer_contacts
 
+  before_validation :normalize_country
+
   after_commit :log_creation, on: :create
   after_commit :log_changes, on: :update
 
@@ -52,6 +54,10 @@ class Prospect < ApplicationRecord
     if Contact.where(email: primary_contact_email).exists?
       errors.add(:primary_contact_email, "is already used by an existing customer contact")
     end
+  end
+
+  def normalize_country
+    self.country = country.presence
   end
 
   def log_creation

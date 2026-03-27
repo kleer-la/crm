@@ -54,6 +54,7 @@ class CsvImportExecutionService
 
     customer = Customer.create!(
       company_name: row[:company_name],
+      country: row[:country],
       industry: row[:industry],
       status: :active,
       responsible_consultant: consultant,

@@ -69,6 +69,7 @@ class CustomersControllerTest < ActionDispatch::IntegrationTest
       post customers_path, params: {
         customer: {
           company_name: "New Customer Co",
+          country: "Argentina",
           status: "active",
           responsible_consultant_id: @user.id,
           date_became_customer: Date.current,
@@ -86,6 +87,7 @@ class CustomersControllerTest < ActionDispatch::IntegrationTest
     end
 
     assert_redirected_to customer_path(Customer.last)
+    assert_equal "Argentina", Customer.last.country
   end
 
   test "create with invalid params re-renders form" do
@@ -106,11 +108,23 @@ class CustomersControllerTest < ActionDispatch::IntegrationTest
 
   test "update with valid params" do
     patch customer_path(@customer), params: {
-      customer: { company_name: "Updated Customer" }
+      customer: { company_name: "Updated Customer", country: "Uruguay" }
     }
 
     assert_redirected_to customer_path(@customer)
     assert_equal "Updated Customer", @customer.reload.company_name
+    assert_equal "Uruguay", @customer.country
+  end
+
+  test "update allows clearing country" do
+    @customer.update!(country: "Argentina")
+
+    patch customer_path(@customer), params: {
+      customer: { country: "" }
+    }
+
+    assert_redirected_to customer_path(@customer)
+    assert_nil @customer.reload.country
   end
 
   test "update with invalid params re-renders form" do

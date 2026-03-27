@@ -9,6 +9,7 @@ class CsvImportParserService
     },
     customer: {
       "CLIENTE" => :company_name,
+      "País/es" => :country,
       "Sector" => :industry,
       "Responsables" => :responsible_consultant_name,
       "Último contacto" => :last_activity_date

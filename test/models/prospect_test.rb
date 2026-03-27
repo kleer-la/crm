@@ -6,6 +6,13 @@ class ProspectTest < ActiveSupport::TestCase
     assert prospect.valid?
   end
 
+  test "allows optional country" do
+    prospect = build(:prospect, country: "Argentina")
+
+    assert prospect.valid?
+    assert_equal "Argentina", prospect.country
+  end
+
   test "requires company_name" do
     prospect = build(:prospect, company_name: nil)
     assert_not prospect.valid?

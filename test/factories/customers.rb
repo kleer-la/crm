@@ -1,6 +1,7 @@
 FactoryBot.define do
   factory :customer do
     sequence(:company_name) { |n| "Customer Co #{n}" }
+    country { nil }
     status { :active }
     association :responsible_consultant, factory: :user
     date_became_customer { Date.current }
@@ -15,6 +16,10 @@ FactoryBot.define do
 
     trait :inactive do
       status { :inactive }
+    end
+
+    trait :with_country do
+      country { "Uruguay" }
     end
   end
 end

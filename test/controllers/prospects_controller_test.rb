@@ -79,6 +79,7 @@ class ProspectsControllerTest < ActionDispatch::IntegrationTest
       post prospects_path, params: {
         prospect: {
           company_name: "New Prospect Co",
+          country: "Argentina",
           primary_contact_name: "John Doe",
           primary_contact_email: "john@newprospect.com",
           source: "referral",
@@ -91,6 +92,7 @@ class ProspectsControllerTest < ActionDispatch::IntegrationTest
     end
 
     assert_redirected_to prospect_path(Prospect.last)
+    assert_equal "Argentina", Prospect.last.country
   end
 
   test "create with invalid params re-renders form" do
@@ -111,11 +113,23 @@ class ProspectsControllerTest < ActionDispatch::IntegrationTest
 
   test "update with valid params" do
     patch prospect_path(@prospect), params: {
-      prospect: { company_name: "Updated Name" }
+      prospect: { company_name: "Updated Name", country: "Uruguay" }
     }
 
     assert_redirected_to prospect_path(@prospect)
     assert_equal "Updated Name", @prospect.reload.company_name
+    assert_equal "Uruguay", @prospect.country
+  end
+
+  test "update allows clearing country" do
+    @prospect.update!(country: "Argentina")
+
+    patch prospect_path(@prospect), params: {
+      prospect: { country: "" }
+    }
+
+    assert_redirected_to prospect_path(@prospect)
+    assert_nil @prospect.reload.country
   end
 
   test "update with invalid params re-renders form" do
@@ -167,12 +181,15 @@ class ProspectsControllerTest < ActionDispatch::IntegrationTest
 
   # Convert
   test "convert creates customer from prospect" do
+    @prospect.update!(country: "Chile")
+
     assert_difference [ "Customer.count" ], 1 do
       patch convert_prospect_path(@prospect)
     end
 
     assert_redirected_to customer_path(Customer.last)
     assert_equal "converted", @prospect.reload.status
+    assert_equal "Chile", Customer.last.country
   end
 
   test "convert fails for disqualified prospect" do

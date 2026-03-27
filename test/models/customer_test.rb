@@ -6,6 +6,13 @@ class CustomerTest < ActiveSupport::TestCase
     assert customer.valid?
   end
 
+  test "allows optional country" do
+    customer = build(:customer, country: "Argentina")
+
+    assert customer.valid?
+    assert_equal "Argentina", customer.country
+  end
+
   test "requires company_name" do
     customer = build(:customer, company_name: nil)
     assert_not customer.valid?

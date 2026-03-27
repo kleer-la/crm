@@ -3,6 +3,7 @@ FactoryBot.define do
     sequence(:company_name) { |n| "Prospect Co #{n}" }
     sequence(:primary_contact_name) { |n| "Contact #{n}" }
     sequence(:primary_contact_email) { |n| "contact#{n}@prospect.com" }
+    country { nil }
     status { :new_prospect }
     association :responsible_consultant, factory: :user
     date_added { Date.current }
@@ -20,6 +21,10 @@ FactoryBot.define do
     trait :converted do
       status { :converted }
       association :converted_customer, factory: :customer
+    end
+
+    trait :with_country do
+      country { "Uruguay" }
     end
   end
 end

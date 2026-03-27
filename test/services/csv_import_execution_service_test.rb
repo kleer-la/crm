@@ -51,7 +51,7 @@ class CsvImportExecutionServiceTest < ActiveSupport::TestCase
   test "creates customers from parsed rows" do
     consultant = create(:user, name: "Pablo Lis")
     rows = [
-      { row_number: 2, company_name: "Acme Corp", industry: "Tech", responsible_consultant_name: "Pablo Lis", last_activity_date: Date.new(2024, 3, 11) }
+      { row_number: 2, company_name: "Acme Corp", country: "Argentina", industry: "Tech", responsible_consultant_name: "Pablo Lis", last_activity_date: Date.new(2024, 3, 11) }
     ]
 
     result = CsvImportExecutionService.new(rows, :customer, @admin).call
@@ -60,21 +60,23 @@ class CsvImportExecutionServiceTest < ActiveSupport::TestCase
     customer = Customer.find_by(company_name: "Acme Corp")
     assert customer.active?
     assert_equal consultant, customer.responsible_consultant
+    assert_equal "Argentina", customer.country
     assert_equal "Tech", customer.industry
     assert_equal Date.new(2024, 3, 11), customer.last_activity_date # restored via update_column after callback
     assert_nil customer.date_became_customer # cleared by import
   end
 
   test "customer defaults last_activity_date to today when nil" do
-    rows = [ { row_number: 2, company_name: "Acme", industry: nil, responsible_consultant_name: nil, last_activity_date: nil } ]
+    rows = [ { row_number: 2, company_name: "Acme", country: nil, industry: nil, responsible_consultant_name: nil, last_activity_date: nil } ]
 
     CsvImportExecutionService.new(rows, :customer, @admin).call
 
     assert_nil Customer.find_by(company_name: "Acme").last_activity_date # nil preserved via update_column
+    assert_nil Customer.find_by(company_name: "Acme").country
   end
 
   test "customer falls back to importing admin when consultant not matched" do
-    rows = [ { row_number: 2, company_name: "Acme", industry: nil, responsible_consultant_name: "Unknown Person", last_activity_date: nil } ]
+    rows = [ { row_number: 2, company_name: "Acme", country: nil, industry: nil, responsible_consultant_name: "Unknown Person", last_activity_date: nil } ]
 
     CsvImportExecutionService.new(rows, :customer, @admin).call
 
@@ -85,7 +87,7 @@ class CsvImportExecutionServiceTest < ActiveSupport::TestCase
 
   test "matches consultant by exact name" do
     pablo = create(:user, name: "Pablo Lis")
-    rows = [ { row_number: 2, company_name: "TestCo", industry: nil, responsible_consultant_name: "Pablo Lis", last_activity_date: nil } ]
+    rows = [ { row_number: 2, company_name: "TestCo", country: nil, industry: nil, responsible_consultant_name: "Pablo Lis", last_activity_date: nil } ]
 
     CsvImportExecutionService.new(rows, :customer, @admin).call
 
@@ -94,7 +96,7 @@ class CsvImportExecutionServiceTest < ActiveSupport::TestCase
 
   test "matches consultant by partial ILIKE" do
     andres = create(:user, name: "Andrés Juárez")
-    rows = [ { row_number: 2, company_name: "TestCo", industry: nil, responsible_consultant_name: "Andrés J", last_activity_date: nil } ]
+    rows = [ { row_number: 2, company_name: "TestCo", country: nil, industry: nil, responsible_consultant_name: "Andrés J", last_activity_date: nil } ]
 
     CsvImportExecutionService.new(rows, :customer, @admin).call
 
@@ -102,7 +104,7 @@ class CsvImportExecutionServiceTest < ActiveSupport::TestCase
   end
 
   test "falls back to importing admin when no consultant match" do
-    rows = [ { row_number: 2, company_name: "TestCo", industry: nil, responsible_consultant_name: "Nobody", last_activity_date: nil } ]
+    rows = [ { row_number: 2, company_name: "TestCo", country: nil, industry: nil, responsible_consultant_name: "Nobody", last_activity_date: nil } ]
 
     CsvImportExecutionService.new(rows, :customer, @admin).call
 

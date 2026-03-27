@@ -22,6 +22,10 @@
             <dd class="mt-1 text-sm text-slate-900"><%= @customer.industry.presence || "—" %></dd>
           </div>
           <div>
+            <dt class="text-sm font-medium text-slate-500">Country</dt>
+            <dd class="mt-1 text-sm text-slate-900"><%= @customer.country.presence || "—" %></dd>
+          </div>
+          <div>
             <dt class="text-sm font-medium text-slate-500">Total Revenue</dt>
             <dd class="mt-1 text-sm text-slate-900 font-semibold"><%= currency(@customer.total_revenue) %></dd>
           </div>
@@ -146,6 +150,10 @@
           <div>
             <dt class="text-sm font-medium text-slate-500">Industry</dt>
             <dd class="mt-1 text-sm text-slate-900"><%= @customer.industry.presence || "—" %></dd>
+          </div>
+          <div>
+            <dt class="text-sm font-medium text-slate-500">Country</dt>
+            <dd class="mt-1 text-sm text-slate-900"><%= @customer.country.presence || "—" %></dd>
           </div>
           <div>
             <dt class="text-sm font-medium text-slate-500">Total Revenue</dt>

@@ -18,10 +18,11 @@ class ConvertProspectServiceTest < ActiveSupport::TestCase
   end
 
   test "conversion pre-populates customer data and sets date_became_customer to today" do
-    @prospect.update!(industry: "Technology")
+    @prospect.update!(industry: "Technology", country: "Argentina")
     customer = ConvertProspectService.new(@prospect, @user).call
 
     assert_equal @prospect.company_name, customer.company_name
+    assert_equal @prospect.country, customer.country
     assert_equal @prospect.industry, customer.industry
     assert_equal @prospect.responsible_consultant, customer.responsible_consultant
     assert_equal Date.current, customer.date_became_customer

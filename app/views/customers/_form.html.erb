@@ -4,6 +4,7 @@
   <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6">
     <%= render "shared/form_field", form: f, field: :company_name, label: "Company Name", required: true %>
     <%= render "shared/form_field", form: f, field: :industry, label: "Industry" %>
+    <%= render "shared/form_field", form: f, field: :country, label: "Country" %>
     <%= render "shared/form_field", form: f, field: :status, label: "Status", type: :select, options: { choices: Customer.statuses.keys.map { |s| [s.titleize, s] } } %>
     <%= render "shared/form_field", form: f, field: :date_became_customer, label: "Customer Since", type: :date_field %>
   </div>

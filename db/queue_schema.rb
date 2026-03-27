@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_25_104404) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_27_090000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -55,6 +55,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_25_104404) do
 
   create_table "customers", force: :cascade do |t|
     t.string "company_name", null: false
+    t.string "country"
     t.datetime "created_at", null: false
     t.date "date_became_customer"
     t.string "industry"
@@ -118,6 +119,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_25_104404) do
   create_table "prospects", force: :cascade do |t|
     t.string "company_name", null: false
     t.integer "converted_customer_id"
+    t.string "country"
     t.datetime "created_at", null: false
     t.date "date_added", null: false
     t.text "disqualification_reason"

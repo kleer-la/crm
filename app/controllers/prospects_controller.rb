@@ -90,7 +90,7 @@ class ProspectsController < ApplicationController
   def prospect_params
     params.require(:prospect).permit(
       :company_name, :primary_contact_name, :primary_contact_email,
-      :primary_contact_phone, :industry, :source, :status,
+      :primary_contact_phone, :industry, :country, :source, :status,
       :estimated_value, :responsible_consultant_id,
       :date_added, :last_activity_date,
       collaborating_consultant_ids: []

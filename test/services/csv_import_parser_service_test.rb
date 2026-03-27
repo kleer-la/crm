@@ -34,9 +34,29 @@ class CsvImportParserServiceTest < ActiveSupport::TestCase
     assert_equal 1, result[:rows].size
     row = result[:rows].first
     assert_equal "San cristobal", row[:company_name]
+    assert_equal "Argentina", row[:country]
     assert_equal "Seguros", row[:industry]
     assert_equal "Andrés J", row[:responsible_consultant_name]
     assert_equal Date.new(2024, 3, 11), row[:last_activity_date]
+  end
+
+  test "customer CSV returns nil for blank country" do
+    csv = "País facturador\tPaís/es\tSector\tResponsables\tCLIENTE\tTipo de cliente\tEstrategia (KARE)\tÚltimo contacto\tPróximo Contacto\tLog contacto\tResumen del cliente\n" \
+          "Uruguay\t\tSeguros\tAndrés J\tSan cristobal\tNuevo facturado\t\t2024/03/11\t\t\t\n"
+    result = CsvImportParserService.new(csv, :customer).call
+
+    assert_nil result[:rows].first[:country]
+  end
+
+  test "customer CSV ignores billing country column" do
+    csv = "País facturador\tPaís/es\tSector\tResponsables\tCLIENTE\tTipo de cliente\tEstrategia (KARE)\tÚltimo contacto\tPróximo Contacto\tLog contacto\tResumen del cliente\n" \
+          "Uruguay\tArgentina\tSeguros\tAndrés J\tSan cristobal\tNuevo facturado\t\t2024/03/11\t\t\t\n"
+    result = CsvImportParserService.new(csv, :customer).call
+
+    row = result[:rows].first
+    assert_equal "Argentina", row[:country]
+    assert_not_includes row.keys, :billing_country
+    assert_not_includes row.values, "Uruguay"
   end
 
   # Proposal CSV

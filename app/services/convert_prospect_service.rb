@@ -29,6 +29,7 @@ class ConvertProspectService
   def create_customer
     Customer.create!(
       company_name: @prospect.company_name,
+      country: @prospect.country,
       industry: @prospect.industry,
       status: :active,
       responsible_consultant: @prospect.responsible_consultant,

@@ -52,6 +52,10 @@
             <dd class="mt-1 text-sm text-slate-900"><%= @prospect.industry.presence || "—" %></dd>
           </div>
           <div>
+            <dt class="text-sm font-medium text-slate-500">Country</dt>
+            <dd class="mt-1 text-sm text-slate-900"><%= @prospect.country.presence || "—" %></dd>
+          </div>
+          <div>
             <dt class="text-sm font-medium text-slate-500">Source</dt>
             <dd class="mt-1 text-sm text-slate-900"><%= @prospect.source&.titleize || "—" %></dd>
           </div>

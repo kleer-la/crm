@@ -21,6 +21,8 @@ class Customer < ApplicationRecord
   validate :company_name_unique_across_prospects
   validate :must_have_at_least_one_contact, on: :update
 
+  before_validation :normalize_country
+
   after_commit :log_creation, on: :create
   after_commit :log_changes, on: :update
 
@@ -42,6 +44,10 @@ class Customer < ApplicationRecord
     if contacts.reject(&:marked_for_destruction?).empty?
       errors.add(:base, "Customer must have at least one contact")
     end
+  end
+
+  def normalize_country
+    self.country = country.presence
   end
 
   def log_creation
