@@ -363,7 +363,7 @@ class CsvImportExecutionServiceTest < ActiveSupport::TestCase
     assert_nil Proposal.find_by(title: "Draft Deal").win_loss_reason
   end
 
-  test "errors when proposal linkable not found" do
+  test "auto-creates a customer when proposal linkable not found" do
     rows = [
       {
         row_number: 2, title: "Orphan Proposal", linkable_company_name: "NonExistent Corp",
@@ -376,9 +376,11 @@ class CsvImportExecutionServiceTest < ActiveSupport::TestCase
 
     result = CsvImportExecutionService.new(rows, :proposal, @admin).call
 
-    assert_equal 0, result[:created_count]
-    assert_equal 1, result[:error_count]
-    assert_includes result[:errors].first[:messages].first, "No matching Customer or Prospect"
+    assert_equal 1, result[:created_count]
+    assert_equal 0, result[:error_count]
+    assert_equal 1, result[:warnings].size
+    assert_includes result[:warnings].first[:messages].first, "NonExistent Corp"
+    assert Customer.exists?(company_name: "NonExistent Corp")
   end
 
   test "matches linkable case-insensitively" do

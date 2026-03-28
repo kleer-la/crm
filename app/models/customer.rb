@@ -2,7 +2,7 @@ class Customer < ApplicationRecord
   include Loggable
   include PgSearch::Model
 
-  pg_search_scope :search_by_name, against: :company_name, using: { trigram: { threshold: 0.1 } }
+  pg_search_scope :search_by_name, against: :company_name, using: { trigram: { threshold: 0.3 } }
 
   enum :status, { active: 0, inactive: 1, at_risk: 2 }
   enum :strategy, { keep: 0, attract: 1, recapture: 2, expand: 3 }

@@ -2,7 +2,7 @@ class Prospect < ApplicationRecord
   include Loggable
   include PgSearch::Model
 
-  pg_search_scope :search_by_name, against: :company_name, using: { trigram: { threshold: 0.1 } }
+  pg_search_scope :search_by_name, against: :company_name, using: { trigram: { threshold: 0.3 } }
 
   enum :source, { referral: 0, inbound: 1, outbound: 2, event: 3, other: 4 }
   enum :status, { new_prospect: 0, contacted: 1, qualified: 2, disqualified: 3, converted: 4 }

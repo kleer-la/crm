@@ -6,6 +6,7 @@ class CsvImportExecutionService
     @created_count = 0
     @skipped_count = 0
     @errors = []
+    @warnings = []
   end
 
   def call
@@ -13,7 +14,7 @@ class CsvImportExecutionService
       import_row(row)
     end
 
-    { created_count: @created_count, skipped_count: @skipped_count, error_count: @errors.size, errors: @errors }
+    { created_count: @created_count, skipped_count: @skipped_count, error_count: @errors.size, errors: @errors, warnings: @warnings }
   end
 
   private
@@ -55,7 +56,7 @@ class CsvImportExecutionService
       return
     end
 
-    consultant = find_consultant(row[:responsible_consultant_name])
+    consultant, collaborators = resolve_consultants(row[:responsible_consultant_name])
     historical_last_activity = row[:last_activity_date]
     historical_date_added = row[:date_added]
 
@@ -72,6 +73,7 @@ class CsvImportExecutionService
       date_added: historical_date_added || Date.current,
       last_activity_date: historical_last_activity || Date.current
     )
+    prospect.collaborating_consultants << collaborators if collaborators.any?
     # Restore historical dates — the log_creation callback overwrites last_activity_date
     prospect.update_column(:last_activity_date, historical_last_activity) if historical_last_activity
     prospect.update_column(:date_added, historical_date_added) if historical_date_added
@@ -93,7 +95,7 @@ class CsvImportExecutionService
       return
     end
 
-    consultant = find_consultant(row[:responsible_consultant_name])
+    consultant, collaborators = resolve_consultants(row[:responsible_consultant_name])
     historical_date = row[:last_activity_date]
     status = customer_type || :active
 
@@ -108,6 +110,7 @@ class CsvImportExecutionService
       last_activity_date: historical_date || Date.current,
       total_revenue: 0
     )
+    customer.collaborating_consultants << collaborators if collaborators.any?
     # Restore historical dates — the log_creation callback overwrites last_activity_date with Time.current
     # Both are cleared to nil if not present in the CSV
     customer.update_column(:last_activity_date, historical_date)
@@ -118,7 +121,7 @@ class CsvImportExecutionService
   # --- Proposal import ---
 
   def import_proposal(row)
-    linkable = find_linkable(row[:linkable_company_name], row[:row_number])
+    linkable = find_linkable(row)
     return unless linkable
 
     if row[:status].nil?
@@ -149,6 +152,16 @@ class CsvImportExecutionService
 
   # --- Consultant matching ---
 
+  def resolve_consultants(raw)
+    names = raw.to_s.split(",").map(&:strip).reject(&:blank?)
+    return [ @importing_user, [] ] if names.empty?
+
+    responsible = find_consultant(names.first)
+    collaborators = names.drop(1).map { |n| find_consultant(n) }.compact.uniq
+    collaborators.reject! { |c| c == responsible }
+    [ responsible, collaborators ]
+  end
+
   def find_consultant(name)
     return @importing_user if name.blank?
 
@@ -166,7 +179,10 @@ class CsvImportExecutionService
 
   # --- Linkable matching ---
 
-  def find_linkable(company_name, row_number)
+  def find_linkable(row)
+    company_name = row[:linkable_company_name]
+    row_number   = row[:row_number]
+
     return log_error(row_number, "Missing company name") if company_name.blank?
 
     # 1. Exact case-insensitive match
@@ -179,9 +195,17 @@ class CsvImportExecutionService
       linkable ||= Prospect.search_by_name(company_name).first
     end
 
+    # 3. Auto-create a Customer when no match found, using the proposal's consultant
     unless linkable
-      log_error(row_number, "No matching Customer or Prospect found for '#{company_name}'")
-      return nil
+      consultant, collaborators = resolve_consultants(row[:responsible_consultant_name])
+      linkable = Customer.create!(
+        company_name: company_name,
+        status: :active,
+        responsible_consultant: consultant,
+        total_revenue: 0
+      )
+      linkable.collaborating_consultants << collaborators if collaborators.any?
+      log_warning(row_number, "No match found for '#{company_name}' — created as a new Customer assigned to #{consultant.name}")
     end
 
     linkable
@@ -238,5 +262,9 @@ class CsvImportExecutionService
   def log_error(row_number, message)
     @errors << { row: row_number, messages: [ message ] }
     nil
+  end
+
+  def log_warning(row_number, message)
+    @warnings << { row: row_number, messages: [ message ] }
   end
 end
