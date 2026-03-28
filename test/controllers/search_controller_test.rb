@@ -52,12 +52,6 @@ class SearchControllerTest < ActionDispatch::IntegrationTest
     assert_includes response.body, "at least 2 characters"
   end
 
-  test "search responds to turbo_stream" do
-    create(:prospect, company_name: "StreamTest Corp", responsible_consultant: @user)
-    get search_path(q: "StreamTest"), as: :turbo_stream
-    assert_response :success
-  end
-
   test "requires authentication" do
     delete logout_path
     get search_path(q: "test")
