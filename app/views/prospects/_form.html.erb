@@ -11,14 +11,13 @@
     <%= render "shared/form_field", form: f, field: :source, label: "Source", type: :select, options: { choices: Prospect.sources.keys.map { |s| [s.titleize, s] }, include_blank: "Select source..." } %>
     <%= render "shared/form_field", form: f, field: :estimated_value, label: "Estimated Value", type: :number_field %>
     <%= render "shared/form_field", form: f, field: :date_added, label: "Date Added", type: :date_field, required: true %>
+    <% if prospect.persisted? && !prospect.converted? %>
+      <%= render "shared/form_field", form: f, field: :status, label: "Status", type: :select, options: { choices: Prospect.statuses.keys.reject { |s| s == "converted" }.map { |s| [s.titleize, s] } } %>
+    <% end %>
   </div>
 
   <%= render "shared/consultant_select", form: f, field: :responsible_consultant_id, label: "Responsible Consultant", required: true %>
   <%= render "shared/consultant_multi_select", form: f, field: :collaborating_consultant_ids, label: "Collaborating Consultants" %>
-
-  <% if prospect.persisted? && !prospect.converted? %>
-    <%= render "shared/form_field", form: f, field: :status, label: "Status", type: :select, options: { choices: Prospect.statuses.keys.reject { |s| s == "converted" }.map { |s| [s.titleize, s] } } %>
-  <% end %>
 
   <%= render "shared/form_actions", form: f, cancel_path: prospect.persisted? ? prospect_path(prospect) : prospects_path %>
 <% end %>

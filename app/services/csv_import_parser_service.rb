@@ -12,7 +12,7 @@ class CsvImportParserService
       "País/es" => :country,
       "Sector" => :industry,
       "Responsables" => :responsible_consultant_name,
-      "Contacto" => :primary_contact_name,
+      "Contacto" => :contact_raw,
       "Email" => :primary_contact_email,
       "Teléfono" => :primary_contact_phone,
       "Fuente" => :source_raw,
@@ -175,7 +175,13 @@ class CsvImportParserService
     end
 
     if row.key?(:contact_raw)
-      row[:contact] = parse_contact(row.delete(:contact_raw))
+      parsed = parse_contact(row.delete(:contact_raw))
+      if @record_type == :prospect
+        row[:primary_contact_name] = parsed&.dig(:name)
+        row[:primary_contact_email] ||= parsed&.dig(:email)
+      else
+        row[:contact] = parsed
+      end
     end
 
     if row.key?(:customer_type_raw)

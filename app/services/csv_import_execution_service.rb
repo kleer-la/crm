@@ -143,7 +143,7 @@ class CsvImportExecutionService
       win_loss_reason: win_loss_reason_for(status)
     )
 
-    extract_contact(linkable, row[:contact]) if row[:contact] && linkable.is_a?(Customer)
+    extract_contact(linkable, row[:contact]) if row[:contact]
     @created_count += 1
   end
 
@@ -189,9 +189,27 @@ class CsvImportExecutionService
 
   # --- Contact extraction ---
 
-  def extract_contact(customer, contact_data)
+  def extract_contact(linkable, contact_data)
     return if contact_data[:name].blank?
 
+    if linkable.is_a?(Prospect)
+      extract_prospect_contact(linkable, contact_data)
+    else
+      extract_customer_contact(linkable, contact_data)
+    end
+  end
+
+  def extract_prospect_contact(prospect, contact_data)
+    return if contact_data[:name].blank?
+    return unless prospect.primary_contact_name.blank? || prospect.primary_contact_email&.end_with?("@placeholder.import")
+
+    prospect.update_columns(
+      primary_contact_name: contact_data[:name],
+      primary_contact_email: contact_data[:email].presence || prospect.primary_contact_email
+    )
+  end
+
+  def extract_customer_contact(customer, contact_data)
     if contact_data[:email].present?
       contact = customer.contacts.find_by(email: contact_data[:email])
     end

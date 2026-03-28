@@ -101,6 +101,26 @@ class CsvImportParserServiceTest < ActiveSupport::TestCase
     assert_nil row[:source_raw]
   end
 
+  test "prospect Contacto column with Name <email> format extracts both name and email" do
+    csv = "CLIENTE\tContacto\n" \
+          "Acme\tJuan López <jlopez@acme.com>\n"
+    result = CsvImportParserService.new(csv, :prospect).call
+
+    row = result[:rows].first
+    assert_equal "Juan López", row[:primary_contact_name]
+    assert_equal "jlopez@acme.com", row[:primary_contact_email]
+  end
+
+  test "prospect separate Email column takes priority over email in Contacto" do
+    csv = "CLIENTE\tContacto\tEmail\n" \
+          "Acme\tJuan López <jlopez@acme.com>\texplicit@acme.com\n"
+    result = CsvImportParserService.new(csv, :prospect).call
+
+    row = result[:rows].first
+    assert_equal "Juan López", row[:primary_contact_name]
+    assert_equal "explicit@acme.com", row[:primary_contact_email]
+  end
+
   test "prospect CSV with missing optional columns returns nil for those fields" do
     csv = "CLIENTE\tContacto\tEmail\n" \
           "DPWorld\tMaria Gómez\tmgomez@dpworld.com\n"
