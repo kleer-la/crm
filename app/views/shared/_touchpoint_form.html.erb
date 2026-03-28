@@ -1,7 +1,7 @@
 <%# Usage: render "shared/touchpoint_form", record: @prospect %>
 <%# record must respond to activity_logs and be a loggable type %>
 <div class="bg-white ring-1 ring-slate-200 rounded-xl p-4 mt-6">
-  <h3 class="text-sm font-semibold text-slate-900 mb-3">Log a Touchpoint</h3>
+  <h3 class="text-sm font-semibold text-slate-900 mb-3">Log a touchpoint</h3>
 
   <%= form_with url: touchpoints_path, method: :post, class: "space-y-3" do |f| %>
     <%= f.hidden_field :loggable_type, value: record.class.name %>
@@ -24,6 +24,6 @@
         placeholder: "What happened?" %>
     </div>
 
-    <%= f.submit "Log Touchpoint", class: "px-3 py-2 text-sm font-medium text-white bg-slate-800 rounded-lg hover:bg-slate-700 cursor-pointer" %>
+    <%= f.submit "Log touchpoint", class: "px-3 py-2 text-sm font-medium text-white bg-slate-800 rounded-lg hover:bg-slate-700 cursor-pointer" %>
   <% end %>
 </div>

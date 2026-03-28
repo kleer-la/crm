@@ -26,15 +26,15 @@
             <dd class="mt-1 text-sm text-slate-900"><%= @customer.country.presence || "—" %></dd>
           </div>
           <div>
-            <dt class="text-sm font-medium text-slate-500">Total Revenue</dt>
+            <dt class="text-sm font-medium text-slate-500">Total revenue</dt>
             <dd class="mt-1 text-sm text-slate-900 font-semibold"><%= currency(@customer.total_revenue) %></dd>
           </div>
           <div>
-            <dt class="text-sm font-medium text-slate-500">Customer Since</dt>
+            <dt class="text-sm font-medium text-slate-500">Customer since</dt>
             <dd class="mt-1 text-sm text-slate-900"><%= @customer.date_became_customer&.strftime("%b %d, %Y") %></dd>
           </div>
           <div>
-            <dt class="text-sm font-medium text-slate-500">Last Activity</dt>
+            <dt class="text-sm font-medium text-slate-500">Last activity</dt>
             <dd class="mt-1 text-sm text-slate-900"><%= @customer.last_activity_date&.strftime("%b %d, %Y") %></dd>
           </div>
         </dl>

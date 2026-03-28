@@ -45,7 +45,7 @@ class ApplicationHelperTest < ActionView::TestCase
   # status_badge — prospect statuses
   test "status_badge new_prospect renders sky blue" do
     badge = status_badge("new_prospect")
-    assert_includes badge, "New Prospect"
+    assert_includes badge, "New prospect"
     assert_includes badge, "bg-sky-100"
     assert_includes badge, "text-sky-700"
   end

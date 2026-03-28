@@ -57,18 +57,18 @@
           </div>
           <div>
             <dt class="text-sm font-medium text-slate-500">Source</dt>
-            <dd class="mt-1 text-sm text-slate-900"><%= @prospect.source&.titleize || "—" %></dd>
+            <dd class="mt-1 text-sm text-slate-900"><%= @prospect.source&.humanize || "—" %></dd>
           </div>
           <div>
-            <dt class="text-sm font-medium text-slate-500">Estimated Value</dt>
+            <dt class="text-sm font-medium text-slate-500">Estimated value</dt>
             <dd class="mt-1 text-sm text-slate-900"><%= currency(@prospect.estimated_value) %></dd>
           </div>
           <div>
-            <dt class="text-sm font-medium text-slate-500">Date Added</dt>
+            <dt class="text-sm font-medium text-slate-500">Date added</dt>
             <dd class="mt-1 text-sm text-slate-900"><%= @prospect.date_added&.strftime("%b %d, %Y") %></dd>
           </div>
           <div>
-            <dt class="text-sm font-medium text-slate-500">Last Activity</dt>
+            <dt class="text-sm font-medium text-slate-500">Last activity</dt>
             <dd class="mt-1 text-sm text-slate-900"><%= @prospect.last_activity_date&.strftime("%b %d, %Y") %></dd>
           </div>
         </dl>

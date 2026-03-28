@@ -42,7 +42,7 @@ module ApplicationHelper
     return tag.span("Deactivated", class: "inline-block px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800") unless active
 
     color = STATUS_BADGE_COLORS.fetch(status.to_s, "bg-slate-100 text-slate-600")
-    tag.span(status.to_s.titleize, class: "inline-block px-2 py-1 text-xs font-semibold rounded-full #{color}")
+    tag.span(status.to_s.humanize, class: "inline-block px-2 py-1 text-xs font-semibold rounded-full #{color}")
   end
 
   def sidebar_link(label, path, section = nil)

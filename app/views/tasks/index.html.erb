@@ -11,18 +11,18 @@
     </div>
     <div>
       <label class="block text-xs font-medium text-slate-600 mb-1">Status</label>
-      <%= f.select :status, Task.statuses.keys.map { |s| [s.titleize, s] }, { include_blank: "All" }, value: params[:status], class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20" %>
+      <%= f.select :status, Task.statuses.keys.map { |s| [s.humanize, s] }, { include_blank: "All" }, value: params[:status], class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20" %>
     </div>
     <div>
       <label class="block text-xs font-medium text-slate-600 mb-1">Priority</label>
-      <%= f.select :priority, Task.priorities.keys.map { |p| [p.titleize, p] }, { include_blank: "All" }, value: params[:priority], class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20" %>
+      <%= f.select :priority, Task.priorities.keys.map { |p| [p.humanize, p] }, { include_blank: "All" }, value: params[:priority], class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20" %>
     </div>
     <div>
-      <label class="block text-xs font-medium text-slate-600 mb-1">Linked To</label>
+      <label class="block text-xs font-medium text-slate-600 mb-1">Linked to</label>
       <%= f.select :linkable_type, [["Prospect", "Prospect"], ["Customer", "Customer"], ["Proposal", "Proposal"]], { include_blank: "All" }, value: params[:linkable_type], class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20" %>
     </div>
     <div>
-      <label class="block text-xs font-medium text-slate-600 mb-1">Assigned To</label>
+      <label class="block text-xs font-medium text-slate-600 mb-1">Assigned to</label>
       <%= f.select :consultant_id, User.assignable.order(:name).map { |u| [u.display_name, u.id] }, { include_blank: "All" }, value: params[:consultant_id], class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20" %>
     </div>
     <div class="flex items-end">
@@ -39,11 +39,11 @@
         <thead class="bg-slate-50">
           <tr>
             <%= render "shared/sortable_header", label: "Title", field: "title", current_sort: params[:sort], current_dir: params[:dir], url: tasks_path %>
-            <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Linked To</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Linked to</th>
             <%= render "shared/sortable_header", label: "Status", field: "status", current_sort: params[:sort], current_dir: params[:dir], url: tasks_path %>
             <%= render "shared/sortable_header", label: "Priority", field: "priority", current_sort: params[:sort], current_dir: params[:dir], url: tasks_path %>
-            <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Assigned To</th>
-            <%= render "shared/sortable_header", label: "Due Date", field: "due_date", current_sort: params[:sort], current_dir: params[:dir], url: tasks_path %>
+            <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Assigned to</th>
+            <%= render "shared/sortable_header", label: "Due date", field: "due_date", current_sort: params[:sort], current_dir: params[:dir], url: tasks_path %>
           </tr>
         </thead>
         <tbody class="bg-white divide-y divide-slate-100">
@@ -64,7 +64,7 @@
               <td class="px-6 py-4 whitespace-nowrap">
                 <% priority_colors = { "low" => "bg-slate-100 text-slate-600", "medium" => "bg-amber-100 text-amber-700", "high" => "bg-red-100 text-red-700" } %>
                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= priority_colors[task.priority] %>">
-                  <%= task.priority.titleize %>
+                  <%= task.priority.humanize %>
                 </span>
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">

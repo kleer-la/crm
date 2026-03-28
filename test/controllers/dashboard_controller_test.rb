@@ -18,7 +18,7 @@ class DashboardControllerTest < ActionDispatch::IntegrationTest
     create(:proposal, linkable: @customer, responsible_consultant: @user, estimated_value: 30000)
     get root_path
     assert_response :success
-    assert_includes response.body, "My Pipeline Value"
+    assert_includes response.body, "My pipeline value"
     assert_includes response.body, "$30,000"
   end
 
@@ -90,7 +90,7 @@ class DashboardControllerTest < ActionDispatch::IntegrationTest
     create(:proposal, linkable: @customer, responsible_consultant: @user, estimated_value: 50000)
     get root_path
     assert_response :success
-    assert_includes response.body, "Team Pipeline Value"
+    assert_includes response.body, "Team pipeline value"
     assert_includes response.body, "$50,000"
   end
 

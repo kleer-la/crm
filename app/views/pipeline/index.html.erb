@@ -6,15 +6,15 @@
   <%# Summary Bar %>
   <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
     <div class="bg-white ring-1 ring-slate-200 rounded-xl p-4">
-      <dt class="text-sm font-medium text-slate-500">Total Pipeline Value</dt>
+      <dt class="text-sm font-medium text-slate-500">Total pipeline value</dt>
       <dd class="mt-1 text-2xl font-semibold text-slate-900"><%= currency(@summary[:pipeline_value]) %></dd>
     </div>
     <div class="bg-white ring-1 ring-slate-200 rounded-xl p-4">
-      <dt class="text-sm font-medium text-slate-500">Open Proposals</dt>
+      <dt class="text-sm font-medium text-slate-500">Open proposals</dt>
       <dd class="mt-1 text-2xl font-semibold text-slate-900"><%= @summary[:open_proposal_count] %></dd>
     </div>
     <div class="bg-white ring-1 ring-slate-200 rounded-xl p-4">
-      <dt class="text-sm font-medium text-slate-500">Active Prospects</dt>
+      <dt class="text-sm font-medium text-slate-500">Active prospects</dt>
       <dd class="mt-1 text-2xl font-semibold text-slate-900"><%= @summary[:active_prospect_count] %></dd>
     </div>
   </div>
@@ -26,27 +26,27 @@
       <%= f.select :consultant_id, User.assignable.order(:name).map { |u| [u.display_name, u.id] }, { include_blank: "All" }, value: params[:consultant_id], class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20" %>
     </div>
     <div>
-      <label class="block text-xs font-medium text-slate-600 mb-1">Prospect Status</label>
+      <label class="block text-xs font-medium text-slate-600 mb-1">Prospect status</label>
       <%= f.select :prospect_status, [["New", "new_prospect"], ["Contacted", "contacted"], ["Qualified", "qualified"]], { include_blank: "All" }, value: params[:prospect_status], class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20" %>
     </div>
     <div>
-      <label class="block text-xs font-medium text-slate-600 mb-1">Proposal Status</label>
+      <label class="block text-xs font-medium text-slate-600 mb-1">Proposal status</label>
       <%= f.select :proposal_status, [["Draft", "draft"], ["Sent", "sent"], ["Under Review", "under_review"]], { include_blank: "All" }, value: params[:proposal_status], class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20" %>
     </div>
     <div>
-      <label class="block text-xs font-medium text-slate-600 mb-1">Close Date From</label>
+      <label class="block text-xs font-medium text-slate-600 mb-1">Close date from</label>
       <%= f.date_field :close_date_from, value: params[:close_date_from], class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20" %>
     </div>
     <div>
-      <label class="block text-xs font-medium text-slate-600 mb-1">Close Date To</label>
+      <label class="block text-xs font-medium text-slate-600 mb-1">Close date to</label>
       <%= f.date_field :close_date_to, value: params[:close_date_to], class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20" %>
     </div>
     <div>
-      <label class="block text-xs font-medium text-slate-600 mb-1">Value Min ($)</label>
+      <label class="block text-xs font-medium text-slate-600 mb-1">Value min ($)</label>
       <%= f.number_field :value_min, value: params[:value_min], min: 0, step: 1000, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20" %>
     </div>
     <div>
-      <label class="block text-xs font-medium text-slate-600 mb-1">Value Max ($)</label>
+      <label class="block text-xs font-medium text-slate-600 mb-1">Value max ($)</label>
       <%= f.number_field :value_max, value: params[:value_max], min: 0, step: 1000, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20" %>
     </div>
   <% end %>
@@ -62,7 +62,7 @@
             <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Status</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Consultant</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Est. Value</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Last Activity</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Last activity</th>
           </tr>
         </thead>
         <tbody class="bg-white divide-y divide-slate-100">
@@ -103,11 +103,11 @@
         <thead class="bg-slate-50">
           <tr>
             <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Title</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Linked To</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Linked to</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Status</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Consultant</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Est. Value</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Expected Close</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Expected close</th>
           </tr>
         </thead>
         <tbody class="bg-white divide-y divide-slate-100">

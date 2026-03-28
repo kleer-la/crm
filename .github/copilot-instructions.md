@@ -41,6 +41,8 @@ Internal consulting CRM for a small team (6-15 people).
 - Form labels: use the `shared/form_field`, `shared/consultant_select`, and `shared/consultant_multi_select` partials — they handle labels, optional tags, and error states
 - Required vs optional fields: do **not** use asterisks (`*`). Instead, mark optional fields with a muted `optional` badge inline next to the label. Required is the default expectation.
 - Inline labels (outside shared partials) should follow the same convention: no asterisk, add `<span class="text-xs text-slate-400 font-normal">optional</span>` for optional fields
+- Label casing: use sentence case for all labels — only the first word is capitalised (e.g. "Responsible consultant", "Collaborating consultants", "Expected close date"). Never title-case multi-word labels.
+- Index table columns: use short labels — prefer "Responsible" over "Responsible consultant" when the context is clear. Full labels ("Responsible consultant", "Collaborating consultants") are appropriate on show and edit pages where both fields appear together.
 
 ## Documentation Lookup
 

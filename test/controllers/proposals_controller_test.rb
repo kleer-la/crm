@@ -233,7 +233,7 @@ class ProposalsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_includes response.body, "Replace & Archive"
     assert_includes response.body, "archive-modal"
-    assert_includes response.body, "Archive Label"
+    assert_includes response.body, "Archive label"
   end
 
   test "show does not display archive prompt when no document url" do

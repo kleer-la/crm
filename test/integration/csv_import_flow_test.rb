@@ -84,15 +84,16 @@ class CsvImportFlowTest < ActionDispatch::IntegrationTest
 
   # 5.4 Error scenarios
 
-  test "proposal import with unmatched linkable records an error and shows details" do
+  test "proposal import with unmatched linkable auto-creates a customer and shows warning" do
     csv = "Propuesta\tCliente\tEstado\nMystery Deal\tUnknown Corp\tGanado\n"
 
-    assert_no_difference "Proposal.count" do
+    assert_difference "Proposal.count", 1 do
       post admin_imports_path, params: { record_type: "proposal", csv_content: csv }
     end
     assert_response :success
+    assert Customer.exists?(company_name: "Unknown Corp")
     assert_includes response.body, "Unknown Corp"
-    assert_includes response.body, "Error Details"
+    assert_includes response.body, "Auto-created Customers"
   end
 
   test "preview with unknown status value succeeds and shows preview" do

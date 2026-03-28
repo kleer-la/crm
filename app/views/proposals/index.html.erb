@@ -11,10 +11,10 @@
     </div>
     <div>
       <label class="block text-xs font-medium text-slate-600 mb-1">Status</label>
-      <%= f.select :status, Proposal.statuses.keys.map { |s| [s.titleize, s] }, { include_blank: "All" }, value: params[:status], class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20" %>
+      <%= f.select :status, Proposal.statuses.keys.map { |s| [s.humanize, s] }, { include_blank: "All" }, value: params[:status], class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20" %>
     </div>
     <div>
-      <label class="block text-xs font-medium text-slate-600 mb-1">Linked To</label>
+      <label class="block text-xs font-medium text-slate-600 mb-1">Linked to</label>
       <%= f.select :linkable_type, [["Prospect", "Prospect"], ["Customer", "Customer"]], { include_blank: "All" }, value: params[:linkable_type], class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20" %>
     </div>
     <div>
@@ -30,11 +30,11 @@
           <tr>
             <%= render "shared/sortable_header", label: "Status", field: "status", current_sort: params[:sort], current_dir: params[:dir], url: proposals_path %>
             <%= render "shared/sortable_header", label: "Asked", field: "date_asked", current_sort: params[:sort], current_dir: params[:dir], url: proposals_path %>
-            <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Linked To</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Consultant</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Linked to</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Responsible</th>
             <%= render "shared/sortable_header", label: "Title", field: "title", current_sort: params[:sort], current_dir: params[:dir], url: proposals_path %>
             <%= render "shared/sortable_header", label: "Est. Value", field: "estimated_value", current_sort: params[:sort], current_dir: params[:dir], url: proposals_path %>
-            <%= render "shared/sortable_header", label: "Expected Close", field: "expected_close_date", current_sort: params[:sort], current_dir: params[:dir], url: proposals_path %>
+            <%= render "shared/sortable_header", label: "Expected close", field: "expected_close_date", current_sort: params[:sort], current_dir: params[:dir], url: proposals_path %>
           </tr>
         </thead>
         <tbody class="bg-white divide-y divide-slate-100">

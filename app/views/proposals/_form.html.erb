@@ -5,7 +5,7 @@
     <%= render "shared/form_field", form: f, field: :title, label: "Title", required: true %>
 
     <div class="py-3">
-      <label class="block text-sm font-medium text-slate-700 mb-1">Linked To</label>
+      <label class="block text-sm font-medium text-slate-700 mb-1">Linked to</label>
       <div class="flex gap-2">
         <%= f.select :linkable_type, [["Prospect", "Prospect"], ["Customer", "Customer"]],
           { include_blank: "Select type..." },
@@ -27,15 +27,15 @@
       </div>
     </div>
 
-    <%= render "shared/form_field", form: f, field: :estimated_value, label: "Estimated Value (USD)", type: :number_field %>
-    <%= render "shared/form_field", form: f, field: :expected_close_date, label: "Expected Close Date", type: :date_field %>
-    <%= render "shared/form_field", form: f, field: :date_asked, label: "Date Asked", type: :date_field %>
-    <%= render "shared/form_field", form: f, field: :date_sent, label: "Date Sent", type: :date_field %>
-    <%= render "shared/form_field", form: f, field: :current_document_url, label: "Document Link (URL)" %>
+    <%= render "shared/form_field", form: f, field: :estimated_value, label: "Estimated value (USD)", type: :number_field %>
+    <%= render "shared/form_field", form: f, field: :expected_close_date, label: "Expected close date", type: :date_field %>
+    <%= render "shared/form_field", form: f, field: :date_asked, label: "Date asked", type: :date_field %>
+    <%= render "shared/form_field", form: f, field: :date_sent, label: "Date sent", type: :date_field %>
+    <%= render "shared/form_field", form: f, field: :current_document_url, label: "Document link (URL)" %>
   </div>
 
-  <%= render "shared/consultant_select", form: f, field: :responsible_consultant_id, label: "Responsible Consultant", required: true %>
-  <%= render "shared/consultant_multi_select", form: f, field: :collaborating_consultant_ids, label: "Collaborating Consultants" %>
+  <%= render "shared/consultant_select", form: f, field: :responsible_consultant_id, label: "Responsible consultant", required: true %>
+  <%= render "shared/consultant_multi_select", form: f, field: :collaborating_consultant_ids, label: "Collaborating consultants" %>
 
   <div class="py-3">
     <label class="block text-sm font-medium text-slate-700 mb-1">Notes</label>
@@ -43,7 +43,7 @@
   </div>
 
   <% if proposal.persisted? %>
-    <%= render "shared/form_field", form: f, field: :status, label: "Status", type: :select, options: { choices: Proposal.statuses.keys.map { |s| [s.titleize, s] } } %>
+    <%= render "shared/form_field", form: f, field: :status, label: "Status", type: :select, options: { choices: Proposal.statuses.keys.map { |s| [s.humanize, s] } } %>
     <% if proposal.won? || proposal.lost? %>
       <%= render "shared/form_field", form: f, field: :win_loss_reason, label: "Win/Loss Reason", required: true %>
     <% end %>
