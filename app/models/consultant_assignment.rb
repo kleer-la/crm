@@ -11,12 +11,14 @@ class ConsultantAssignment < ApplicationRecord
 
   def log_addition
     return unless assignable.respond_to?(:log_system_event)
+    return if assignable.destroyed?
 
     assignable.log_system_event("Collaborating consultant added: #{user.name}")
   end
 
   def log_removal
     return unless assignable.respond_to?(:log_system_event)
+    return if assignable.destroyed?
 
     assignable.log_system_event("Collaborating consultant removed: #{user.name}")
   end
