@@ -13,7 +13,7 @@ class SessionsController < ApplicationController
     if user
       user.update!(name: auth.info.name, avatar_url: auth.info.image)
     elsif (user = User.find_by(email: auth.info.email))
-      user.update!(google_uid: auth.uid, name: auth.info.name, avatar_url: auth.info.image)
+      user.update!(google_uid: auth.uid, avatar_url: auth.info.image)
     else
       user = User.create!(
         google_uid: auth.uid,

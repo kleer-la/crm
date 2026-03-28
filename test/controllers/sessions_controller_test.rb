@@ -87,7 +87,7 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "oauth callback links imported user by email when no google_uid" do
-    imported_user = create(:user, email: "imported@example.com", google_uid: nil, role: :consultant)
+    imported_user = create(:user, name: "Imported name", email: "imported@example.com", google_uid: nil, role: :consultant)
 
     OmniAuth.config.mock_auth[:google_oauth2] = OmniAuth::AuthHash.new(
       provider: "google_oauth2",
@@ -101,7 +101,7 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
 
     imported_user.reload
     assert_equal "new_google_uid_456", imported_user.google_uid
-    assert_equal "Updated Name", imported_user.name
+    assert_equal "Imported name", imported_user.name
     assert_equal "consultant", imported_user.role
     assert_redirected_to root_path
   end
