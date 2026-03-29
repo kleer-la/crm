@@ -2,7 +2,7 @@
   <% if @query.length < 2 %>
     <div class="px-4 py-3 text-sm text-slate-500">Type at least 2 characters...</div>
   <% elsif @results.empty? %>
-    <div class="px-4 py-3 text-sm text-slate-500">No results found.</div>
+    <div class="px-4 py-3 text-sm text-slate-500">No results found...</div>
   <% else %>
     <div class="divide-y divide-slate-100">
       <% @results.each do |result| %>

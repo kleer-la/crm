@@ -10,7 +10,7 @@
 
 ## 2. Pilot — Customers Module
 
-- [x] 2.1 Update `customers/index.html.erb`: swap `blue-600` → `indigo-600` on the New Customer button; add company initials chip per row; update row link to `text-indigo-600`; update `hover:bg-gray-50` → `hover:bg-indigo-50`; improve empty state with SVG icon + message + CTA
+- [x] 2.1 Update `customers/index.html.erb`: swap `blue-600` → `indigo-600` on the New customer button; add company initials chip per row; update row link to `text-indigo-600`; update `hover:bg-gray-50` → `hover:bg-indigo-50`; improve empty state with SVG icon + message + CTA
 - [x] 2.2 Update `customers/index.html.erb`: replace `bg-white shadow rounded-lg` card with `bg-white ring-1 ring-slate-200 rounded-xl` on the table wrapper
 - [x] 2.3 Update `customers/show.html.erb`: replace all `shadow rounded-lg` cards with `ring-1 ring-slate-200 rounded-xl`; swap blue links → indigo; update the Edit button to secondary outline style
 - [x] 2.4 Update `customers/_form.html.erb`: swap blue focus/button classes → indigo; update Cancel button to secondary outline style

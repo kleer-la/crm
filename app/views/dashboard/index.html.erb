@@ -20,10 +20,10 @@
     </div>
   </div>
 
-  <%# Team Alerts %>
+  <%# Team alerts %>
   <% if @pending_conversions.any? || @team_stale_proposals.any? %>
     <div class="mb-6 space-y-3">
-      <h2 class="text-lg font-semibold text-slate-900">Team Alerts</h2>
+      <h2 class="text-lg font-semibold text-slate-900">Team alerts</h2>
       <% @pending_conversions.each do |proposal| %>
         <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
           <p class="text-sm text-yellow-800">
@@ -67,10 +67,10 @@
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
     <%# Main column %>
     <div class="lg:col-span-2 space-y-6">
-      <%# My Open Tasks %>
+      <%# My open tasks %>
       <div class="bg-white ring-1 ring-slate-200 rounded-xl p-6">
         <div class="flex items-center justify-between mb-4">
-          <h2 class="text-lg font-semibold text-slate-900">My Open Tasks</h2>
+          <h2 class="text-lg font-semibold text-slate-900">My open tasks</h2>
           <%= link_to "View All", tasks_path(consultant_id: current_user.id), class: "text-sm text-indigo-600 hover:text-indigo-900" %>
         </div>
         <% if @my_tasks.any? %>
@@ -94,10 +94,10 @@
         <% end %>
       </div>
 
-      <%# My Open Proposals %>
+      <%# My open proposals %>
       <div class="bg-white ring-1 ring-slate-200 rounded-xl p-6">
         <div class="flex items-center justify-between mb-4">
-          <h2 class="text-lg font-semibold text-slate-900">My Open Proposals</h2>
+          <h2 class="text-lg font-semibold text-slate-900">My open proposals</h2>
           <%= link_to "View All", proposals_path(consultant_id: current_user.id), class: "text-sm text-indigo-600 hover:text-indigo-900" %>
         </div>
         <% if @my_proposals.any? %>
@@ -120,10 +120,10 @@
         <% end %>
       </div>
 
-      <%# My Active Prospects %>
+      <%# My active prospects %>
       <div class="bg-white ring-1 ring-slate-200 rounded-xl p-6">
         <div class="flex items-center justify-between mb-4">
-          <h2 class="text-lg font-semibold text-slate-900">My Active Prospects</h2>
+          <h2 class="text-lg font-semibold text-slate-900">My active prospects</h2>
           <%= link_to "View All", prospects_path(consultant_id: current_user.id), class: "text-sm text-indigo-600 hover:text-indigo-900" %>
         </div>
         <% if @my_prospects.any? %>
@@ -146,7 +146,7 @@
     <%# Sidebar column %>
     <div class="space-y-6">
       <div class="bg-white ring-1 ring-slate-200 rounded-xl p-4">
-        <h3 class="text-sm font-semibold text-slate-900 mb-3">Recent Activity</h3>
+        <h3 class="text-sm font-semibold text-slate-900 mb-3">Recent activity</h3>
         <%= render "shared/activity_timeline", activity_logs: @recent_activity %>
       </div>
     </div>
@@ -155,7 +155,7 @@
   <%# Admin Dashboard Section %>
   <% if current_user.admin? %>
     <div class="mt-8 border-t border-gray-200 pt-8">
-      <h2 class="text-xl font-bold text-slate-900 mb-4">Admin: Team Overview</h2>
+      <h2 class="text-xl font-bold text-slate-900 mb-4">Admin: Team overview</h2>
 
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         <div class="bg-white ring-1 ring-slate-200 rounded-xl p-4">
@@ -173,7 +173,7 @@
       </div>
 
       <div class="bg-white ring-1 ring-slate-200 rounded-xl p-6">
-        <h3 class="text-lg font-semibold text-slate-900 mb-4">All Overdue Tasks</h3>
+        <h3 class="text-lg font-semibold text-slate-900 mb-4">All overdue tasks</h3>
         <% if @all_overdue_tasks.any? %>
           <div class="space-y-2">
             <% @all_overdue_tasks.each do |task| %>

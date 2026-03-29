@@ -43,7 +43,7 @@
       <div class="bg-white ring-1 ring-slate-200 rounded-xl p-6">
         <div class="flex items-center justify-between mb-4">
           <h2 class="text-lg font-semibold text-slate-900">Contacts</h2>
-          <%= link_to "Add Contact", new_customer_contact_path(@customer), class: "text-sm text-indigo-600 hover:text-indigo-900" %>
+          <%= link_to "Add contact", new_customer_contact_path(@customer), class: "text-sm text-indigo-600 hover:text-indigo-900" %>
         </div>
         <% if @contacts.any? %>
           <div class="space-y-3">
@@ -105,7 +105,7 @@
       <div class="bg-white ring-1 ring-slate-200 rounded-xl p-6">
         <div class="flex items-center justify-between mb-4">
           <h2 class="text-lg font-semibold text-slate-900">Tasks</h2>
-          <%= link_to "New Task", new_task_path(linkable_type: "Customer", linkable_id: @customer.id), class: "text-sm text-indigo-600 hover:text-indigo-900" %>
+          <%= link_to "New task", new_task_path(linkable_type: "Customer", linkable_id: @customer.id), class: "text-sm text-indigo-600 hover:text-indigo-900" %>
         </div>
         <% tasks = @customer.tasks.where.not(status: [:done, :cancelled]).order(due_date: :asc) %>
         <% if tasks.any? %>
@@ -134,7 +134,7 @@
       <%= render "shared/touchpoint_form", record: @customer %>
 
       <div class="bg-white ring-1 ring-slate-200 rounded-xl p-4">
-        <h3 class="text-sm font-semibold text-slate-900 mb-3">Recent Activity</h3>
+        <h3 class="text-sm font-semibold text-slate-900 mb-3">Recent activity</h3>
         <%= render "shared/activity_timeline", activity_logs: @customer.activity_logs.includes(:user).order(created_at: :desc).limit(20) %>
       </div>
     </div>

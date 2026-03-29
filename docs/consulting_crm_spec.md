@@ -1,4 +1,4 @@
-# Application Spec: Consulting CRM
+# Application Spec: PaToRiCo CRM
 **Version:** 1.3  
 **Date:** March 2026  
 **Target Users:** Small consulting team (6–15 people)

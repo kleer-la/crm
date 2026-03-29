@@ -4,7 +4,7 @@
   <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6">
     <%= render "shared/form_field", form: f, field: :title, label: "Title", required: true %>
 
-    <div class="py-3">
+    <div class="mb-4">
       <label class="block text-sm font-medium text-slate-700 mb-1">Linked to</label>
       <div class="flex gap-2">
         <%= f.select :linkable_type, [["Prospect", "Prospect"], ["Customer", "Customer"]],
@@ -37,8 +37,8 @@
   <%= render "shared/consultant_select", form: f, field: :responsible_consultant_id, label: "Responsible consultant", required: true %>
   <%= render "shared/consultant_multi_select", form: f, field: :collaborating_consultant_ids, label: "Collaborating consultants" %>
 
-  <div class="py-3">
-    <label class="block text-sm font-medium text-slate-700 mb-1">Notes</label>
+  <div class="mb-4">
+    <label class="block text-sm font-medium text-slate-700 mb-1">Notes <span class="text-xs text-slate-400 font-normal">optional</span></label>
     <%= f.text_area :notes, rows: 4, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm placeholder:text-slate-400 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20" %>
   </div>
 

@@ -1,7 +1,7 @@
 <div class="px-4 sm:px-6 lg:px-8 py-8">
   <div class="sm:flex sm:items-center sm:justify-between mb-6">
     <h1 class="text-2xl font-bold text-slate-900">Proposals</h1>
-    <%= link_to "New Proposal", new_proposal_path, class: "mt-4 sm:mt-0 inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-slate-800 rounded-lg hover:bg-slate-700" %>
+    <%= link_to "New proposal", new_proposal_path, class: "mt-4 sm:mt-0 inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-slate-800 rounded-lg hover:bg-slate-700" %>
   </div>
 
   <%= render "shared/filter_bar", url: proposals_path do |f| %>
@@ -33,7 +33,7 @@
             <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Linked to</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Responsible</th>
             <%= render "shared/sortable_header", label: "Title", field: "title", current_sort: params[:sort], current_dir: params[:dir], url: proposals_path %>
-            <%= render "shared/sortable_header", label: "Est. Value", field: "estimated_value", current_sort: params[:sort], current_dir: params[:dir], url: proposals_path %>
+            <%= render "shared/sortable_header", label: "Est. value", field: "estimated_value", current_sort: params[:sort], current_dir: params[:dir], url: proposals_path %>
             <%= render "shared/sortable_header", label: "Expected close", field: "expected_close_date", current_sort: params[:sort], current_dir: params[:dir], url: proposals_path %>
           </tr>
         </thead>
@@ -73,7 +73,7 @@
                 </svg>
                 <p class="text-sm font-medium text-slate-900 mb-1">No proposals found</p>
                 <p class="text-xs text-slate-500 mb-4">Try adjusting your filters or create a new proposal</p>
-                <%= link_to "New Proposal", new_proposal_path, class: "inline-flex items-center px-3 py-1.5 text-sm font-medium text-white bg-slate-800 rounded-lg hover:bg-slate-700" %>
+                <%= link_to "New proposal", new_proposal_path, class: "inline-flex items-center px-3 py-1.5 text-sm font-medium text-white bg-slate-800 rounded-lg hover:bg-slate-700" %>
               </td>
             </tr>
           <% end %>

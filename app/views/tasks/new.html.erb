@@ -1,6 +1,11 @@
 <div class="px-4 sm:px-6 lg:px-8 py-8">
   <div class="max-w-2xl mx-auto">
-    <h1 class="text-2xl font-bold text-slate-900 mb-6">New Task</h1>
+    <% if @task.linkable_type.present? && @task.linkable_id.present? && (linkable = @task.linkable) %>
+      <% linkable_display = linkable.respond_to?(:company_name) ? linkable.company_name : linkable.title %>
+      <h1 class="text-2xl font-bold text-slate-900 mb-6">New task for <%= linkable_display %></h1>
+    <% else %>
+      <h1 class="text-2xl font-bold text-slate-900 mb-6">New task</h1>
+    <% end %>
     <div class="bg-white ring-1 ring-slate-200 rounded-xl p-6">
       <%= render "form", task: @task %>
     </div>

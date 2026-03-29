@@ -23,8 +23,8 @@ class DashboardControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "shows my open tasks with overdue first" do
-    overdue_task = create(:task, :overdue, assigned_to: @user, linkable: @customer, title: "Overdue Task XYZ")
-    future_task = create(:task, assigned_to: @user, linkable: @customer, title: "Future Task XYZ")
+    create(:task, :overdue, assigned_to: @user, linkable: @customer, title: "Overdue Task XYZ")
+    create(:task, assigned_to: @user, linkable: @customer, title: "Future Task XYZ")
     get root_path
     assert_response :success
     assert_includes response.body, "Overdue Task XYZ"
@@ -76,7 +76,7 @@ class DashboardControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "does not show stale alert for proposals with recent activity" do
-    proposal = create(:proposal, linkable: @customer, responsible_consultant: @user, title: "Active Prop XYZ")
+    create(:proposal, linkable: @customer, responsible_consultant: @user, title: "Active Prop XYZ")
     # The creation callback already logged recent activity
     get root_path
     assert_response :success
@@ -97,10 +97,10 @@ class DashboardControllerTest < ActionDispatch::IntegrationTest
   test "admin sees all overdue tasks" do
     admin = create(:user, role: :admin)
     sign_in(admin)
-    overdue = create(:task, :overdue, assigned_to: @user, linkable: @customer, title: "Team Overdue XYZ")
+    create(:task, :overdue, assigned_to: @user, linkable: @customer, title: "Team Overdue XYZ")
     get root_path
     assert_response :success
-    assert_includes response.body, "All Overdue Tasks"
+    assert_includes response.body, "All overdue tasks"
     assert_includes response.body, "Team Overdue XYZ"
   end
 
@@ -131,7 +131,7 @@ class DashboardControllerTest < ActionDispatch::IntegrationTest
     assert_includes response.body, "Non-Dismissable Alert"
     assert_includes response.body, "Stale Non-Dismissable"
     # Alerts are purely data-driven — no dismiss/close controls
-    team_alerts_section = response.body[/Team Alerts.*?(?=<h2|<div class="grid|\z)/m]
+    team_alerts_section = response.body[/Team alerts.*?(?=<h2|<div class="grid|\z)/m]
     assert_not_includes team_alerts_section, "dismiss"
     assert_not_includes team_alerts_section, "close"
     assert_no_match(/<button[^>]*>.*?[Dd]ismiss/m, team_alerts_section)
@@ -140,7 +140,7 @@ class DashboardControllerTest < ActionDispatch::IntegrationTest
   test "consultant does not see admin section" do
     get root_path
     assert_response :success
-    assert_not_includes response.body, "Admin: Team Overview"
+    assert_not_includes response.body, "Admin: Team overview"
   end
 
   test "requires authentication" do

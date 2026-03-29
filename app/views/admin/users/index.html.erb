@@ -1,5 +1,5 @@
 <div class="max-w-4xl mx-auto">
-  <h1 class="text-2xl font-bold mb-6">User Management</h1>
+  <h1 class="text-2xl font-bold mb-6">User management</h1>
 
   <% if flash[:notice] %>
     <div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded mb-6">
@@ -16,7 +16,7 @@
   <% if @pending_users.any? %>
     <section class="mb-8">
       <h2 class="text-lg font-semibold mb-3 text-yellow-800">
-        Pending Approval (<%= @pending_users.count %>)
+        Pending approval (<%= @pending_users.count %>)
       </h2>
       <div class="bg-white ring-1 ring-slate-200 rounded-xl overflow-hidden">
         <table class="min-w-full divide-y divide-slate-100">
@@ -54,10 +54,10 @@
     </section>
   <% end %>
 
-  <%# Active Users %>
+  <%# Active users %>
   <section class="mb-8">
     <h2 class="text-lg font-semibold mb-3">
-      Active Users (<%= @active_users.count %>)
+      Active users (<%= @active_users.count %>)
     </h2>
     <div class="bg-white ring-1 ring-slate-200 rounded-xl overflow-hidden">
       <table class="min-w-full divide-y divide-slate-100">

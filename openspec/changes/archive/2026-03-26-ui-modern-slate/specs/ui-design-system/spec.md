@@ -62,7 +62,7 @@ The sidebar navigation SHALL use `bg-slate-700` as its background. The active na
 All interactive elements that previously used `blue-600` as the accent SHALL use `indigo-600`. This includes primary buttons, link text, focus ring colors, active filter states, and the primary action button on all forms.
 
 #### Scenario: Primary CTA button color
-- **WHEN** a primary action button is rendered (e.g., "New Customer", "Save")
+- **WHEN** a primary action button is rendered (e.g., "New customer", "Save")
 - **THEN** it SHALL use `bg-indigo-600 hover:bg-indigo-700` classes
 
 #### Scenario: Link color

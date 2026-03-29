@@ -3,7 +3,7 @@
 - [x] 1.1 Create CsvImportParserService that accepts CSV content (string) and record_type (:user, :customer, or :proposal). Validates that required headers are present. Returns { headers:, rows: [] } with rows as hashes keyed by CRM field names.
 - [x] 1.2 Define header-to-field mappings. User: name→name, email→email, role→role. Customer: CLIENTE→company_name, Sector→industry, Responsables→responsible_consultant_name, Último contacto→last_activity_date. Proposal: Propuesta→title, Cliente→linkable_company_name, Responsable→responsible_consultant_name, Estado→status_raw, $ Oportunidad→estimated_value, Enlace Propuesta→current_document_url, Comentarios→notes, Fecha del pedido→date_sent, Valor factura→final_value, Fecha de factura→actual_close_date, Contacto→contact_raw.
 - [x] 1.3 Add value cleaning: strip whitespace, parse monetary values (strip $ and commas), parse dates (YYYY/MM/DD format), map Estado values to CRM statuses (BUN/Entender/Presupuestar→draft, Entregada/WIP→sent, Confirmado→under_review, Ganado→won, Perdido/No por ahora/No contesta→lost, Declinamos→cancelled).
-- [x] 1.4 Add Contacto parsing: extract name and email from "Name <email>" format. Handle name-only (no angle brackets).
+- [x] 1.4 Add contacto parsing: extract name and email from "Name <email>" format. Handle name-only (no angle brackets).
 - [x] 1.5 Write tests: valid user CSV, valid customer CSV, valid proposal CSV, missing required headers, empty file, monetary cleanup, date parsing, status mapping, Contacto parsing edge cases, UTF-8 BOM handling.
 - [x] 1.6 Run bin/ci to verify.
 

@@ -1,11 +1,11 @@
-## 1. Project Setup
+## 1. Project setup
 
 - [x] 1.1 Initialize Rails 8 app with PostgreSQL, Hotwire (Turbo + Stimulus), and Tailwind CSS
 - [x] 1.2 Configure database.yml and create development/test databases
 - [x] 1.3 Set up environment variables (credentials/dotenv) for Google OAuth client ID/secret and SMTP settings
 - [x] 1.4 Configure Solid Queue for background job processing
 
-## 2. Database Schema & Models
+## 2. Database schema & Models
 
 - [x] 2.1 Generate User model (name, email, role enum [pending/consultant/admin], active flag, google_uid, avatar_url)
 - [x] 2.2 Generate Prospect model (company_name, primary_contact_name, primary_contact_email, primary_contact_phone, industry, source enum, status enum, estimated_value, disqualification_reason, converted_customer_id, responsible_consultant_id, date_added, last_activity_date)
@@ -30,7 +30,7 @@
 - [x] 3.7 Create login page with Google sign-in button and error states
 - [x] 3.8 Create "waiting for approval" page for pending users
 
-## 4. User Management (Admin)
+## 4. User management (Admin)
 
 - [x] 4.1 Build Admin::UsersController with index (list all users grouped by status: pending, active, deactivated)
 - [x] 4.2 Implement assign role action (Admin sets pending user to Consultant or Admin)
@@ -38,7 +38,7 @@
 - [x] 4.4 Add "(Deactivated) Name" display helper used across the app
 - [x] 4.5 Build user management views with Turbo Frames for inline role assignment
 
-## 5. Shared Layout & Components
+## 5. Shared layout & Components
 
 - [x] 5.1 Create application layout (sidebar nav, top bar with user menu and notification bell placeholder, mobile-responsive)
 - [x] 5.2 Build reusable form partials (text input, select, multi-select, date picker, currency input, URL input with validation)
@@ -47,7 +47,7 @@
 - [x] 5.5 Build activity log timeline partial (chronological entries display)
 - [x] 5.6 Build touchpoint logging form partial (type selector: Call/Email/Meeting/Note + description textarea)
 
-## 6. Activity Log System
+## 6. Activity log system
 
 - [x] 6.1 Create ActivityLog model with readonly? override (returns true for persisted records), no update/destroy routes
 - [x] 6.2 Create Loggable concern: shared methods for models that have activity logs (has_many :activity_logs, as: :loggable)
@@ -55,7 +55,7 @@
 - [x] 6.4 Create TouchpointsController for manual touchpoint logging with type and description validation
 - [x] 6.5 Auto-update last_activity_date on parent record when activity is logged
 
-## 7. Prospects Module
+## 7. Prospects module
 
 - [x] 7.1 Create Prospect model validations: required fields, company_name uniqueness (across Prospects + Customers), email uniqueness (across Prospects + Customer contacts)
 - [x] 7.2 Build ProspectsController with full CRUD actions
@@ -66,7 +66,7 @@
 - [x] 7.7 Add touchpoint logging and activity log display on Prospect show page
 - [x] 7.8 Implement consultant reassignment (responsible + collaborating) with activity log entries
 
-## 8. Customers Module
+## 8. Customers module
 
 - [x] 8.1 Create Customer model validations: required fields, company_name uniqueness, at least one contact
 - [x] 8.2 Build CustomersController with full CRUD actions
@@ -77,7 +77,7 @@
 - [x] 8.7 Build Customer full history timeline partial (linked Proposals, Tasks, activity log in chronological order)
 - [x] 8.8 Add touchpoint logging on Customer show page
 
-## 9. Proposals Module
+## 9. Proposals module
 
 - [x] 9.1 Create Proposal model validations: required fields, win/loss reason required for Won/Lost, URL format for document link
 - [x] 9.2 Build ProposalsController with full CRUD and status transition actions
@@ -90,7 +90,7 @@
 - [x] 9.9 Implement Duplicate Proposal action (copy fields except status, dates, document links → new Draft)
 - [x] 9.10 Implement guard: cannot set Won on Proposal linked to Disqualified Prospect
 
-## 10. Tasks Module
+## 10. Tasks module
 
 - [x] 10.1 Create Task model validations: due_date not in past on creation, cancellation_reason required for Cancelled
 - [x] 10.2 Build TasksController with CRUD, status transitions, and reassignment
@@ -100,7 +100,7 @@
 - [x] 10.6 Implement Cancel with required reason validation
 - [x] 10.7 Add task creation from Prospect, Customer, and Proposal show pages (Turbo Frame form)
 
-## 11. Pipeline View
+## 11. Pipeline view
 
 - [x] 11.1 Create PipelineController with index action: query active Prospects + open Proposals, apply combined AND filters
 - [x] 11.2 Build Pipeline list view with summary bar (total pipeline value, open proposal count, active prospect count)
@@ -116,7 +116,7 @@
 - [x] 12.5 Ensure alerts link to relevant records and cannot be manually dismissed
 - [x] 12.6 Build Admin dashboard section: team-wide metrics and all overdue tasks, conditionally rendered for Admin role
 
-## 13. Global Search
+## 13. Global search
 
 - [x] 13.1 Add pg_search gem, configure trigram indexes on Prospect (company_name), Customer (company_name), Proposal (title)
 - [x] 13.2 Create SearchController with cross-model search action returning typed results

@@ -11,7 +11,7 @@ class Admin::ImportsControllerTest < ActionDispatch::IntegrationTest
   test "admin can access import page" do
     get new_admin_import_path
     assert_response :success
-    assert_includes response.body, "Import Data"
+    assert_includes response.body, "Import data"
   end
 
   test "non-admin is rejected" do

@@ -92,7 +92,7 @@ The helper accepts the status/role as a string and maps it. Unknown values fall 
 
 ```erb
 <%= render "shared/page_header", title: "Customers" do |header| %>
-  <%= header.with_action { link_to "New Customer", ... } %>
+  <%= header.with_action { link_to "New customer", ... } %>
 <% end %>
 ```
 
@@ -132,7 +132,7 @@ The helper accepts the status/role as a string and maps it. Unknown values fall 
 
 **Rationale:** `indigo-600` reads as "default web blue" and doesn't feel distinctive. `slate-800` matches the sidebar palette, gives the UI a composed, professional look (similar to Linear/Vercel), and lets semantic colors (badges, status indicators) carry meaning rather than the chrome.
 
-**Scope:** All primary buttons: page CTAs (`New Customer`, `New Prospect`, etc.), form submit buttons, and filter submit buttons. The active nav pill in the sidebar keeps `bg-indigo-600` as an accent — that contrast against `slate-700` is intentional.
+**Scope:** All primary buttons: page CTAs (`New customer`, `New Prospect`, etc.), form submit buttons, and filter submit buttons. The active nav pill in the sidebar keeps `bg-indigo-600` as an accent — that contrast against `slate-700` is intentional.
 
 ---
 
