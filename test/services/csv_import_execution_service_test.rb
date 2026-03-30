@@ -306,7 +306,7 @@ class CsvImportExecutionServiceTest < ActiveSupport::TestCase
 
     rows = [
       {
-        row_number: 2, title: "Curso Agilidad", linkable_company_name: "UTE UY",
+        row_number: 2, title: "Curso Agilidad", description: "Curso Agilidad", linkable_company_name: "UTE UY",
         responsible_consultant_name: "Pablo Lis", status: "lost",
         estimated_value: BigDecimal("2500"), final_value: nil,
         current_document_url: nil, notes: nil, date_asked: Date.new(2024, 3, 11),
@@ -323,6 +323,7 @@ class CsvImportExecutionServiceTest < ActiveSupport::TestCase
     assert proposal.lost?
     assert_equal "Imported", proposal.win_loss_reason
     assert_equal BigDecimal("2500"), proposal.estimated_value
+    assert_equal "Curso Agilidad", proposal.description
   end
 
   test "sets win_loss_reason to Imported for won proposals" do

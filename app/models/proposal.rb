@@ -14,6 +14,7 @@ class Proposal < ApplicationRecord
   has_many :tasks, as: :linkable, dependent: :restrict_with_error
 
   validates :title, presence: true
+  validates :description, presence: true
   validates :status, presence: true
   validates :responsible_consultant, presence: true
   validates :win_loss_reason, presence: true, if: -> { won? || lost? }
@@ -45,6 +46,7 @@ class Proposal < ApplicationRecord
   def duplicate
     Proposal.new(
       title: title,
+      description: description,
       linkable: linkable,
       responsible_consultant: responsible_consultant,
       estimated_value: estimated_value,

@@ -69,6 +69,7 @@ class CsvImportParserServiceTest < ActiveSupport::TestCase
     assert_equal 1, result[:rows].size
     row = result[:rows].first
     assert_equal "Curso Agilidad y Scrum", row[:title]
+    assert_equal "Curso Agilidad y Scrum", row[:description]
     assert_equal "UTE UY", row[:linkable_company_name]
     assert_equal "Pablo Lis", row[:responsible_consultant_name]
     assert_equal "lost", row[:status]

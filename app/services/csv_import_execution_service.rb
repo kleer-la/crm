@@ -134,6 +134,7 @@ class CsvImportExecutionService
 
     Proposal.create!(
       title: row[:title],
+      description: row[:description].presence || row[:title].to_s,
       linkable: linkable,
       responsible_consultant: consultant,
       status: status,

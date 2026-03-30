@@ -7,11 +7,11 @@
 
   <nav class="flex-1 px-2 py-4 space-y-1">
     <%= sidebar_link "Dashboard", root_path, "dashboard" %>
-    <%= sidebar_link "Prospects", prospects_path, "prospects" %>
-    <%= sidebar_link "Customers", customers_path, "customers" %>
     <%= sidebar_link "Proposals", proposals_path, "proposals" %>
     <%= sidebar_link "Tasks", tasks_path, "tasks" %>
     <%= sidebar_link "Pipeline", pipeline_path, "pipeline" %>
+    <%= sidebar_link "Prospects", prospects_path, "prospects" %>
+    <%= sidebar_link "Customers", customers_path, "customers" %>
     <%= sidebar_link "Reports", "#", "reports" %>
 
     <% if current_user&.admin? %>

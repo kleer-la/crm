@@ -16,7 +16,7 @@ class ProposalsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "index filters by status" do
-    sent_proposal = create(:proposal, linkable: @customer, responsible_consultant: @user, status: :sent, title: "Sent Proposal")
+    create(:proposal, linkable: @customer, responsible_consultant: @user, status: :sent, title: "Sent Proposal")
     get proposals_path(status: "sent")
     assert_response :success
     assert_includes response.body, "Sent Proposal"
@@ -24,7 +24,7 @@ class ProposalsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "index filters by search" do
-    other = create(:proposal, linkable: @customer, responsible_consultant: @user, title: "Unrelated Prop")
+    create(:proposal, linkable: @customer, responsible_consultant: @user, title: "Unrelated Prop")
     get proposals_path(search: @proposal.title)
     assert_response :success
     assert_includes response.body, @proposal.title
@@ -75,6 +75,7 @@ class ProposalsControllerTest < ActionDispatch::IntegrationTest
       post proposals_path, params: {
         proposal: {
           title: "New Proposal",
+          description: "A detailed description of the proposal",
           linkable_type: "Customer",
           linkable_id: @customer.id,
           responsible_consultant_id: @user.id,
@@ -84,6 +85,23 @@ class ProposalsControllerTest < ActionDispatch::IntegrationTest
     end
 
     assert_redirected_to proposal_path(Proposal.last)
+    assert_equal "A detailed description of the proposal", Proposal.last.description
+  end
+
+  test "create without description re-renders form" do
+    assert_no_difference "Proposal.count" do
+      post proposals_path, params: {
+        proposal: {
+          title: "No Desc Proposal",
+          description: "",
+          linkable_type: "Customer",
+          linkable_id: @customer.id,
+          responsible_consultant_id: @user.id
+        }
+      }
+    end
+
+    assert_response :unprocessable_entity
   end
 
   test "create with invalid params re-renders form" do
@@ -104,11 +122,12 @@ class ProposalsControllerTest < ActionDispatch::IntegrationTest
 
   test "update with valid params" do
     patch proposal_path(@proposal), params: {
-      proposal: { title: "Updated Title" }
+      proposal: { title: "Updated Title", description: "Updated description" }
     }
 
     assert_redirected_to proposal_path(@proposal)
     assert_equal "Updated Title", @proposal.reload.title
+    assert_equal "Updated description", @proposal.description
   end
 
   # Destroy
@@ -231,7 +250,7 @@ class ProposalsControllerTest < ActionDispatch::IntegrationTest
     @proposal.update!(current_document_url: "https://docs.example.com/proposal")
     get proposal_path(@proposal)
     assert_response :success
-    assert_includes response.body, "Replace & Archive"
+    assert_includes response.body, "Replace & archive"
     assert_includes response.body, "archive-modal"
     assert_includes response.body, "Archive label"
   end

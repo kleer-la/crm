@@ -26,13 +26,21 @@
         <% end %>
       </div>
     </div>
+  </div>
 
+  <div class="mb-4">
+    <label class="block text-sm font-medium text-slate-700 mb-1">Description</label>
+    <%= f.text_area :description, rows: 4, class: "block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm placeholder:text-slate-400 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20" %>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6">
     <%= render "shared/form_field", form: f, field: :estimated_value, label: "Estimated value (USD)", type: :number_field %>
     <%= render "shared/form_field", form: f, field: :expected_close_date, label: "Expected close date", type: :date_field %>
     <%= render "shared/form_field", form: f, field: :date_asked, label: "Date asked", type: :date_field %>
     <%= render "shared/form_field", form: f, field: :date_sent, label: "Date sent", type: :date_field %>
-    <%= render "shared/form_field", form: f, field: :current_document_url, label: "Document link (URL)" %>
   </div>
+
+  <%= render "shared/form_field", form: f, field: :current_document_url, label: "Document link (URL)" %>
 
   <%= render "shared/consultant_select", form: f, field: :responsible_consultant_id, label: "Responsible consultant", required: true %>
   <%= render "shared/consultant_multi_select", form: f, field: :collaborating_consultant_ids, label: "Collaborating consultants" %>

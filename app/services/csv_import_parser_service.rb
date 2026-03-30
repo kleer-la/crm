@@ -205,6 +205,10 @@ class CsvImportParserService
       raw = row.delete(:source_raw)
       row[:source] = raw.blank? ? nil : PROSPECT_SOURCE_MAPPING[raw]
     end
+
+    if @record_type == :proposal && row.key?(:title)
+      row[:description] = row[:title]
+    end
   end
 
   def parse_monetary(value)

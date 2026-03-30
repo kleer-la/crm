@@ -1,6 +1,7 @@
 FactoryBot.define do
   factory :proposal do
     sequence(:title) { |n| "Proposal #{n}" }
+    sequence(:description) { |n| "Description for proposal #{n}" }
     status { :draft }
     association :responsible_consultant, factory: :user
     association :linkable, factory: :customer

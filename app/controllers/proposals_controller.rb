@@ -111,7 +111,7 @@ class ProposalsController < ApplicationController
 
   def proposal_params
     params.require(:proposal).permit(
-      :title, :linkable_type, :linkable_id,
+      :title, :description, :linkable_type, :linkable_id,
       :status, :estimated_value,
       :date_asked, :date_sent, :expected_close_date, :actual_close_date,
       :win_loss_reason, :notes, :current_document_url,

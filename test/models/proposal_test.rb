@@ -12,6 +12,18 @@ class ProposalTest < ActiveSupport::TestCase
     assert_includes proposal.errors[:title], "can't be blank"
   end
 
+  test "requires description" do
+    proposal = build(:proposal, description: nil)
+    assert_not proposal.valid?
+    assert_includes proposal.errors[:description], "can't be blank"
+  end
+
+  test "requires description to be non-blank" do
+    proposal = build(:proposal, description: "")
+    assert_not proposal.valid?
+    assert_includes proposal.errors[:description], "can't be blank"
+  end
+
   test "requires win_loss_reason when won" do
     proposal = build(:proposal, status: :won, win_loss_reason: nil)
     assert_not proposal.valid?
@@ -142,6 +154,7 @@ class ProposalTest < ActiveSupport::TestCase
     dup = original.duplicate
 
     assert_equal original.title, dup.title
+    assert_equal original.description, dup.description
     assert_equal original.linkable, dup.linkable
     assert_equal original.responsible_consultant, dup.responsible_consultant
     assert_equal original.estimated_value, dup.estimated_value
