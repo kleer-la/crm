@@ -57,6 +57,7 @@ class ProposalsControllerTest < ActionDispatch::IntegrationTest
     get proposal_path(@proposal)
     assert_response :success
     assert_includes response.body, @proposal.title
+    assert_includes response.body, @proposal.description
   end
 
   # New / Create
