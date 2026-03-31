@@ -54,7 +54,7 @@ class DashboardControllerTest < ActionDispatch::IntegrationTest
     create(:proposal, :won, linkable: prospect, responsible_consultant: @user, title: "Won Prop Alert XYZ")
     get root_path
     assert_response :success
-    assert_includes response.body, "Pending Conversion"
+    assert_includes response.body, "Pending conversion"
     assert_includes response.body, "Won Prop Alert XYZ"
   end
 
@@ -63,7 +63,7 @@ class DashboardControllerTest < ActionDispatch::IntegrationTest
     create(:proposal, :won, linkable: prospect, responsible_consultant: @user, title: "Converted Prop XYZ")
     get root_path
     assert_response :success
-    assert_no_match(/Pending Conversion.*Converted Prop XYZ/m, response.body)
+    assert_no_match(/Pending conversion.*Converted Prop XYZ/m, response.body)
   end
 
   test "shows stale proposal alerts" do
@@ -81,7 +81,7 @@ class DashboardControllerTest < ActionDispatch::IntegrationTest
     get root_path
     assert_response :success
     # Should not appear in stale section
-    assert_no_match(/Stale Proposal.*Active Prop XYZ/, response.body)
+    assert_no_match(/Stale proposal.*Active Prop XYZ/, response.body)
   end
 
   test "admin sees team-wide metrics" do
