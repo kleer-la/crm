@@ -24,10 +24,13 @@ class Proposal < ApplicationRecord
 
   scope :open, -> { where(status: [ :draft, :sent, :under_review ]) }
   scope :closed, -> { where(status: [ :won, :lost, :cancelled ]) }
+  STALE_DAYS = 30
+
   scope :stale, -> {
     open.where.not(
       id: ActivityLog.where(loggable_type: "Proposal")
-                     .where("created_at >= ?", 30.days.ago)
+                     .where(entry_type: :touchpoint)
+                     .where("created_at >= ?", STALE_DAYS.days.ago)
                      .select(:loggable_id)
     )
   }

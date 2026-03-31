@@ -1,18 +1,4 @@
-## Purpose
-Provide a personal home screen with open tasks, proposals, prospects, recent activity, key metrics, stale proposal alerts, team alerts, and admin-only team-wide views.
-
-## Requirements
-
-### Requirement: Personal dashboard
-The system SHALL display a personal dashboard as the home screen showing: my open tasks (sorted by due date, overdue first), my open proposals (grouped by status), my active prospects, recent activity on my records, and key metrics (my total pipeline value, proposals sent this month, proposals won this month). "My" records means records where the user is the responsible or a collaborating consultant.
-
-#### Scenario: View personal dashboard
-- **WHEN** a logged-in user navigates to the dashboard
-- **THEN** they see their open tasks, proposals, prospects, recent activity, and personal metrics
-
-#### Scenario: Overdue tasks appear first
-- **WHEN** the user has overdue open tasks
-- **THEN** overdue tasks are sorted to the top of the task list
+## MODIFIED Requirements
 
 ### Requirement: Stale proposal alerts on personal dashboard
 The system SHALL display alerts for the user's open proposals that have had no **touchpoint** (call, email, meeting, or note) logged in the last 30 calendar days. A proposal is stale if no touchpoint activity log entry has been recorded against it in the past 30 days and its status is not Won, Lost, or Cancelled. System-generated activity log entries (status changes, document link updates, consultant changes) SHALL NOT count toward staleness resolution. These alerts are dashboard-only and SHALL NOT trigger email notifications.
@@ -55,21 +41,3 @@ The system SHALL display a team alert widget visible to all logged-in users show
 #### Scenario: Alert cannot be dismissed manually
 - **WHEN** a user attempts to dismiss an alert in the team widget
 - **THEN** the system does not allow manual dismissal
-
-### Requirement: Admin dashboard
-The system SHALL display additional admin-only dashboard content showing: team-wide versions of all personal metrics and all overdue open tasks across the team.
-
-#### Scenario: Admin views admin dashboard
-- **WHEN** an Admin navigates to the dashboard
-- **THEN** they see the personal dashboard content plus team-wide metrics and all overdue tasks across the team
-
-#### Scenario: Consultant cannot see admin metrics
-- **WHEN** a Consultant navigates to the dashboard
-- **THEN** they see only the personal dashboard content, not team-wide admin metrics
-
-### Requirement: Dashboard metrics from live data
-All dashboard metrics SHALL be calculated from live data with no stale caching.
-
-#### Scenario: Metrics reflect current state
-- **WHEN** a user views the dashboard after a Proposal status change
-- **THEN** all metrics reflect the updated state immediately
