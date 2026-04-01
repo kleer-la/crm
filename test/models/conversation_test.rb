@@ -51,7 +51,7 @@ class ConversationTest < ActiveSupport::TestCase
     old = create(:conversation, last_message_at: 2.days.ago)
     recent = create(:conversation, last_message_at: 1.hour.ago)
 
-    assert_equal [recent, old], Conversation.recent.to_a
+    assert_equal [ recent, old ], Conversation.recent.to_a
   end
 
   test "has many messages with dependent destroy" do
