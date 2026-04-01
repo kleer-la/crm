@@ -24,7 +24,7 @@ class KapsoWebhookService
 
   def find_or_create_conversation(conv)
     phone = conv["phone_number"]
-    contact_name = conv.dig("kapso", "contact_name")
+    contact_name = conv["contact_name"] || conv.dig("kapso", "contact_name")
 
     conversation = Conversation.find_or_initialize_by(
       platform: :whatsapp,

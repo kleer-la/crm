@@ -5,11 +5,16 @@ module Webhooks
     # POST /webhooks/kapso — Incoming Kapso events
     def receive
       payload = JSON.parse(request.raw_post)
-      event = payload["event"]
 
-      if event == "whatsapp.message.received"
-        KapsoWebhookService.process(payload["data"])
+      # Kapso v2 sends message/conversation at root level (via X-Webhook-Event header)
+      # Kapso v1 wraps in { event, data }
+      data = if payload.key?("message")
+               payload
+      elsif payload.key?("data")
+               payload["data"]
       end
+
+      KapsoWebhookService.process(data) if data&.key?("message")
 
       head :ok
     rescue JSON::ParserError
