@@ -68,6 +68,7 @@ Rails.application.routes.draw do
   namespace :webhooks do
     get "meta", to: "meta#verify"
     post "meta", to: "meta#receive"
+    post "kapso", to: "kapso#receive"
   end
 
   # Touchpoints
