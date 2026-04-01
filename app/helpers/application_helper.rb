@@ -55,4 +55,14 @@ module ApplicationHelper
   def currency(amount)
     number_to_currency(amount || 0, unit: "$", precision: 2)
   end
+
+  PLATFORM_BADGE_COLORS = {
+    "whatsapp"  => "bg-green-600",
+    "instagram" => "bg-gradient-to-tr from-purple-600 to-pink-500",
+    "facebook"  => "bg-blue-600"
+  }.freeze
+
+  def platform_badge_bg(platform)
+    PLATFORM_BADGE_COLORS.fetch(platform.to_s, "bg-slate-500")
+  end
 end

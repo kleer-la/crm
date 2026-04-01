@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_29_224213) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_01_100001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -53,6 +53,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_29_224213) do
     t.index ["email"], name: "index_contacts_on_email"
   end
 
+  create_table "conversations", force: :cascade do |t|
+    t.string "contact_name"
+    t.datetime "created_at", null: false
+    t.string "external_contact_id", null: false
+    t.datetime "last_message_at"
+    t.integer "platform", null: false
+    t.integer "status", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.index ["last_message_at"], name: "index_conversations_on_last_message_at"
+    t.index ["platform", "external_contact_id"], name: "index_conversations_on_platform_and_external_contact_id", unique: true
+    t.index ["status"], name: "index_conversations_on_status"
+  end
+
   create_table "customers", force: :cascade do |t|
     t.string "company_name", null: false
     t.string "country"
@@ -81,6 +94,21 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_29_224213) do
     t.string "url", null: false
     t.index ["archived_by_id"], name: "index_document_versions_on_archived_by_id"
     t.index ["proposal_id"], name: "index_document_versions_on_proposal_id"
+  end
+
+  create_table "messages", force: :cascade do |t|
+    t.text "content"
+    t.bigint "conversation_id", null: false
+    t.datetime "created_at", null: false
+    t.integer "direction", null: false
+    t.string "external_message_id"
+    t.integer "message_type", default: 0, null: false
+    t.jsonb "metadata", default: {}
+    t.datetime "sent_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["conversation_id"], name: "index_messages_on_conversation_id"
+    t.index ["external_message_id"], name: "index_messages_on_external_message_id", unique: true
+    t.index ["sent_at"], name: "index_messages_on_sent_at"
   end
 
   create_table "notification_preferences", force: :cascade do |t|
@@ -324,6 +352,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_29_224213) do
   add_foreign_key "customers", "users", column: "responsible_consultant_id"
   add_foreign_key "document_versions", "proposals"
   add_foreign_key "document_versions", "users", column: "archived_by_id"
+  add_foreign_key "messages", "conversations"
   add_foreign_key "notification_preferences", "users"
   add_foreign_key "proposals", "users", column: "responsible_consultant_id"
   add_foreign_key "prospects", "users", column: "responsible_consultant_id"

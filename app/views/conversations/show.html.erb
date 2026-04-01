@@ -1,0 +1,45 @@
+<div class="px-4 sm:px-6 lg:px-8 py-8">
+  <!-- Header -->
+  <div class="sm:flex sm:items-center sm:justify-between mb-6">
+    <div class="flex items-center gap-3">
+      <span class="inline-flex items-center justify-center w-10 h-10 rounded-full flex-shrink-0 <%= platform_badge_bg(@conversation.platform) %>">
+        <span class="text-xs font-bold text-white"><%= @conversation.platform_label %></span>
+      </span>
+      <div>
+        <h1 class="text-2xl font-bold text-slate-900"><%= @conversation.display_name %></h1>
+        <p class="text-sm text-slate-500">
+          <%= @conversation.platform.capitalize %> · <%= @conversation.external_contact_id %>
+          · <%= @conversation.status.capitalize %>
+        </p>
+      </div>
+    </div>
+    <div class="mt-4 sm:mt-0">
+      <%= link_to "Back to inbox", conversations_path, class: "inline-flex items-center px-4 py-2 border border-slate-300 rounded-md text-sm font-medium text-slate-700 bg-white hover:bg-slate-50" %>
+    </div>
+  </div>
+
+  <!-- Messages -->
+  <div class="bg-white ring-1 ring-slate-200 rounded-xl overflow-hidden">
+    <div class="p-4 sm:p-6 space-y-4 max-h-[600px] overflow-y-auto" id="messages">
+      <% @messages.each do |message| %>
+        <div class="flex <%= message.outbound? ? 'justify-end' : 'justify-start' %>">
+          <div class="max-w-[75%] rounded-2xl px-4 py-2 <%= message.outbound? ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-900' %>">
+            <% unless message.text? %>
+              <p class="text-xs font-medium mb-1 <%= message.outbound? ? 'text-indigo-200' : 'text-slate-400' %>">
+                <%= message.message_type.capitalize %>
+              </p>
+            <% end %>
+            <p class="text-sm whitespace-pre-wrap"><%= message.content %></p>
+            <p class="text-xs mt-1 <%= message.outbound? ? 'text-indigo-200' : 'text-slate-400' %>">
+              <%= message.sent_at.strftime("%b %d, %H:%M") %>
+            </p>
+          </div>
+        </div>
+      <% end %>
+
+      <% if @messages.empty? %>
+        <p class="text-center text-slate-400 py-8">No messages in this conversation.</p>
+      <% end %>
+    </div>
+  </div>
+</div>

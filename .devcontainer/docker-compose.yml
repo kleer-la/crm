@@ -33,7 +33,7 @@ services:
       - db
 
   db:
-    image: postgres:latest
+    image: postgres:17
     restart: unless-stopped
     volumes:
       - crm-postgres-data:/var/lib/postgresql/data

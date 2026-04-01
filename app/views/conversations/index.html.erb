@@ -1,0 +1,60 @@
+<div class="px-4 sm:px-6 lg:px-8 py-8">
+  <div class="sm:flex sm:items-center sm:justify-between mb-6">
+    <h1 class="text-2xl font-bold text-slate-900">Conversations</h1>
+  </div>
+
+  <!-- Filters -->
+  <div class="mb-6 flex gap-3">
+    <%= link_to "All", conversations_path,
+      class: "px-3 py-1.5 text-sm font-medium rounded-md #{params[:platform].blank? ? 'bg-slate-700 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}" %>
+    <% Conversation.platforms.each_key do |platform| %>
+      <%= link_to platform.upcase == "WHATSAPP" ? "WhatsApp" : platform.capitalize,
+        conversations_path(platform: platform),
+        class: "px-3 py-1.5 text-sm font-medium rounded-md #{params[:platform] == platform ? 'bg-slate-700 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}" %>
+    <% end %>
+  </div>
+
+  <% if @conversations.any? %>
+    <div class="bg-white ring-1 ring-slate-200 rounded-xl overflow-hidden divide-y divide-slate-100">
+      <% @conversations.each do |conversation| %>
+        <%= link_to conversation_path(conversation), class: "block hover:bg-slate-50 transition-colors", data: { turbo_frame: "_top" } do %>
+          <div class="px-4 py-3 sm:px-6 flex items-center gap-4">
+            <!-- Platform badge -->
+            <span class="inline-flex items-center justify-center w-10 h-10 rounded-full flex-shrink-0 <%= platform_badge_bg(conversation.platform) %>">
+              <span class="text-xs font-bold text-white"><%= conversation.platform_label %></span>
+            </span>
+
+            <!-- Contact info -->
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2">
+                <p class="text-sm font-semibold text-slate-900 truncate"><%= conversation.display_name %></p>
+                <% if conversation.open? %>
+                  <span class="inline-block w-2 h-2 rounded-full bg-green-400"></span>
+                <% end %>
+              </div>
+              <% last_message = conversation.messages.max_by(&:sent_at) %>
+              <% if last_message %>
+                <p class="text-sm text-slate-500 truncate">
+                  <%= last_message.outbound? ? "You: " : "" %><%= truncate(last_message.content || "[Media]", length: 80) %>
+                </p>
+              <% end %>
+            </div>
+
+            <!-- Timestamp + count -->
+            <div class="flex-shrink-0 text-right">
+              <% if conversation.last_message_at %>
+                <p class="text-xs text-slate-400"><%= time_ago_in_words(conversation.last_message_at) %> ago</p>
+              <% end %>
+              <p class="text-xs text-slate-400 mt-1"><%= conversation.messages.size %> messages</p>
+            </div>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="bg-white ring-1 ring-slate-200 rounded-xl p-12 text-center">
+      <p class="text-slate-500">No conversations yet.</p>
+      <p class="text-sm text-slate-400 mt-1">Messages will appear here once the Meta webhook is connected.</p>
+    </div>
+  <% end %>
+</div>
