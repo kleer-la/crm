@@ -48,7 +48,7 @@
         <% if @contacts.any? %>
           <div class="space-y-3">
             <% @contacts.each do |contact| %>
-              <div class="flex items-start justify-between border border-slate-200 rounded-lg p-3">
+              <div class="flex items-center justify-between border border-slate-200 rounded-lg p-3">
                 <div>
                   <p class="text-sm font-medium text-slate-900">
                     <%= contact.name %>
@@ -64,9 +64,9 @@
                     <% end %>
                   </p>
                 </div>
-                <div class="flex gap-2">
+                <div class="flex items-center gap-3 shrink-0">
                   <%= link_to "Edit", edit_customer_contact_path(@customer, contact), class: "text-sm text-slate-600 hover:text-slate-900" %>
-                  <%= button_to "Remove", customer_contact_path(@customer, contact), method: :delete, class: "text-sm text-red-600 hover:text-red-800", form: { data: { turbo_confirm: "Remove this contact?" } } %>
+                  <%= link_to "Remove", customer_contact_path(@customer, contact), class: "text-sm text-red-600 hover:text-red-800", data: { turbo_method: :delete, turbo_confirm: "Remove this contact?" } %>
                 </div>
               </div>
             <% end %>
