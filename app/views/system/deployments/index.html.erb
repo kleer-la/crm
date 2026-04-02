@@ -1,0 +1,162 @@
+<div class="px-4 sm:px-6 lg:px-8 py-8">
+  <div class="mb-6">
+    <h1 class="text-2xl font-bold text-slate-900">Deployments</h1>
+  </div>
+
+  <%# Selected deployment detail %>
+  <div class="bg-white ring-1 ring-slate-200 rounded-xl overflow-hidden mb-6">
+    <div class="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+      <h2 class="text-sm font-semibold text-slate-700">
+        <%= @selected_deployment && params[:id].present? ? "Past deployment" : "Current deployment" %>
+      </h2>
+      <% if params[:id].present? %>
+        <%= link_to "Back to current", system_deployments_path,
+            class: "text-xs text-indigo-600 hover:text-indigo-800 font-medium" %>
+      <% end %>
+    </div>
+    <div class="px-6 py-4">
+      <% if @selected_deployment %>
+        <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3 text-sm">
+          <div>
+            <dt class="text-slate-500">Version</dt>
+            <dd class="mt-0.5 font-medium text-slate-900">
+              <% if @selected_deployment.commit_url.present? %>
+                <%= link_to @selected_deployment.version, @selected_deployment.commit_url,
+                    target: "_blank", class: "font-mono text-indigo-600 hover:text-indigo-800" %>
+              <% else %>
+                <span class="font-mono"><%= @selected_deployment.version %></span>
+              <% end %>
+            </dd>
+          </div>
+          <div>
+            <dt class="text-slate-500">Commit SHA</dt>
+            <dd class="mt-0.5 font-mono text-xs text-slate-700"><%= @selected_deployment.commit_sha %></dd>
+          </div>
+          <div class="sm:col-span-2">
+            <dt class="text-slate-500">Commit message</dt>
+            <dd class="mt-0.5 text-slate-900"><%= @selected_deployment.commit_message %></dd>
+          </div>
+          <div>
+            <dt class="text-slate-500">Author</dt>
+            <dd class="mt-0.5 text-slate-900"><%= @selected_deployment.author %></dd>
+          </div>
+          <div>
+            <dt class="text-slate-500">Branch</dt>
+            <dd class="mt-0.5">
+              <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-700">
+                <%= @selected_deployment.branch %>
+              </span>
+            </dd>
+          </div>
+          <div>
+            <dt class="text-slate-500">Environment</dt>
+            <dd class="mt-0.5">
+              <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium
+                <%= @selected_deployment.environment == 'production' ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700' %>">
+                <%= @selected_deployment.environment %>
+              </span>
+            </dd>
+          </div>
+          <div>
+            <dt class="text-slate-500">Deployed</dt>
+            <dd class="mt-0.5 text-slate-900">
+              <%= @selected_deployment.deployed_at.strftime("%Y-%m-%d %H:%M") %>
+            </dd>
+          </div>
+          <div>
+            <dt class="text-slate-500">Deployed by</dt>
+            <dd class="mt-0.5 text-slate-900"><%= @selected_deployment.deployed_by %></dd>
+          </div>
+        </dl>
+      <% else %>
+        <p class="text-sm text-slate-500">No deployment information available yet.</p>
+      <% end %>
+    </div>
+  </div>
+
+  <%# History table %>
+  <div class="bg-white ring-1 ring-slate-200 rounded-xl overflow-hidden">
+    <div class="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+      <h2 class="text-sm font-semibold text-slate-700">History</h2>
+      <span class="text-xs text-slate-500"><%= @total_count %> deployments</span>
+    </div>
+
+    <% if @deployments.any? %>
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-slate-200">
+          <thead class="bg-slate-50">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Version</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Commit</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Branch</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Env</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Date</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">By</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-slate-100">
+            <% @deployments.each do |deployment| %>
+              <%= link_to system_deployments_path(id: deployment.id, page: @page),
+                  class: "contents", data: { turbo_frame: "_top" } do %>
+                <tr class="hover:bg-indigo-50 cursor-pointer
+                  <%= 'bg-indigo-50' if @selected_deployment&.id == deployment.id %>">
+                  <td class="px-6 py-3 whitespace-nowrap text-sm font-mono text-indigo-600">
+                    <%= deployment.version %>
+                  </td>
+                  <td class="px-6 py-3 text-sm text-slate-700 max-w-xs truncate"
+                      title="<%= deployment.commit_message %>">
+                    <%= truncate(deployment.commit_message, length: 50) %>
+                  </td>
+                  <td class="px-6 py-3 whitespace-nowrap">
+                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-700">
+                      <%= deployment.branch %>
+                    </span>
+                  </td>
+                  <td class="px-6 py-3 whitespace-nowrap">
+                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium
+                      <%= deployment.environment == 'production' ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700' %>">
+                      <%= deployment.environment %>
+                    </span>
+                  </td>
+                  <td class="px-6 py-3 whitespace-nowrap text-sm text-slate-500">
+                    <%= deployment.deployed_at.strftime("%Y-%m-%d %H:%M") %>
+                  </td>
+                  <td class="px-6 py-3 whitespace-nowrap text-sm text-slate-500">
+                    <%= deployment.deployed_by %>
+                  </td>
+                </tr>
+              <% end %>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+
+      <% if @total_pages > 1 %>
+        <div class="px-6 py-3 bg-slate-50 border-t border-slate-200">
+          <nav class="flex items-center justify-center gap-1">
+            <% if @page > 1 %>
+              <%= link_to "Previous", system_deployments_path(page: @page - 1),
+                  class: "px-3 py-1 text-sm text-slate-600 hover:text-slate-900 rounded hover:bg-slate-200" %>
+            <% end %>
+            <% (1..@total_pages).each do |p| %>
+              <% if p == 1 || p == @total_pages || (p >= @page - 2 && p <= @page + 2) %>
+                <%= link_to p, system_deployments_path(page: p),
+                    class: "px-3 py-1 text-sm rounded #{p == @page ? 'bg-indigo-600 text-white' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200'}" %>
+              <% elsif p == @page - 3 || p == @page + 3 %>
+                <span class="px-2 text-sm text-slate-400">...</span>
+              <% end %>
+            <% end %>
+            <% if @page < @total_pages %>
+              <%= link_to "Next", system_deployments_path(page: @page + 1),
+                  class: "px-3 py-1 text-sm text-slate-600 hover:text-slate-900 rounded hover:bg-slate-200" %>
+            <% end %>
+          </nav>
+        </div>
+      <% end %>
+    <% else %>
+      <div class="px-6 py-8 text-center text-sm text-slate-500">
+        No deployment history recorded yet.
+      </div>
+    <% end %>
+  </div>
+</div>

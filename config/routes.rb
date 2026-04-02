@@ -74,6 +74,11 @@ Rails.application.routes.draw do
   # Touchpoints
   resources :touchpoints, only: [ :create ]
 
+  # System
+  namespace :system do
+    resources :deployments, only: [ :index ]
+  end
+
   # Health check
   get "up" => "rails/health#show", as: :rails_health_check
 

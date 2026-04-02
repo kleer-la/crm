@@ -23,4 +23,13 @@
       </div>
     <% end %>
   </nav>
+
+  <% last_deployment = Deployment.recent.first %>
+  <% if last_deployment %>
+    <div class="px-4 py-3 border-t border-slate-600">
+      <%= link_to system_deployments_path, class: "text-xs text-slate-400 hover:text-slate-300" do %>
+        Deployed: <%= last_deployment.deployed_at.strftime("%Y-%m-%d %H:%M") %>
+      <% end %>
+    </div>
+  <% end %>
 </div>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_01_100001) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_02_100000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -82,6 +82,22 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_01_100001) do
     t.index ["company_name"], name: "index_customers_on_company_name_trgm", opclass: :gin_trgm_ops, using: :gin
     t.index ["responsible_consultant_id"], name: "index_customers_on_responsible_consultant_id"
     t.index ["status"], name: "index_customers_on_status"
+  end
+
+  create_table "deployments", force: :cascade do |t|
+    t.string "author"
+    t.string "branch"
+    t.text "commit_message"
+    t.string "commit_sha", null: false
+    t.string "commit_url"
+    t.datetime "created_at", null: false
+    t.datetime "deployed_at", null: false
+    t.string "deployed_by"
+    t.string "environment"
+    t.datetime "updated_at", null: false
+    t.string "version"
+    t.index ["commit_sha"], name: "index_deployments_on_commit_sha"
+    t.index ["deployed_at"], name: "index_deployments_on_deployed_at", unique: true
   end
 
   create_table "document_versions", force: :cascade do |t|
