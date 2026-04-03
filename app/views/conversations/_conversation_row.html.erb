@@ -1,0 +1,41 @@
+<%= link_to conversation_path(conversation), id: "conversation_#{conversation.id}",
+    class: "block hover:bg-slate-50 transition-colors #{conversation.closed? ? 'opacity-60' : ''}",
+    data: { turbo_frame: "_top" } do %>
+  <div class="px-4 py-3 sm:px-6 flex items-center gap-4">
+    <!-- Platform badge -->
+    <span class="inline-flex items-center justify-center w-10 h-10 rounded-full flex-shrink-0 <%= platform_badge_bg(conversation.platform) %>">
+      <span class="text-xs font-bold text-white"><%= conversation.platform_label %></span>
+    </span>
+
+    <!-- Contact info -->
+    <% unread = defined?(current_user) && current_user ? conversation.unread_count_for(current_user) : 0 %>
+    <div class="flex-1 min-w-0">
+      <div class="flex items-center gap-2">
+        <p class="text-sm <%= unread > 0 ? 'font-bold text-slate-900' : conversation.closed? ? 'font-medium text-slate-500' : 'font-semibold text-slate-900' %> truncate"><%= conversation.display_name %></p>
+        <% if conversation.open? %>
+          <span class="inline-block w-2 h-2 rounded-full bg-green-400"></span>
+        <% end %>
+        <% if conversation.closed? %>
+          <span class="text-xs text-slate-400">Closed</span>
+        <% end %>
+        <% if unread > 0 %>
+          <span class="inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 text-xs font-bold text-white bg-indigo-600 rounded-full"><%= unread %></span>
+        <% end %>
+      </div>
+      <% last_message = conversation.messages.order(sent_at: :desc).first %>
+      <% if last_message %>
+        <p class="text-sm text-slate-400 truncate">
+          <%= last_message.outbound? ? "You: " : "" %><%= truncate(last_message.content || "[Media]", length: 80) %>
+        </p>
+      <% end %>
+    </div>
+
+    <!-- Timestamp + count -->
+    <div class="flex-shrink-0 text-right">
+      <% if conversation.last_message_at %>
+        <p class="text-xs text-slate-400"><%= time_ago_in_words(conversation.last_message_at) %> ago</p>
+      <% end %>
+      <p class="text-xs text-slate-400 mt-1"><%= conversation.messages.size %> messages</p>
+    </div>
+  </div>
+<% end %>

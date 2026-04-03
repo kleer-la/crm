@@ -3,52 +3,46 @@
     <h1 class="text-2xl font-bold text-slate-900">Conversations</h1>
   </div>
 
-  <!-- Filters -->
+  <!-- Search -->
+  <div class="mb-4">
+    <%= form_with url: conversations_path, method: :get do |f| %>
+      <input type="text" name="q" value="<%= params[:q] %>"
+             class="block w-full sm:w-80 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+             placeholder="Search conversations..."
+             autocomplete="off">
+      <% if params[:platform].present? %>
+        <%= f.hidden_field :platform, value: params[:platform] %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <!-- Status filters -->
+  <div class="mb-3 flex gap-3">
+    <% current_status = params[:status] || "open" %>
+    <%= link_to "Open", conversations_path(status: "open", platform: params[:platform], q: params[:q]),
+      class: "px-3 py-1.5 text-sm font-medium rounded-md #{current_status == 'open' ? 'bg-slate-700 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}" %>
+    <%= link_to "Closed", conversations_path(status: "closed", platform: params[:platform], q: params[:q]),
+      class: "px-3 py-1.5 text-sm font-medium rounded-md #{current_status == 'closed' ? 'bg-slate-700 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}" %>
+    <%= link_to "All", conversations_path(status: "all", platform: params[:platform], q: params[:q]),
+      class: "px-3 py-1.5 text-sm font-medium rounded-md #{current_status == 'all' ? 'bg-slate-700 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}" %>
+  </div>
+
+  <!-- Platform filters -->
   <div class="mb-6 flex gap-3">
-    <%= link_to "All", conversations_path,
+    <%= link_to "All", conversations_path(status: current_status),
       class: "px-3 py-1.5 text-sm font-medium rounded-md #{params[:platform].blank? ? 'bg-slate-700 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}" %>
     <% Conversation.platforms.each_key do |platform| %>
       <%= link_to platform.upcase == "WHATSAPP" ? "WhatsApp" : platform.capitalize,
-        conversations_path(platform: platform),
+        conversations_path(platform: platform, status: current_status),
         class: "px-3 py-1.5 text-sm font-medium rounded-md #{params[:platform] == platform ? 'bg-slate-700 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}" %>
     <% end %>
   </div>
 
   <% if @conversations.any? %>
-    <div class="bg-white ring-1 ring-slate-200 rounded-xl overflow-hidden divide-y divide-slate-100">
+    <%= turbo_stream_from "conversations" %>
+    <div class="bg-white ring-1 ring-slate-200 rounded-xl overflow-hidden divide-y divide-slate-100" id="conversation-list">
       <% @conversations.each do |conversation| %>
-        <%= link_to conversation_path(conversation), class: "block hover:bg-slate-50 transition-colors", data: { turbo_frame: "_top" } do %>
-          <div class="px-4 py-3 sm:px-6 flex items-center gap-4">
-            <!-- Platform badge -->
-            <span class="inline-flex items-center justify-center w-10 h-10 rounded-full flex-shrink-0 <%= platform_badge_bg(conversation.platform) %>">
-              <span class="text-xs font-bold text-white"><%= conversation.platform_label %></span>
-            </span>
-
-            <!-- Contact info -->
-            <div class="flex-1 min-w-0">
-              <div class="flex items-center gap-2">
-                <p class="text-sm font-semibold text-slate-900 truncate"><%= conversation.display_name %></p>
-                <% if conversation.open? %>
-                  <span class="inline-block w-2 h-2 rounded-full bg-green-400"></span>
-                <% end %>
-              </div>
-              <% last_message = conversation.messages.max_by(&:sent_at) %>
-              <% if last_message %>
-                <p class="text-sm text-slate-500 truncate">
-                  <%= last_message.outbound? ? "You: " : "" %><%= truncate(last_message.content || "[Media]", length: 80) %>
-                </p>
-              <% end %>
-            </div>
-
-            <!-- Timestamp + count -->
-            <div class="flex-shrink-0 text-right">
-              <% if conversation.last_message_at %>
-                <p class="text-xs text-slate-400"><%= time_ago_in_words(conversation.last_message_at) %> ago</p>
-              <% end %>
-              <p class="text-xs text-slate-400 mt-1"><%= conversation.messages.size %> messages</p>
-            </div>
-          </div>
-        <% end %>
+        <%= render "conversations/conversation_row", conversation: conversation %>
       <% end %>
     </div>
   <% else %>

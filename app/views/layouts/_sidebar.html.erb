@@ -12,7 +12,8 @@
     <%= sidebar_link "Pipeline", pipeline_path, "pipeline" %>
     <%= sidebar_link "Prospects", prospects_path, "prospects" %>
     <%= sidebar_link "Customers", customers_path, "customers" %>
-    <%= sidebar_link "Conversations", conversations_path, "conversations" %>
+    <% total_unread = current_user ? Conversation.open.sum { |c| c.unread_count_for(current_user) } : 0 %>
+    <%= sidebar_link "Conversations#{total_unread > 0 ? " (#{total_unread})" : ""}", conversations_path, "conversations" %>
     <%= sidebar_link "Reports", "#", "reports" %>
 
     <% if current_user&.admin? %>

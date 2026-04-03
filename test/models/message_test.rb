@@ -42,6 +42,17 @@ class MessageTest < ActiveSupport::TestCase
     assert_in_delta now.to_f, conversation.reload.last_message_at.to_f, 1
   end
 
+  test "requires content for note messages" do
+    message = build(:message, message_type: :note, content: nil)
+    assert_not message.valid?
+    assert_includes message.errors[:content], "can't be blank"
+  end
+
+  test "note message type is valid" do
+    message = build(:message, message_type: :note, content: "Internal note", direction: :outbound)
+    assert message.valid?
+  end
+
   test "does not overwrite newer last_message_at" do
     conversation = create(:conversation, last_message_at: Time.current)
     original = conversation.last_message_at

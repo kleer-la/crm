@@ -1,0 +1,74 @@
+<%# Renders media content based on message type, using URLs from metadata %>
+<% case message.message_type %>
+<% when "image" %>
+  <% image_url = message.metadata.dig("image", "url") || message.metadata.dig("image", "link") %>
+  <% if image_url %>
+    <img src="<%= image_url %>" alt="<%= message.content %>" class="rounded-lg max-w-full max-h-64 cursor-pointer" loading="lazy">
+  <% end %>
+  <% if message.content.present? && message.content != "[Image]" %>
+    <p class="text-sm whitespace-pre-wrap mt-1"><%= message.content %></p>
+  <% end %>
+
+<% when "audio" %>
+  <% audio_url = message.metadata.dig("audio", "url") || message.metadata.dig("audio", "link") %>
+  <% if audio_url %>
+    <audio controls class="max-w-full" preload="none">
+      <source src="<%= audio_url %>">
+    </audio>
+  <% else %>
+    <p class="text-sm italic">Audio message</p>
+  <% end %>
+
+<% when "video" %>
+  <% video_url = message.metadata.dig("video", "url") || message.metadata.dig("video", "link") %>
+  <% if video_url %>
+    <video controls class="rounded-lg max-w-full max-h-64" preload="none">
+      <source src="<%= video_url %>">
+    </video>
+  <% else %>
+    <p class="text-sm italic">Video message</p>
+  <% end %>
+  <% if message.content.present? && message.content != "[Video]" %>
+    <p class="text-sm whitespace-pre-wrap mt-1"><%= message.content %></p>
+  <% end %>
+
+<% when "document" %>
+  <% doc_url = message.metadata.dig("document", "url") || message.metadata.dig("document", "link") %>
+  <% filename = message.metadata.dig("document", "filename") || "Document" %>
+  <% if doc_url %>
+    <a href="<%= doc_url %>" target="_blank" rel="noopener" class="inline-flex items-center gap-2 text-sm underline">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+      <%= filename %>
+    </a>
+  <% else %>
+    <p class="text-sm italic"><%= filename %></p>
+  <% end %>
+
+<% when "sticker" %>
+  <% sticker_url = message.metadata.dig("sticker", "url") || message.metadata.dig("sticker", "link") %>
+  <% if sticker_url %>
+    <img src="<%= sticker_url %>" alt="Sticker" class="max-w-[128px] max-h-[128px]" loading="lazy">
+  <% else %>
+    <p class="text-sm italic">Sticker</p>
+  <% end %>
+
+<% when "location" %>
+  <% lat = message.metadata.dig("location", "latitude") %>
+  <% lng = message.metadata.dig("location", "longitude") %>
+  <% name = message.metadata.dig("location", "name") %>
+  <% if lat && lng %>
+    <p class="text-sm">
+      <span class="font-medium"><%= name || "Location" %></span><br>
+      <span class="text-xs opacity-75"><%= lat %>, <%= lng %></span>
+    </p>
+  <% else %>
+    <p class="text-sm italic">Location shared</p>
+  <% end %>
+
+<% when "reaction" %>
+  <% emoji = message.metadata.dig("reaction", "emoji") %>
+  <% if emoji %>
+    <p class="text-2xl"><%= emoji %></p>
+  <% end %>
+
+<% end %>

@@ -1,0 +1,13 @@
+<% if has_older && messages.any? %>
+  <turbo-frame id="older-messages" src="<%= older_messages_conversation_path(conversation, before: messages.first.sent_at.iso8601(6)) %>" loading="lazy">
+    <button class="w-full text-center text-sm text-indigo-600 hover:text-indigo-800 py-2">
+      Load earlier messages
+    </button>
+  </turbo-frame>
+<% else %>
+  <turbo-frame id="older-messages"></turbo-frame>
+<% end %>
+
+<% messages.each do |message| %>
+  <%= render "conversations/message", message: message %>
+<% end %>

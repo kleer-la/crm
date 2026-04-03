@@ -1,0 +1,63 @@
+<div id="contact-panel" class="bg-white ring-1 ring-slate-200 rounded-xl p-4">
+  <% if conversation.linkable %>
+    <% record = conversation.linkable %>
+    <h3 class="text-sm font-semibold text-slate-900 mb-3">
+      <%= record.class.name %>
+    </h3>
+
+    <div class="space-y-3 text-sm">
+      <div>
+        <p class="text-slate-500">Name</p>
+        <% if record.is_a?(Customer) %>
+          <%= link_to record.company_name, customer_path(record), class: "text-indigo-600 hover:underline font-medium" %>
+        <% else %>
+          <%= link_to record.company_name, prospect_path(record), class: "text-indigo-600 hover:underline font-medium" %>
+        <% end %>
+      </div>
+
+      <div>
+        <p class="text-slate-500">Status</p>
+        <p><%= status_badge(record.status) %></p>
+      </div>
+
+      <% if record.respond_to?(:responsible_consultant) && record.responsible_consultant %>
+        <div>
+          <p class="text-slate-500">Responsible</p>
+          <p class="text-slate-900"><%= record.responsible_consultant.name %></p>
+        </div>
+      <% end %>
+
+      <% if record.is_a?(Customer) && record.contacts.any? %>
+        <div>
+          <p class="text-slate-500">Contacts</p>
+          <% record.contacts.each do |contact| %>
+            <p class="text-slate-900">
+              <%= contact.name %>
+              <% if contact.primary? %>
+                <span class="text-xs text-indigo-600">(primary)</span>
+              <% end %>
+            </p>
+          <% end %>
+        </div>
+      <% end %>
+
+      <% recent_proposals = record.proposals.order(created_at: :desc).limit(3) if record.respond_to?(:proposals) %>
+      <% if recent_proposals&.any? %>
+        <div>
+          <p class="text-slate-500">Recent proposals</p>
+          <% recent_proposals.each do |proposal| %>
+            <p>
+              <%= link_to proposal.title, proposal_path(proposal), class: "text-indigo-600 hover:underline" %>
+              <span class="text-slate-400 text-xs"><%= status_badge(proposal.status) %></span>
+            </p>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="text-center py-4">
+      <p class="text-sm text-slate-400">No linked record</p>
+      <p class="text-xs text-slate-400 mt-1">Use the "Link to" dropdown above to connect this conversation to a customer or prospect.</p>
+    </div>
+  <% end %>
+</div>

@@ -62,4 +62,88 @@ class ConversationTest < ActiveSupport::TestCase
       conversation.destroy
     end
   end
+
+  test "belongs to assigned_user optionally" do
+    conversation = build(:conversation, assigned_user: nil)
+    assert conversation.valid?
+  end
+
+  test "can be assigned to a user" do
+    user = create(:user)
+    conversation = create(:conversation, assigned_user: user)
+    assert_equal user, conversation.assigned_user
+  end
+
+  test "belongs to linkable polymorphic optionally" do
+    conversation = build(:conversation, linkable: nil)
+    assert conversation.valid?
+  end
+
+  test "can be linked to a customer" do
+    customer = create(:customer)
+    conversation = create(:conversation, linkable: customer)
+    assert_equal customer, conversation.linkable
+  end
+
+  test "can be linked to a prospect" do
+    prospect = create(:prospect)
+    conversation = create(:conversation, linkable: prospect)
+    assert_equal prospect, conversation.linkable
+  end
+
+  test "has many read_states with dependent destroy" do
+    conversation = create(:conversation)
+    create(:conversation_read_state, conversation: conversation)
+    assert_equal 1, conversation.read_states.count
+
+    assert_difference "ConversationReadState.count", -1 do
+      conversation.destroy
+    end
+  end
+
+  test "unread_count_for returns total messages when no read state" do
+    conversation = create(:conversation, :with_messages)
+    user = create(:user)
+    assert_equal 2, conversation.unread_count_for(user)
+  end
+
+  test "unread_count_for returns messages after last_read_at" do
+    conversation = create(:conversation)
+    user = create(:user)
+    create(:message, conversation: conversation, sent_at: 2.hours.ago)
+    create(:message, conversation: conversation, sent_at: 30.minutes.ago)
+    create(:conversation_read_state, user: user, conversation: conversation, last_read_at: 1.hour.ago)
+
+    assert_equal 1, conversation.unread_count_for(user)
+  end
+
+  test "mark_as_read creates read state" do
+    conversation = create(:conversation)
+    user = create(:user)
+
+    assert_difference "ConversationReadState.count", 1 do
+      conversation.mark_as_read!(user)
+    end
+  end
+
+  test "mark_as_read updates existing read state" do
+    conversation = create(:conversation)
+    user = create(:user)
+    create(:conversation_read_state, user: user, conversation: conversation, last_read_at: 1.day.ago)
+
+    assert_no_difference "ConversationReadState.count" do
+      conversation.mark_as_read!(user)
+    end
+
+    assert_in_delta Time.current, conversation.read_states.find_by(user: user).last_read_at, 2
+  end
+
+  test "search_by_contact finds by name" do
+    create(:conversation, contact_name: "Carlos Martinez")
+    create(:conversation, contact_name: "Ana Lopez")
+
+    results = Conversation.search_by_contact("Carlos")
+    assert_equal 1, results.count
+    assert_equal "Carlos Martinez", results.first.contact_name
+  end
 end

@@ -65,4 +65,14 @@ module ApplicationHelper
   def platform_badge_bg(platform)
     PLATFORM_BADGE_COLORS.fetch(platform.to_s, "bg-slate-500")
   end
+
+  def message_bubble_classes(message)
+    if message.note?
+      "bg-amber-50 text-slate-900 border border-amber-200"
+    elsif message.outbound?
+      "bg-indigo-600 text-white"
+    else
+      "bg-slate-100 text-slate-900"
+    end
+  end
 end

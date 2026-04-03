@@ -62,7 +62,16 @@ Rails.application.routes.draw do
   get "pipeline", to: "pipeline#index", as: :pipeline
 
   # Conversations (Meta messaging PoC)
-  resources :conversations, only: [ :index, :show ]
+  resources :conversations, only: [ :index, :show ] do
+    resources :messages, only: [ :create ]
+    member do
+      patch :assign
+      patch :link
+      patch :close
+      patch :reopen
+      get :older_messages
+    end
+  end
 
   # Webhooks
   namespace :webhooks do

@@ -1,0 +1,28 @@
+<div id="reply_composer" class="border-t border-slate-200 p-4"
+     data-controller="reply-composer">
+  <%= form_with(model: [conversation, message || Message.new], url: conversation_messages_path(conversation),
+                class: "flex gap-2 items-end",
+                data: { reply_composer_target: "form", action: "keydown.enter->reply-composer#submitOnEnter" }) do |f| %>
+    <div class="flex-1">
+      <%= f.text_area :content, rows: 1,
+          class: "block w-full rounded-xl border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm resize-none",
+          placeholder: "Type a message...",
+          data: { reply_composer_target: "input", action: "input->reply-composer#resize" } %>
+    </div>
+    <div class="flex gap-1">
+      <%= f.hidden_field :message_type, value: "text", data: { reply_composer_target: "messageType" } %>
+      <button type="button"
+              class="px-3 py-2 text-sm font-medium rounded-xl text-slate-500 hover:bg-slate-100"
+              data-action="click->reply-composer#toggleNote"
+              data-reply-composer-target="noteToggle"
+              title="Add internal note">
+        Note
+      </button>
+      <button type="submit"
+              class="px-4 py-2 text-sm font-medium rounded-xl bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-50"
+              data-reply-composer-target="submit">
+        Send
+      </button>
+    </div>
+  <% end %>
+</div>
