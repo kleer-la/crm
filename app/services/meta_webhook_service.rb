@@ -41,6 +41,14 @@ class MetaWebhookService
     end
   end
 
+  def instagram?
+    @payload["object"] == "instagram"
+  end
+
+  def page_id
+    @payload.dig("entry", 0, "id")
+  end
+
   def whatsapp_message?(change)
     value = change["value"]
     value && value["messaging_product"] == "whatsapp" && value["messages"]&.any?
@@ -78,8 +86,11 @@ class MetaWebhookService
     msg = change["message"]
     return unless msg
 
-    # Determine platform from page vs instagram scoped ID
-    platform = change.key?("instagram") ? :instagram : :facebook
+    # Skip messages sent by our own page (auto-replies, echoes)
+    return if sender_id == page_id
+
+    # Determine platform from top-level object field
+    platform = instagram? ? :instagram : :facebook
 
     conversation = find_or_create_conversation(
       platform: platform,
