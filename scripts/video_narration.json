@@ -1,0 +1,67 @@
+[
+  {
+    "screenshot": "01_inbox_empty.png",
+    "duration": 5,
+    "narration": "Bienvenidos al CRM de consultoría. Esta es la bandeja de conversaciones de WhatsApp. Por ahora está vacía, esperando conexiones."
+  },
+  {
+    "screenshot": "02_first_message_arrives.png",
+    "duration": 5,
+    "narration": "Un nuevo contacto envía un mensaje por WhatsApp. Carlos Pérez aparece en la bandeja con un indicador de mensaje no leído."
+  },
+  {
+    "screenshot": "03_conversation_opened.png",
+    "duration": 5,
+    "narration": "La consultora abre la conversación. Ve el mensaje de Carlos preguntando por servicios de consultoría ágil."
+  },
+  {
+    "screenshot": "04_consultant_replies.png",
+    "duration": 5,
+    "narration": "La consultora responde desde el CRM. Su mensaje aparece a la derecha, en color índigo, distinguiéndose del mensaje recibido."
+  },
+  {
+    "screenshot": "05_more_messages.png",
+    "duration": 5,
+    "narration": "Carlos responde con más detalles. Necesitan coaching ágil para un equipo de veinte personas con experiencia en Scrum."
+  },
+  {
+    "screenshot": "06_document_received.png",
+    "duration": 5,
+    "narration": "Carlos envía un documento PDF con los requisitos del proyecto. El CRM muestra el tipo de archivo con un enlace de descarga."
+  },
+  {
+    "screenshot": "07_reply_to_document.png",
+    "duration": 5,
+    "narration": "La consultora responde que revisarán el documento y prepararán una propuesta. Vemos el hilo completo de la conversación."
+  },
+  {
+    "screenshot": "08_internal_note.png",
+    "duration": 5,
+    "narration": "Agrega una nota interna visible solo para el equipo. Se muestra en color ámbar para distinguirla de los mensajes que van al cliente."
+  },
+  {
+    "screenshot": "09_assigned_consultant.png",
+    "duration": 4,
+    "narration": "Asigna la conversación a su nombre usando el selector de consultores en la parte superior de la página."
+  },
+  {
+    "screenshot": "10_linked_to_customer.png",
+    "duration": 5,
+    "narration": "Vincula la conversación al cliente Kleer en el CRM. El panel lateral muestra los datos del cliente, contactos y propuestas."
+  },
+  {
+    "screenshot": "11_final_reply.png",
+    "duration": 4,
+    "narration": "Envía la respuesta final prometiendo una propuesta para esta semana. Todo el historial queda registrado."
+  },
+  {
+    "screenshot": "12_conversation_closed.png",
+    "duration": 4,
+    "narration": "Cierra la conversación. El sistema confirma el cierre y muestra el botón para reabrir si es necesario."
+  },
+  {
+    "screenshot": "13_closed_filter.png",
+    "duration": 5,
+    "narration": "En la bandeja, al filtrar por cerradas, aparece Carlos con el indicador correspondiente. Todo el historial queda vinculado al cliente y asignado a la consultora responsable. Gracias por ver esta demostración."
+  }
+]

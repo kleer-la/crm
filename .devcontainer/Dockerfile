@@ -14,10 +14,17 @@ RUN addgroup --gid $USER_GID $USER_NAME && adduser --disabled-password --gecos '
 # [Optional] Uncomment this section to install additional OS packages.
 RUN export DEBIAN_FRONTEND=noninteractive && \
     apt-get -y update && \
-    apt-get -y --no-install-recommends install ca-certificates curl git gh unzip make gcc libc6-dev ripgrep fd-find xclip tree-sitter-cli && \
+    apt-get -y --no-install-recommends install ca-certificates curl git gh unzip make gcc libc6-dev ripgrep fd-find xclip tree-sitter-cli ffmpeg jq python3 python3-pip && \
     curl -fsSL https://deb.nodesource.com/setup_lts.x | bash - && apt-get -y install nodejs && \
     apt-get -y autoremove && apt-get clean && rm -rf /var/lib/apt/lists/* && \
-    npm install -g @fission-ai/openspec@latest
+    npm install -g @fission-ai/openspec@latest && \
+    pip install --break-system-packages edge-tts
+
+# Chrome for system tests (headless)
+RUN curl -fsSL https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -o /tmp/chrome.deb && \
+    apt-get -y update && \
+    apt-get -y install /tmp/chrome.deb || apt-get -y --fix-broken install && \
+    rm /tmp/chrome.deb && rm -rf /var/lib/apt/lists/*
 
 # Docker CLI (uses host docker via mounted socket)
 RUN curl -fsSL https://download.docker.com/linux/debian/gpg | dd of=/usr/share/keyrings/docker-archive-keyring.gpg && \

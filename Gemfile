@@ -75,3 +75,8 @@ group :development do
 end
 
 gem "factory_bot_rails", "~> 6.5", groups: [ :development, :test ]
+
+group :test do
+  gem "capybara"
+  gem "selenium-webdriver"
+end
