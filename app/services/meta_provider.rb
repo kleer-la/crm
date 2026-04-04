@@ -23,7 +23,7 @@ class MetaProvider
       message: { text: message.content }
     }
 
-    response = post_json(uri, body)
+    response = post_json(uri, body, platform: "instagram")
 
     if response.is_a?(Net::HTTPSuccess)
       data = JSON.parse(response.body)
@@ -83,8 +83,8 @@ class MetaProvider
     end
   end
 
-  def post_json(uri, body)
-    token = ENV["META_ACCESS_TOKEN"]
+  def post_json(uri, body, platform: nil)
+    token = token_for(platform)
     http = Net::HTTP.new(uri.host, uri.port)
     http.use_ssl = true
 
@@ -94,6 +94,15 @@ class MetaProvider
     request.body = body.to_json
 
     http.request(request)
+  end
+
+  def token_for(platform)
+    case platform
+    when "instagram"
+      ENV["META_IG_ACCESS_TOKEN"].presence || ENV["META_ACCESS_TOKEN"]
+    else
+      ENV["META_ACCESS_TOKEN"]
+    end
   end
 
   def parse_error(response)

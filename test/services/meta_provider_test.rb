@@ -39,7 +39,7 @@ class MetaProviderTest < ActiveSupport::TestCase
     captured_uri = nil
     captured_body = nil
 
-    @provider.define_singleton_method(:post_json) do |uri, body|
+    @provider.define_singleton_method(:post_json) do |uri, body, platform: nil|
       captured_uri = uri
       captured_body = body
       response = Net::HTTPOK.new("1.1", "200", "OK")
@@ -63,7 +63,7 @@ class MetaProviderTest < ActiveSupport::TestCase
 
     captured_body = nil
 
-    @provider.define_singleton_method(:post_json) do |uri, body|
+    @provider.define_singleton_method(:post_json) do |uri, body, platform: nil|
       captured_body = body
       response = Net::HTTPOK.new("1.1", "200", "OK")
       response.instance_variable_set(:@read, true)

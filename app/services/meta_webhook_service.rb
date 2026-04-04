@@ -149,7 +149,7 @@ class MetaWebhookService
   end
 
   def fetch_ig_username(user_id)
-    token = ENV["META_ACCESS_TOKEN"]
+    token = ENV["META_IG_ACCESS_TOKEN"].presence || ENV["META_ACCESS_TOKEN"]
     return nil if token.blank?
 
     response = Net::HTTP.get(
