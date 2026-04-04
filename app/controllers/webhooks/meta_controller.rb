@@ -30,8 +30,15 @@ module Webhooks
       signature = request.headers["X-Hub-Signature-256"]
       return head :unauthorized unless signature
 
-      expected = "sha256=#{OpenSSL::HMAC.hexdigest("SHA256", ENV["META_APP_SECRET"].to_s, request.raw_post)}"
-      head :unauthorized unless ActiveSupport::SecurityUtils.secure_compare(signature, expected)
+      body = request.raw_post
+      secrets = [ ENV["META_APP_SECRET"], ENV["META_IG_APP_SECRET"] ].compact.reject(&:blank?)
+      return head :unauthorized if secrets.empty?
+
+      verified = secrets.any? do |secret|
+        expected = "sha256=#{OpenSSL::HMAC.hexdigest("SHA256", secret, body)}"
+        ActiveSupport::SecurityUtils.secure_compare(signature, expected)
+      end
+      head :unauthorized unless verified
     end
   end
 end

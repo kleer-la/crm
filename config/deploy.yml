@@ -34,6 +34,7 @@ env:
     - META_APP_SECRET
     - META_ACCESS_TOKEN
     - META_PHONE_NUMBER_ID
+    - META_IG_APP_SECRET
   clear:
     SOLID_QUEUE_IN_PUMA: true
     MESSAGING_PROVIDER: "null"
