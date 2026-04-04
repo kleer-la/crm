@@ -37,7 +37,7 @@ env:
     - META_IG_APP_SECRET
   clear:
     SOLID_QUEUE_IN_PUMA: true
-    MESSAGING_PROVIDER: "null"
+    MESSAGING_PROVIDER: "meta"
 
 # Aliases are triggered with "bin/kamal <alias>".
 aliases:
