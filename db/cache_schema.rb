@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_02_100000) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_03_193637) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -53,15 +53,31 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_02_100000) do
     t.index ["email"], name: "index_contacts_on_email"
   end
 
+  create_table "conversation_read_states", force: :cascade do |t|
+    t.bigint "conversation_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "last_read_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["conversation_id"], name: "index_conversation_read_states_on_conversation_id"
+    t.index ["user_id", "conversation_id"], name: "index_conversation_read_states_uniqueness", unique: true
+    t.index ["user_id"], name: "index_conversation_read_states_on_user_id"
+  end
+
   create_table "conversations", force: :cascade do |t|
+    t.bigint "assigned_user_id"
     t.string "contact_name"
     t.datetime "created_at", null: false
     t.string "external_contact_id", null: false
     t.datetime "last_message_at"
+    t.bigint "linkable_id"
+    t.string "linkable_type"
     t.integer "platform", null: false
     t.integer "status", default: 0, null: false
     t.datetime "updated_at", null: false
+    t.index ["assigned_user_id"], name: "index_conversations_on_assigned_user_id"
     t.index ["last_message_at"], name: "index_conversations_on_last_message_at"
+    t.index ["linkable_type", "linkable_id"], name: "index_conversations_on_linkable"
     t.index ["platform", "external_contact_id"], name: "index_conversations_on_platform_and_external_contact_id", unique: true
     t.index ["status"], name: "index_conversations_on_status"
   end
@@ -365,6 +381,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_02_100000) do
   add_foreign_key "activity_logs", "users"
   add_foreign_key "consultant_assignments", "users"
   add_foreign_key "contacts", "customers"
+  add_foreign_key "conversation_read_states", "conversations"
+  add_foreign_key "conversation_read_states", "users"
+  add_foreign_key "conversations", "users", column: "assigned_user_id"
   add_foreign_key "customers", "users", column: "responsible_consultant_id"
   add_foreign_key "document_versions", "proposals"
   add_foreign_key "document_versions", "users", column: "archived_by_id"
