@@ -83,23 +83,25 @@ class MetaWebhookService
 
   def process_messenger_message(change)
     sender_id = change.dig("sender", "id")
+    recipient_id = change.dig("recipient", "id")
     msg = change["message"]
     return unless msg
-
-    # Skip messages sent by our own page (auto-replies, echoes)
-    return if sender_id == page_id
 
     # Determine platform from top-level object field
     platform = instagram? ? :instagram : :facebook
 
+    # Messages from our page are outbound (auto-replies)
+    outbound = sender_id == page_id
+    contact_id = outbound ? recipient_id : sender_id
+
     conversation = find_or_create_conversation(
       platform: platform,
-      external_contact_id: sender_id,
-      contact_name: nil
+      external_contact_id: contact_id,
+      contact_name: outbound ? nil : fetch_ig_username(sender_id)
     )
 
-    message = create_message(
-      conversation: conversation,
+    message = conversation.messages.create!(
+      direction: outbound ? :outbound : :inbound,
       external_message_id: msg["mid"],
       content: msg["text"],
       message_type: msg.key?("attachments") ? :image : :text,
@@ -144,6 +146,20 @@ class MetaWebhookService
     when "reaction" then msg.dig("reaction", "emoji") || "[Reaction]"
     else "[#{msg["type"]}]"
     end
+  end
+
+  def fetch_ig_username(user_id)
+    token = ENV["META_ACCESS_TOKEN"]
+    return nil if token.blank?
+
+    response = Net::HTTP.get(
+      URI("https://graph.instagram.com/v25.0/#{user_id}?fields=name,username&access_token=#{token}")
+    )
+    data = JSON.parse(response)
+    data["name"] || data["username"]
+  rescue StandardError => e
+    Rails.logger.warn("[MetaWebhookService] Failed to fetch IG username for #{user_id}: #{e.message}")
+    nil
   end
 
   def map_whatsapp_type(type)
