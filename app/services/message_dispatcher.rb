@@ -14,6 +14,10 @@ class MessageDispatcher
   private
 
   def default_provider
-    NullProvider.new
+    case Rails.application.config.messaging_provider
+    when "meta"  then MetaProvider.new
+    when "kapso" then KapsoProvider.new
+    else NullProvider.new
+    end
   end
 end

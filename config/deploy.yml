@@ -33,6 +33,7 @@ env:
     - META_WEBHOOK_VERIFY_TOKEN
   clear:
     SOLID_QUEUE_IN_PUMA: true
+    MESSAGING_PROVIDER: "null"
 
 # Aliases are triggered with "bin/kamal <alias>".
 aliases:
