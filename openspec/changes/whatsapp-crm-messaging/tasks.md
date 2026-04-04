@@ -96,4 +96,21 @@
 ## 13. Final Integration
 
 - [x] 13.1 Full test suite: 546 tests, 1776 assertions, 0 failures, 0 errors
-- [ ] 13.2 Manual smoke test: simulate webhooks, verify real-time updates, reply, search, assign, link, notifications
+- [x] 13.2 Manual smoke test: IG inbound/outbound working in production, assignment, linking, close verified
+
+## 14. Post-PoC: Provider Implementation (added 2026-04-04)
+
+- [x] 14.1 Implement MetaProvider for Instagram outbound (graph.instagram.com/v25.0/me/messages)
+- [x] 14.2 Implement MetaProvider for WhatsApp outbound (graph.facebook.com/v25.0/{phone_id}/messages)
+- [x] 14.3 Add separate IG credentials (META_IG_APP_SECRET, META_IG_ACCESS_TOKEN)
+- [x] 14.4 Fix Instagram platform detection (read from payload "object" field)
+- [x] 14.5 Handle IG auto-replies as outbound messages in contact's conversation
+- [x] 14.6 Fetch Instagram username via Graph API on inbound messages
+- [x] 14.7 Add MESSAGING_PROVIDER config (clear env var: "meta", "kapso", "null")
+- [x] 14.8 Dual webhook signature verification (META_APP_SECRET + META_IG_APP_SECRET)
+- [x] 14.9 Integration test: full WhatsApp conversation lifecycle (83 assertions)
+- [x] 14.10 Video demo generator: system test + make_video.sh (13 narrated scenes)
+- [ ] 14.11 Register Twilio WhatsApp sender (company approved, number pending)
+- [ ] 14.12 Test WhatsApp outbound with registered phone number
+- [ ] 14.13 WhatsApp message templates for initiating conversations
+- [ ] 14.14 Media upload/send from CRM

@@ -1,7 +1,9 @@
 <%# Renders media content based on message type, using URLs from metadata %>
 <% case message.message_type %>
 <% when "image" %>
-  <% image_url = message.metadata.dig("image", "url") || message.metadata.dig("image", "link") %>
+  <% image_url = message.metadata.dig("image", "url") ||
+                 message.metadata.dig("image", "link") ||
+                 message.metadata.dig("attachments", 0, "payload", "url") %>
   <% if image_url %>
     <img src="<%= image_url %>" alt="<%= message.content %>" class="rounded-lg max-w-full max-h-64 cursor-pointer" loading="lazy">
   <% end %>
@@ -10,7 +12,7 @@
   <% end %>
 
 <% when "audio" %>
-  <% audio_url = message.metadata.dig("audio", "url") || message.metadata.dig("audio", "link") %>
+  <% audio_url = message.metadata.dig("audio", "url") || message.metadata.dig("audio", "link") || message.metadata.dig("attachments", 0, "payload", "url") %>
   <% if audio_url %>
     <audio controls class="max-w-full" preload="none">
       <source src="<%= audio_url %>">
@@ -20,7 +22,7 @@
   <% end %>
 
 <% when "video" %>
-  <% video_url = message.metadata.dig("video", "url") || message.metadata.dig("video", "link") %>
+  <% video_url = message.metadata.dig("video", "url") || message.metadata.dig("video", "link") || message.metadata.dig("attachments", 0, "payload", "url") %>
   <% if video_url %>
     <video controls class="rounded-lg max-w-full max-h-64" preload="none">
       <source src="<%= video_url %>">
