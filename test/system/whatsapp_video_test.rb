@@ -7,7 +7,7 @@ require "application_system_test_case"
 # Use scripts/make_video.sh to assemble into a narrated video.
 class WhatsappVideoTest < ApplicationSystemTestCase
   # Tablet viewport for good visuals in video
-  driven_by :selenium, using: :headless_chrome, screen_size: [1024, 768] do |options|
+  driven_by :selenium, using: :headless_chrome, screen_size: [ 1024, 768 ] do |options|
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--force-device-scale-factor=1")

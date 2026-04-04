@@ -1,5 +1,5 @@
 class ConversationsController < ApplicationController
-  before_action :set_conversation, only: [:show, :older_messages, :assign, :link, :close, :reopen]
+  before_action :set_conversation, only: [ :show, :older_messages, :assign, :link, :close, :reopen ]
 
   def index
     @conversations = Conversation.recent.includes(:messages, :read_states)

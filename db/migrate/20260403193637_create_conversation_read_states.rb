@@ -8,6 +8,6 @@ class CreateConversationReadStates < ActiveRecord::Migration[8.1]
       t.timestamps
     end
 
-    add_index :conversation_read_states, [:user_id, :conversation_id], unique: true, name: "index_conversation_read_states_uniqueness"
+    add_index :conversation_read_states, [ :user_id, :conversation_id ], unique: true, name: "index_conversation_read_states_uniqueness"
   end
 end

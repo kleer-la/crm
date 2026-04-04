@@ -1,6 +1,6 @@
 namespace :simulate do
   desc "Simulate inbound WhatsApp webhook messages. Usage: rake simulate:webhook[5]"
-  task :webhook, [:count] => :environment do |_t, args|
+  task :webhook, [ :count ] => :environment do |_t, args|
     count = (args[:count] || 5).to_i
 
     contacts = [

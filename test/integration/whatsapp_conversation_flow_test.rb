@@ -220,48 +220,48 @@ class WhatsappConversationFlowTest < ActionDispatch::IntegrationTest
   def whatsapp_webhook(from:, name:, message_id:, text:, timestamp:)
     {
       "object" => "whatsapp_business_account",
-      "entry" => [{
+      "entry" => [ {
         "id" => "123456",
-        "changes" => [{
+        "changes" => [ {
           "value" => {
             "messaging_product" => "whatsapp",
             "metadata" => { "display_phone_number" => "15551234567", "phone_number_id" => "test_phone_id" },
-            "contacts" => [{ "profile" => { "name" => name }, "wa_id" => from }],
-            "messages" => [{
+            "contacts" => [ { "profile" => { "name" => name }, "wa_id" => from } ],
+            "messages" => [ {
               "id" => message_id,
               "from" => from,
               "timestamp" => timestamp.to_i.to_s,
               "type" => "text",
               "text" => { "body" => text }
-            }]
+            } ]
           },
           "field" => "messages"
-        }]
-      }]
+        } ]
+      } ]
     }
   end
 
   def whatsapp_webhook_document(from:, name:, message_id:, filename:, timestamp:)
     {
       "object" => "whatsapp_business_account",
-      "entry" => [{
+      "entry" => [ {
         "id" => "123456",
-        "changes" => [{
+        "changes" => [ {
           "value" => {
             "messaging_product" => "whatsapp",
             "metadata" => { "display_phone_number" => "15551234567", "phone_number_id" => "test_phone_id" },
-            "contacts" => [{ "profile" => { "name" => name }, "wa_id" => from }],
-            "messages" => [{
+            "contacts" => [ { "profile" => { "name" => name }, "wa_id" => from } ],
+            "messages" => [ {
               "id" => message_id,
               "from" => from,
               "timestamp" => timestamp.to_i.to_s,
               "type" => "document",
               "document" => { "filename" => filename, "mime_type" => "application/pdf", "id" => "doc_media_#{message_id}" }
-            }]
+            } ]
           },
           "field" => "messages"
-        }]
-      }]
+        } ]
+      } ]
     }
   end
 
