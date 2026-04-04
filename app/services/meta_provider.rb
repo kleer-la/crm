@@ -18,10 +18,23 @@ class MetaProvider
 
   def send_instagram_message(conversation, message)
     uri = URI("https://graph.instagram.com/v25.0/me/messages")
-    body = {
-      recipient: { id: conversation.external_contact_id },
-      message: { text: message.content }
-    }
+
+    body = if message.file.attached?
+      {
+        recipient: { id: conversation.external_contact_id },
+        message: {
+          attachment: {
+            type: ig_attachment_type(message),
+            payload: { url: file_url(message) }
+          }
+        }
+      }
+    else
+      {
+        recipient: { id: conversation.external_contact_id },
+        message: { text: message.content }
+      }
+    end
 
     response = post_json(uri, body, platform: "instagram")
 
@@ -110,5 +123,18 @@ class MetaProvider
     data.dig("error", "message") || "HTTP #{response.code}"
   rescue JSON::ParserError
     "HTTP #{response.code}: #{response.body.to_s.truncate(200)}"
+  end
+
+  def file_url(message)
+    Rails.application.routes.url_helpers.rails_blob_url(message.file, host: ENV.fetch("APP_HOST", "crm.kleer.la"), protocol: "https")
+  end
+
+  def ig_attachment_type(message)
+    case message.message_type
+    when "image" then "image"
+    when "video" then "video"
+    when "audio" then "audio"
+    else "file"
+    end
   end
 end

@@ -5,6 +5,11 @@ class MessagesController < ApplicationController
     @message.direction = :outbound
     @message.sent_at = Time.current
 
+    # Set content for media messages if not provided
+    if @message.file.attached? && @message.content.blank?
+      @message.content = "[#{@message.message_type.capitalize}]"
+    end
+
     if @message.save
       MessageDispatcher.new.dispatch(@message) unless @message.note?
       head :ok
@@ -20,6 +25,6 @@ class MessagesController < ApplicationController
   private
 
   def message_params
-    params.require(:message).permit(:content, :message_type)
+    params.require(:message).permit(:content, :message_type, :file)
   end
 end
