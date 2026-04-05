@@ -104,7 +104,7 @@ class MetaWebhookService
       direction: outbound ? :outbound : :inbound,
       external_message_id: msg["mid"],
       content: msg["text"],
-      message_type: msg.key?("attachments") ? :image : :text,
+      message_type: detect_ig_message_type(msg),
       sent_at: Time.at(change["timestamp"].to_i / 1000.0),
       metadata: msg.except("mid", "text")
     )
@@ -145,6 +145,19 @@ class MetaWebhookService
     when "location" then "[Location: #{msg.dig("location", "latitude")}, #{msg.dig("location", "longitude")}]"
     when "reaction" then msg.dig("reaction", "emoji") || "[Reaction]"
     else "[#{msg["type"]}]"
+    end
+  end
+
+  def detect_ig_message_type(msg)
+    attachment_type = msg.dig("attachments", 0, "type")
+    case attachment_type
+    when "image" then :image
+    when "video" then :video
+    when "audio" then :audio
+    when "file" then :document
+    when "share", "story_mention" then :text
+    when nil then :text
+    else :text
     end
   end
 
