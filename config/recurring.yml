@@ -15,6 +15,11 @@ default: &default
   #   queue: default
   #   schedule: at 8am every day
 
+  conversation_auto_disconnect:
+    class: ConversationAutoDisconnectJob
+    queue: default
+    schedule: every hour
+
 development:
   <<: *default
 

@@ -1,0 +1,14 @@
+<%= form_with(model: [:admin, canned_response], class: "space-y-4") do |f| %>
+  <%= render "shared/form_field", form: f, field: :name, label: "Name", type: :text_field, required: true, options: { placeholder: "e.g. Greeting" } %>
+  <%= render "shared/form_field", form: f, field: :content, label: "Message content", type: :text_area, required: true, options: { rows: 3, placeholder: "Type the message text..." } %>
+  <%= render "shared/form_field", form: f, field: :position, label: "Position", type: :number_field, options: { step: 1 }, hint: "Lower numbers appear first" %>
+
+  <% if canned_response.system? %>
+    <p class="text-sm text-amber-600">This is a system quick reply (key: <code><%= canned_response.key %></code>). The key cannot be changed.</p>
+  <% end %>
+
+  <div class="flex items-center gap-3 pt-2">
+    <%= f.submit canned_response.persisted? ? "Update" : "Create", class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 cursor-pointer" %>
+    <%= link_to "Cancel", admin_canned_responses_path, class: "text-sm text-slate-500 hover:text-slate-700" %>
+  </div>
+<% end %>

@@ -113,4 +113,4 @@
 - [ ] 14.11 Register Twilio WhatsApp sender (company approved, number pending)
 - [ ] 14.12 Test WhatsApp outbound with registered phone number
 - [ ] 14.13 WhatsApp message templates for initiating conversations
-- [ ] 14.14 Media upload/send from CRM
+- [x] 14.14 Media upload/send from CRM (Active Storage attachments, auto-detect image/video/audio/document)

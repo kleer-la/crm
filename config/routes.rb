@@ -21,6 +21,7 @@ Rails.application.routes.draw do
         post :preview
       end
     end
+    resources :canned_responses, except: [ :show ]
   end
 
   # Prospects

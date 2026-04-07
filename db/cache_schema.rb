@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_04_234125) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_06_150315) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -55,6 +55,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_04_234125) do
     t.index ["created_at"], name: "index_activity_logs_on_created_at"
     t.index ["loggable_type", "loggable_id"], name: "index_activity_logs_on_loggable"
     t.index ["user_id"], name: "index_activity_logs_on_user_id"
+  end
+
+  create_table "canned_responses", force: :cascade do |t|
+    t.text "content", null: false
+    t.datetime "created_at", null: false
+    t.string "key"
+    t.string "name", null: false
+    t.integer "position", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.index ["key"], name: "index_canned_responses_on_key", unique: true, where: "(key IS NOT NULL)"
+    t.index ["position"], name: "index_canned_responses_on_position"
   end
 
   create_table "consultant_assignments", force: :cascade do |t|

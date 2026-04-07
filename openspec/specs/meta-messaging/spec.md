@@ -104,3 +104,25 @@ The system SHALL visually identify each conversation's platform using color-code
 #### Scenario: Facebook conversation badge
 - **WHEN** a Facebook conversation is displayed
 - **THEN** it shows a blue circular badge with "FB"
+
+### Requirement: Send outbound messages
+The system SHALL allow consultants to send text messages and media (images, videos, audio, documents) from the reply composer. Messages are dispatched via the configured messaging provider (Meta Graph API for WhatsApp and Instagram).
+
+#### Scenario: Send text message
+- **WHEN** a consultant types a message and clicks Send (or presses Enter)
+- **THEN** the system creates an outbound Message record, dispatches it via the provider, and broadcasts it to the conversation via Turbo Stream
+
+#### Scenario: Send media attachment
+- **WHEN** a consultant attaches a file and clicks Send
+- **THEN** the system auto-detects the media type (image, video, audio, document), stores the file via Active Storage, creates the Message, and dispatches it to the platform
+
+### Requirement: Instagram integration
+The system SHALL support Instagram Messaging via the Meta Graph API with separate credentials (META_IG_ACCESS_TOKEN, META_IG_APP_SECRET). Instagram messages are sent via graph.instagram.com/v25.0/me/messages. The system detects the Instagram platform from the webhook payload "object" field and fetches Instagram usernames via the Graph API.
+
+#### Scenario: Instagram outbound message
+- **WHEN** a consultant sends a message in an Instagram conversation
+- **THEN** the system dispatches it via the Instagram Graph API endpoint with IG-specific credentials
+
+#### Scenario: Instagram auto-reply handling
+- **WHEN** the system receives an Instagram message that was sent by the business account
+- **THEN** it stores it as an outbound message in the contact's conversation

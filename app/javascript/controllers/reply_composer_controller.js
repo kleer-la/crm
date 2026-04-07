@@ -1,10 +1,54 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["form", "input", "messageType", "noteToggle", "submit", "fileInput", "filePreview", "fileName", "fileButton"]
+  static targets = ["form", "input", "messageType", "noteToggle", "submit", "fileInput", "filePreview", "fileName", "fileButton", "cannedMenu", "cannedToggle", "cannedDropdown"]
 
   connect() {
     this.noteMode = false
+    this.cannedOpen = false
+    this.closeCannedOnClickOutside = this.closeCannedOnClickOutside.bind(this)
+  }
+
+  disconnect() {
+    document.removeEventListener("click", this.closeCannedOnClickOutside)
+  }
+
+  toggleCanned() {
+    this.cannedOpen = !this.cannedOpen
+    if (this.cannedOpen) {
+      this.cannedDropdownTarget.classList.remove("hidden")
+      document.addEventListener("click", this.closeCannedOnClickOutside)
+    } else {
+      this.closeCanned()
+    }
+  }
+
+  closeCanned() {
+    this.cannedOpen = false
+    this.cannedDropdownTarget.classList.add("hidden")
+    document.removeEventListener("click", this.closeCannedOnClickOutside)
+  }
+
+  closeCannedOnClickOutside(event) {
+    if (!this.cannedMenuTarget.contains(event.target)) {
+      this.closeCanned()
+    }
+  }
+
+  selectCanned(event) {
+    const content = event.currentTarget.dataset.content
+    this.inputTarget.value = content
+    this.inputTarget.focus()
+    this.resize()
+    this.closeCanned()
+  }
+
+  resetAfterSubmit(event) {
+    if (event.detail.success) {
+      this.inputTarget.value = ""
+      this.resize()
+      this.clearFile()
+    }
   }
 
   submitOnEnter(event) {
@@ -12,9 +56,6 @@ export default class extends Controller {
       event.preventDefault()
       if (this.inputTarget.value.trim() || this.fileInputTarget.files.length > 0) {
         this.formTarget.requestSubmit()
-        this.inputTarget.value = ""
-        this.resize()
-        this.clearFile()
       }
     }
   }
