@@ -36,7 +36,7 @@ class CannedResponseTest < ActiveSupport::TestCase
     a = create(:canned_response, name: "A reply", position: 0)
     b = create(:canned_response, name: "B reply", position: 1)
 
-    assert_equal [a, b, c], CannedResponse.ordered.to_a
+    assert_equal [ a, b, c ], CannedResponse.ordered.to_a
   end
 
   test "auto_disconnect returns the system disconnect response" do
