@@ -43,7 +43,7 @@ class DashboardController < ApplicationController
       my_proposal_ids.presence || [ 0 ],
       my_prospect_ids.presence || [ 0 ],
       my_customer_ids.presence || [ 0 ]
-    ).preload(:loggable).includes(:user).order(created_at: :desc).limit(15)
+    ).preload(:loggable).includes(:user).order(occurred_at: :desc).limit(15)
 
     # Personal metrics
     @my_pipeline_value = my_record_ids(Proposal).open.sum(:estimated_value)

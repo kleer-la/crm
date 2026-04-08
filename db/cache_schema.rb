@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_06_150315) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_08_192636) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -49,6 +49,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_06_150315) do
     t.integer "entry_type", null: false
     t.bigint "loggable_id", null: false
     t.string "loggable_type", null: false
+    t.datetime "occurred_at", null: false
     t.integer "touchpoint_type"
     t.datetime "updated_at", null: false
     t.bigint "user_id"
@@ -202,6 +203,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_06_150315) do
     t.decimal "estimated_value", precision: 12, scale: 2
     t.date "expected_close_date"
     t.decimal "final_value", precision: 12, scale: 2
+    t.date "last_activity_date"
     t.bigint "linkable_id", null: false
     t.string "linkable_type", null: false
     t.text "notes"

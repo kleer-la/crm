@@ -106,4 +106,36 @@ class TouchpointsControllerTest < ActionDispatch::IntegrationTest
     }
     assert_redirected_to login_path
   end
+
+  test "create touchpoint with past occurred_at date persists correctly" do
+    proposal = create(:proposal)
+    past_date = 10.days.ago.to_date
+
+    post touchpoints_path, params: {
+      loggable_type: "Proposal",
+      loggable_id: proposal.id,
+      touchpoint_type: "call",
+      content: "Backdated call",
+      occurred_at: past_date.to_s
+    }
+
+    assert_redirected_to root_path
+    log = proposal.activity_logs.where(entry_type: :touchpoint).last
+    assert_equal past_date, log.occurred_at.to_date
+    assert_equal past_date, proposal.reload.last_activity_date
+  end
+
+  test "create touchpoint without occurred_at defaults to today" do
+    prospect = create(:prospect)
+    freeze_time do
+      post touchpoints_path, params: {
+        loggable_type: "Prospect",
+        loggable_id: prospect.id,
+        touchpoint_type: "call",
+        content: "Call today"
+      }
+      log = ActivityLog.last
+      assert_equal Date.current, log.occurred_at.to_date
+    end
+  end
 end

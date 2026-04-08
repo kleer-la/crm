@@ -30,7 +30,7 @@ class Proposal < ApplicationRecord
     open.where.not(
       id: ActivityLog.where(loggable_type: "Proposal")
                      .where(entry_type: :touchpoint)
-                     .where("created_at >= ?", STALE_DAYS.days.ago)
+                     .where("occurred_at >= ?", STALE_DAYS.days.ago)
                      .select(:loggable_id)
     )
   }
@@ -90,6 +90,7 @@ class Proposal < ApplicationRecord
   def log_status_change
     old_status, new_status = previous_changes["status"]
     log_system_event("Status changed from #{old_status} to #{new_status}")
+    update_column(:last_activity_date, Date.current)
   end
 
   def log_consultant_change

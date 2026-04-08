@@ -10,7 +10,8 @@ class TouchpointsController < ApplicationController
     @loggable.log_touchpoint(
       touchpoint_type: params[:touchpoint_type],
       content: params[:content],
-      user: current_user
+      user: current_user,
+      occurred_at: params[:occurred_at].present? ? Date.parse(params[:occurred_at]).to_time : Time.current
     )
 
     redirect_back fallback_location: root_path, notice: "Touchpoint logged successfully."

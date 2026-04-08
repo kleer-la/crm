@@ -200,8 +200,8 @@ class ProposalTest < ActiveSupport::TestCase
   test "stale scope excludes proposals with touchpoint within STALE_DAYS" do
     customer = create(:customer)
     proposal = create(:proposal, linkable: customer)
-    touchpoint = create(:activity_log, :touchpoint, loggable: proposal, user: proposal.responsible_consultant)
-    touchpoint.update_column(:created_at, (Proposal::STALE_DAYS - 1).days.ago)
+    create(:activity_log, :touchpoint, loggable: proposal, user: proposal.responsible_consultant,
+           occurred_at: (Proposal::STALE_DAYS - 1).days.ago)
 
     assert_not_includes Proposal.stale, proposal
   end
@@ -209,8 +209,8 @@ class ProposalTest < ActiveSupport::TestCase
   test "stale scope includes proposals with touchpoint older than STALE_DAYS" do
     customer = create(:customer)
     proposal = create(:proposal, linkable: customer)
-    touchpoint = create(:activity_log, :touchpoint, loggable: proposal, user: proposal.responsible_consultant)
-    touchpoint.update_column(:created_at, (Proposal::STALE_DAYS + 1).days.ago)
+    create(:activity_log, :touchpoint, loggable: proposal, user: proposal.responsible_consultant,
+           occurred_at: (Proposal::STALE_DAYS + 1).days.ago)
 
     assert_includes Proposal.stale, proposal
   end
@@ -220,5 +220,29 @@ class ProposalTest < ActiveSupport::TestCase
     proposal = create(:proposal, :won, linkable: customer)
 
     assert_not_includes Proposal.stale, proposal
+  end
+
+  test "status change updates last_activity_date to today" do
+    customer = create(:customer)
+    proposal = create(:proposal, linkable: customer)
+    freeze_time do
+      proposal.update!(status: :sent)
+      assert_equal Date.current, proposal.reload.last_activity_date
+    end
+  end
+
+  test "consultant change does not update last_activity_date" do
+    customer = create(:customer)
+    proposal = create(:proposal, linkable: customer)
+    new_user = create(:user)
+    proposal.update!(responsible_consultant: new_user)
+    assert_nil proposal.reload.last_activity_date
+  end
+
+  test "document link change does not update last_activity_date" do
+    customer = create(:customer)
+    proposal = create(:proposal, linkable: customer)
+    proposal.update!(current_document_url: "https://docs.google.com/d/abc")
+    assert_nil proposal.reload.last_activity_date
   end
 end

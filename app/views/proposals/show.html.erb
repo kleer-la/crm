@@ -176,7 +176,7 @@
 
       <div class="bg-white ring-1 ring-slate-200 rounded-xl p-4">
         <h3 class="text-sm font-semibold text-slate-900 mb-3">Activity</h3>
-        <%= render "shared/activity_timeline", activity_logs: @proposal.activity_logs.includes(:user).order(created_at: :desc) %>
+        <%= render "shared/activity_timeline", activity_logs: @proposal.activity_logs.includes(:user).order(occurred_at: :desc) %>
       </div>
     </div>
   </div>

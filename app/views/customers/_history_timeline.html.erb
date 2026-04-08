@@ -11,7 +11,7 @@
   end
 
   customer.activity_logs.includes(:user).each do |log|
-    entries << { date: log.created_at, type: :activity, record: log }
+    entries << { date: log.occurred_at, type: :activity, record: log }
   end
 
   entries.sort_by! { |e| e[:date] }.reverse!
@@ -93,7 +93,7 @@
                     <% if log.touchpoint? %>
                       logged a <span class="font-medium"><%= log.touchpoint_type %></span>
                     <% end %>
-                    <span class="whitespace-nowrap ml-1"><%= time_ago_in_words(log.created_at) %> ago</span>
+                    <span class="whitespace-nowrap ml-1"><%= log.occurred_at.strftime("%b %d, %Y") %></span>
                   </div>
                   <p class="mt-1 text-sm text-gray-700"><%= log.content %></p>
                 <% end %>

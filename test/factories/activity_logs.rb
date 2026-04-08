@@ -2,6 +2,7 @@ FactoryBot.define do
   factory :activity_log do
     entry_type { :system }
     content { "Something happened" }
+    occurred_at { Time.current }
     association :loggable, factory: :prospect
     association :user
 
