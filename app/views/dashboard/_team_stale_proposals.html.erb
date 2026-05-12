@@ -1,0 +1,16 @@
+<% if team_stale_proposals.any? %>
+  <div class="bg-white ring-1 ring-slate-200 rounded-xl p-6">
+    <h2 class="text-sm font-semibold text-slate-900 mb-3">Stale proposals <span class="text-slate-400 font-normal">(no contact in 30+ days)</span></h2>
+    <div class="space-y-2">
+      <% team_stale_proposals.each do |proposal| %>
+        <div class="bg-orange-50 border border-orange-200 rounded-lg p-3">
+          <p class="text-sm text-orange-800">
+            <%= link_to proposal.title, proposal, class: "font-semibold text-orange-900 underline hover:text-orange-700" %>
+            — <%= proposal.linkable.company_name %>
+            <span class="text-xs text-orange-600 ml-1">(<%= proposal.responsible_consultant.display_name %>)</span>
+          </p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>

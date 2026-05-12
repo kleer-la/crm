@@ -92,6 +92,10 @@ Rails.application.routes.draw do
   # Health check
   get "up" => "rails/health#show", as: :rails_health_check
 
+  # Dashboard panels (Turbo Frame endpoints)
+  get "dashboard/team_panel", to: "dashboard#team_panel"
+  get "dashboard/mine_panel", to: "dashboard#mine_panel"
+
   # Root
   root "dashboard#index"
 end

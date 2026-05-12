@@ -1,0 +1,19 @@
+<%= turbo_frame_tag "dashboard-team" do %>
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <%# Main column — alerts + open proposals %>
+    <div class="lg:col-span-2 space-y-6">
+      <%= render "team_pending_conversions", pending_conversions: @pending_conversions %>
+      <%= render "team_stale_proposals", team_stale_proposals: @team_stale_proposals %>
+      <%= render "team_overdue_tasks", team_overdue_tasks: @team_overdue_tasks %>
+      <%= render "team_open_proposals", team_open_proposals: @team_open_proposals %>
+    </div>
+
+    <%# Sidebar — all-team activity %>
+    <div class="space-y-6">
+      <div class="bg-white ring-1 ring-slate-200 rounded-xl p-4">
+        <h3 class="text-sm font-semibold text-slate-900 mb-3">Recent activity</h3>
+        <%= render "shared/activity_timeline", activity_logs: @team_activity %>
+      </div>
+    </div>
+  </div>
+<% end %>
