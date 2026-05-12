@@ -28,11 +28,11 @@
 
   <%# Team tab (eager-loaded) %>
   <div data-dashboard-tabs-target="teamPanel">
-    <%= turbo_frame_tag "dashboard-team", src: dashboard_team_panel_path %>
+    <%= turbo_frame_tag "dashboard-team", src: dashboard_team_panel_path, target: "_top" %>
   </div>
 
   <%# Mine tab (lazy-loaded — request fires only when panel becomes visible) %>
   <div data-dashboard-tabs-target="minePanel" hidden>
-    <%= turbo_frame_tag "dashboard-mine", src: dashboard_mine_panel_path, loading: :lazy %>
+    <%= turbo_frame_tag "dashboard-mine", src: dashboard_mine_panel_path, loading: :lazy, target: "_top" %>
   </div>
 </div>

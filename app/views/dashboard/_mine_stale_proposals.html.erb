@@ -6,7 +6,7 @@
         <div class="bg-orange-50 border border-orange-200 rounded-lg p-3">
           <p class="text-sm text-orange-800">
             <%= link_to proposal.title, proposal, class: "font-semibold text-orange-900 underline hover:text-orange-700" %>
-            — <%= proposal.linkable.respond_to?(:company_name) ? proposal.linkable.company_name : proposal.linkable.title %>
+            — <%= proposal.linkable.class.name %> <%= link_to proposal.linkable.company_name, proposal.linkable, class: "underline hover:text-orange-700" %>
           </p>
         </div>
       <% end %>
