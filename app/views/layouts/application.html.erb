@@ -49,5 +49,7 @@
       <%= render "layouts/flash" unless content_for?(:hide_flash) %>
       <%= yield %>
     <% end %>
+
+    <turbo-frame id="modal" data-controller="modal"></turbo-frame>
   </body>
 </html>

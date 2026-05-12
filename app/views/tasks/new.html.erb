@@ -1,13 +1,36 @@
-<div class="px-4 sm:px-6 lg:px-8 py-8">
-  <div class="max-w-2xl mx-auto">
-    <% if @task.linkable_type.present? && @task.linkable_id.present? && (linkable = @task.linkable) %>
-      <% linkable_display = linkable.respond_to?(:company_name) ? linkable.company_name : linkable.title %>
-      <h1 class="text-2xl font-bold text-slate-900 mb-6">New task for <%= linkable_display %></h1>
-    <% else %>
-      <h1 class="text-2xl font-bold text-slate-900 mb-6">New task</h1>
-    <% end %>
-    <div class="bg-white ring-1 ring-slate-200 rounded-xl p-6">
-      <%= render "form", task: @task %>
+<% if turbo_frame_request? %>
+  <turbo-frame id="modal">
+    <dialog class="m-auto rounded-xl shadow-2xl w-full max-w-lg p-0 border-0 backdrop:bg-slate-900/50">
+      <div class="p-6">
+        <div class="flex items-center justify-between mb-6">
+          <% if @task.linkable_type.present? && @task.linkable_id.present? && (linkable = @task.linkable) %>
+            <% linkable_display = linkable.respond_to?(:company_name) ? linkable.company_name : linkable.title %>
+            <h2 class="text-xl font-bold text-slate-900">New task for <%= linkable_display %></h2>
+          <% else %>
+            <h2 class="text-xl font-bold text-slate-900">New task</h2>
+          <% end %>
+          <button type="button" class="text-slate-400 hover:text-slate-600" data-action="click->modal#close" aria-label="Close">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+            </svg>
+          </button>
+        </div>
+        <%= render "form", task: @task %>
+      </div>
+    </dialog>
+  </turbo-frame>
+<% else %>
+  <div class="px-4 sm:px-6 lg:px-8 py-8">
+    <div class="max-w-2xl mx-auto">
+      <% if @task.linkable_type.present? && @task.linkable_id.present? && (linkable = @task.linkable) %>
+        <% linkable_display = linkable.respond_to?(:company_name) ? linkable.company_name : linkable.title %>
+        <h1 class="text-2xl font-bold text-slate-900 mb-6">New task for <%= linkable_display %></h1>
+      <% else %>
+        <h1 class="text-2xl font-bold text-slate-900 mb-6">New task</h1>
+      <% end %>
+      <div class="bg-white ring-1 ring-slate-200 rounded-xl p-6">
+        <%= render "form", task: @task %>
+      </div>
     </div>
   </div>
-</div>
+<% end %>

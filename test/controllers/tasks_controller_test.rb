@@ -102,8 +102,50 @@ class TasksControllerTest < ActionDispatch::IntegrationTest
     assert_equal "Follow up call", Task.last.title
   end
 
+  test "create task via turbo stream returns stream response" do
+    assert_difference("Task.count", 1) do
+      post tasks_path,
+        params: { task: {
+          title: "Modal task",
+          linkable_type: "Customer",
+          linkable_id: @customer.id,
+          assigned_to_id: @user.id,
+          due_date: 5.days.from_now.to_date,
+          priority: "medium"
+        } },
+        headers: { "Accept" => "text/vnd.turbo-stream.html" }
+    end
+    assert_response :success
+    assert_equal "text/vnd.turbo-stream.html; charset=utf-8", response.content_type
+    assert_includes response.body, %(<turbo-stream action="update" target="modal">)
+    assert_includes response.body, %(<turbo-stream action="update" target="tasks_customer_#{@customer.id}">)
+  end
+
+  test "create task via turbo stream clears modal in response" do
+    post tasks_path,
+      params: { task: {
+        title: "Modal task",
+        linkable_type: "Customer",
+        linkable_id: @customer.id,
+        assigned_to_id: @user.id,
+        due_date: 5.days.from_now.to_date,
+        priority: "medium"
+      } },
+      headers: { "Accept" => "text/vnd.turbo-stream.html" }
+    modal_stream = response.body.scan(/<turbo-stream[^>]*target="modal"[^>]*>.*?<\/turbo-stream>/m).first
+    assert_not_nil modal_stream
+    assert_includes modal_stream, "<template></template>"
+  end
+
   test "create task with invalid data renders new" do
     post tasks_path, params: { task: { title: "" } }
+    assert_response :unprocessable_entity
+  end
+
+  test "create task with invalid data via turbo stream renders form" do
+    post tasks_path,
+      params: { task: { title: "", linkable_type: "Customer", linkable_id: @customer.id } },
+      headers: { "Accept" => "text/vnd.turbo-stream.html", "Turbo-Frame" => "modal" }
     assert_response :unprocessable_entity
   end
 

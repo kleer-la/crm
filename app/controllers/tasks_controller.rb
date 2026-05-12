@@ -1,5 +1,6 @@
 class TasksController < ApplicationController
   include Sortable
+  include ActionView::RecordIdentifier
 
   before_action :set_task, only: [ :show, :edit, :update, :destroy, :mark_done, :cancel, :reassign ]
 
@@ -18,15 +19,29 @@ class TasksController < ApplicationController
     @task = Task.new(status: :open, priority: :medium)
     @task.linkable_type = params[:linkable_type] if params[:linkable_type].present?
     @task.linkable_id = params[:linkable_id] if params[:linkable_id].present?
+    if @task.linkable_type.present? && @task.linkable_id.present?
+      linkable = @task.linkable
+      @task.assigned_to_id = linkable.responsible_consultant_id if linkable.respond_to?(:responsible_consultant_id)
+    end
   end
 
   def create
     @task = Task.new(task_params)
 
     if @task.save
-      redirect_to @task, notice: "Task was successfully created."
+      respond_to do |format|
+        format.turbo_stream do
+          render turbo_stream: [
+            turbo_stream.update("modal", ""),
+            turbo_stream.update(dom_id(@task.linkable, :tasks),
+                                partial: "tasks/section",
+                                locals: { linkable: @task.linkable })
+          ]
+        end
+        format.html { redirect_to @task, notice: "Task was successfully created." }
+      end
     else
-      render :new, status: :unprocessable_entity
+      render :new, status: :unprocessable_entity, formats: [ :html ]
     end
   end
 
@@ -35,9 +50,19 @@ class TasksController < ApplicationController
 
   def update
     if @task.update(task_params)
-      redirect_to @task, notice: "Task was successfully updated."
+      respond_to do |format|
+        format.turbo_stream do
+          render turbo_stream: [
+            turbo_stream.update("modal", ""),
+            turbo_stream.update(dom_id(@task.linkable, :tasks),
+                                partial: "tasks/section",
+                                locals: { linkable: @task.linkable })
+          ]
+        end
+        format.html { redirect_to @task, notice: "Task was successfully updated." }
+      end
     else
-      render :edit, status: :unprocessable_entity
+      render :edit, status: :unprocessable_entity, formats: [ :html ]
     end
   end
 
