@@ -34,7 +34,6 @@
 				"eamodio.gitlens",
 				"Shopify.ruby-lsp",
 				"misogi.ruby-rubocop",
-				"sst-dev.opencode",
 				"anthropic.claude-code"
 			]
 		}
