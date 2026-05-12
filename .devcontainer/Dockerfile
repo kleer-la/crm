@@ -18,7 +18,7 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
     curl -fsSL https://deb.nodesource.com/setup_lts.x | bash - && apt-get -y install nodejs && \
     apt-get -y autoremove && apt-get clean && rm -rf /var/lib/apt/lists/* && \
     npm install -g @fission-ai/openspec@latest && \
-    npm install -g open-code-ai@latest && \
+    npm install -g opencode-ai@latest && \
     pip install --break-system-packages edge-tts
 
 # Chrome for system tests (headless)
