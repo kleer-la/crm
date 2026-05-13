@@ -74,6 +74,13 @@ Rails.application.routes.draw do
     end
   end
 
+  # API
+  namespace :api do
+    namespace :v1 do
+      resource :contact, only: [ :create ]
+    end
+  end
+
   # Webhooks
   namespace :webhooks do
     get "meta", to: "meta#verify"
