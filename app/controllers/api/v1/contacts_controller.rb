@@ -1,25 +1,26 @@
-require "json"
-
 module Api
   module V1
-    # "contact": {
-    #   "name": "Ana García",
-    #   "email": "ana@example.com",
-    #   "company": "Acme S.A.",
-    #   "message": "Quisiera info sobre fechas...",
-    #   "context": "https://kleer.la/cursos/scrum"
-    # }
     class ContactsController < Api::ApiController
       def create
         body = request.body.read
         data = JSON.parse(body)
+        contact = data["contact"]
 
-        Rails.logger.debug data.inspect
+        if contact.blank?
+          return render status: :bad_request, json: { message: "Missing required field: contact" }
+        end
 
-        render status: :ok, json: { message: "Contact captured" }
+        missing = %w[name email message].select { |f| contact[f].blank? }
+        if missing.any?
+          fields = missing.map { |f| "contact.#{f}" }.join(", ")
+          return render status: :bad_request, json: { message: "Missing required fields: #{fields}" }
+        end
+
+        IngestWebContactJob.perform_later(contact)
+        render status: :accepted, json: { message: "Contact accepted" }
+      rescue JSON::ParserError
+        render status: :bad_request, json: { message: "Invalid JSON body" }
       end
-
-      private
     end
   end
 end
