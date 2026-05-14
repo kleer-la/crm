@@ -69,6 +69,53 @@ class ConversationsControllerTest < ActionDispatch::IntegrationTest
     assert_includes response.body, "Maria Garcia"
   end
 
+  test "index shows empty state when no conversations" do
+    Conversation.destroy_all
+    get conversations_path
+    assert_response :success
+    assert_includes response.body, "No conversations yet."
+  end
+
+  test "older_messages returns older messages" do
+    before = 1.hour.ago
+    51.times do |i|
+      create(:message, conversation: @conversation, sent_at: before - (i + 1).hours)
+    end
+
+    get older_messages_conversation_path(@conversation, before: before.iso8601(6))
+    assert_response :success
+    assert_includes response.body, "Load earlier messages"
+    assert_includes response.body, @conversation.messages.order(:sent_at).last.content
+  end
+
+  test "index renders platform badges" do
+    ig = create(:conversation, :instagram)
+    fb = create(:conversation, :facebook)
+
+    get conversations_path(status: "all")
+    assert_response :success
+    assert_includes response.body, "WA"
+    assert_includes response.body, "IG"
+    assert_includes response.body, "FB"
+  end
+
+  test "show renders contact panel with linked customer" do
+    customer = create(:customer, company_name: "Acme Corp")
+    @conversation.update!(linkable: customer)
+
+    get conversation_path(@conversation)
+    assert_response :success
+    assert_includes response.body, "Customer"
+    assert_includes response.body, "Acme Corp"
+  end
+
+  test "show renders contact panel empty state when unlinked" do
+    get conversation_path(@conversation)
+    assert_response :success
+    assert_includes response.body, "No linked record"
+    assert_includes response.body, "Link to"
+  end
+
   test "unauthenticated user cannot access" do
     delete logout_path
     get conversations_path

@@ -146,4 +146,43 @@ class ApplicationHelperTest < ActionView::TestCase
   test "currency handles zero" do
     assert_equal "$0.00", currency(0)
   end
+
+  # platform badge colors
+  test "platform_badge_bg whatsapp returns green" do
+    assert_includes platform_badge_bg(:whatsapp), "bg-green-600"
+  end
+
+  test "platform_badge_bg instagram returns purple-to-pink gradient" do
+    assert_includes platform_badge_bg(:instagram), "from-purple-600"
+    assert_includes platform_badge_bg(:instagram), "to-pink-500"
+  end
+
+  test "platform_badge_bg facebook returns blue" do
+    assert_includes platform_badge_bg(:facebook), "bg-blue-600"
+  end
+
+  test "platform_badge_bg unknown platform defaults to slate" do
+    assert_includes platform_badge_bg("unknown"), "bg-slate-500"
+  end
+
+  # message bubble helpers
+  test "message_bubble_classes returns amber for notes" do
+    message = build(:message, message_type: :note)
+    classes = message_bubble_classes(message)
+    assert_includes classes, "bg-amber-50"
+    assert_includes classes, "border-amber-200"
+  end
+
+  test "message_bubble_classes returns indigo for outbound" do
+    message = build(:message, :outbound)
+    classes = message_bubble_classes(message)
+    assert_includes classes, "bg-indigo-600"
+    assert_includes classes, "text-white"
+  end
+
+  test "message_bubble_classes returns slate for inbound" do
+    message = build(:message, direction: :inbound)
+    classes = message_bubble_classes(message)
+    assert_includes classes, "bg-slate-100"
+  end
 end
