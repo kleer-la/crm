@@ -12,5 +12,7 @@ echo '[ -f /app/.env ] && set -a && . /app/.env && set +a' >> /home/user/.bashrc
 cd /app
 [ -d openspec ] && openspec update || true
 
+./scripts/sync-skills.sh --quiet
+
 # Install dependencies
 # bundle install --jobs 4
