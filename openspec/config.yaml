@@ -22,12 +22,14 @@ context: |
 
   Domain:
     Internal consulting CRM for a small team (6-15 people)
+    Full domain glossary in CONTEXT.md at project root
     All monetary values in USD, stored as decimal(12,2)
     Prospects have inline contact fields (primary_contact_name, email, phone) — not a Contact association
-    Customers have many Contacts (with primary flag enforcement)
-    Prospects can be converted to Customers (becomes read-only), but not vice versa
+    Customers have many Contacts (primary flag is informational, not enforced)
+    Prospects can be converted to Customers (becomes read-only), never the reverse
     Proposals are polymorphically linked to Prospects or Customers
     Customer total_revenue is auto-calculated from Won proposal estimated_values (final_value field removed)
     Tasks are polymorphically linked to Prospects, Customers, or Proposals
     ActivityLog is append-only (immutable after creation)
-    Admin users can manage all users; consultants can manage their assigned records
+    Consultants have full CRUD access to all records — flat team, no record-level scoping
+    Admins additionally manage users, imports, and canned responses

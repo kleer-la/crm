@@ -20,7 +20,7 @@ Internal consulting CRM for a small team (6-15 people).
 - Customer total_revenue is auto-calculated from Won proposal estimated_values
 - Tasks are polymorphically linked to Prospects, Customers, or Proposals
 - ActivityLog is append-only (immutable after creation)
-- Admins manage all users; consultants manage their assigned records
+- Admins manage users, imports, and canned responses; consultants have full CRUD access to all prospects, customers, proposals, tasks, and contacts (flat team — no record-level scoping)
 
 ## Testing
 

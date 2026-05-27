@@ -242,7 +242,6 @@ The system SHALL map proposal CSV columns to CRM fields using fixed rules.
   - Enlace Propuesta → current_document_url
   - Comentarios → notes
   - Fecha del pedido → date_sent (parse YYYY/MM/DD)
-  - Valor factura → final_value (strip $ and commas)
   - Fecha de factura → actual_close_date (parse YYYY/MM/DD)
   - Contacto → create or find Contact on the linked Customer (parse "Name <email>" format)
   - All other columns → ignored

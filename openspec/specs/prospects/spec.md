@@ -30,11 +30,15 @@ The system SHALL require a non-empty disqualification reason when setting a Pros
 - **THEN** the system rejects the save and requires a reason
 
 ### Requirement: Convert Prospect to Customer
-The system SHALL allow converting a Prospect to a Customer. Conversion creates a new Customer record pre-populated from the Prospect's data, including country, re-links all associated Proposals to the new Customer, marks the Prospect as Converted and read-only, and stores a reference to the resulting Customer.
+The system SHALL allow converting a Prospect to a Customer. Conversion creates a new Customer record pre-populated from the Prospect's data, including country, creates a primary Contact from the Prospect's inline contact fields, copies all collaborating consultants to the new Customer, re-links all associated Proposals and Tasks to the new Customer, marks the Prospect as Converted and read-only, and stores a reference to the resulting Customer.
 
-#### Scenario: Successful conversion
+#### Scenario: Successful conversion with contact and consultant copy
 - **WHEN** a user converts a Prospect with status New, Contacted, or Qualified
-- **THEN** a Customer record is created with the Prospect's data, including country, all linked Proposals are re-linked to the Customer, and the Prospect becomes read-only with a link to the Customer
+- **THEN** a Customer record is created with the Prospect's data, a primary Contact is created from the Prospect's primary contact name/email/phone, collaborating consultants are copied, all linked Proposals and Tasks are re-linked to the Customer, and the Prospect becomes read-only with a link to the Customer
+
+#### Scenario: Convert a Prospect without collaborating consultants
+- **WHEN** a user converts a Prospect that has no collaborating consultants
+- **THEN** the Customer is created with only the responsible consultant and no collaborators
 
 #### Scenario: Convert a Disqualified Prospect
 - **WHEN** a user attempts to convert a Prospect with status Disqualified
