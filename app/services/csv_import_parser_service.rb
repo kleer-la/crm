@@ -37,7 +37,6 @@ class CsvImportParserService
       "Enlace Propuesta" => :current_document_url,
       "Comentarios" => :notes,
       "Fecha del pedido" => :date_asked,
-      "Valor factura" => :final_value,
       "Fecha de factura" => :actual_close_date,
       "Contacto" => :contact_raw
     }
@@ -97,7 +96,7 @@ class CsvImportParserService
     "Expandir"        => :expand
   }.freeze
 
-  MONETARY_FIELDS = %i[estimated_value final_value].freeze
+  MONETARY_FIELDS = %i[estimated_value].freeze
   DATE_FIELDS = %i[last_activity_date date_asked actual_close_date date_added].freeze
 
   def initialize(csv_content, record_type)

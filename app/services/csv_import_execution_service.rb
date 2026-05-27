@@ -139,7 +139,6 @@ class CsvImportExecutionService
       responsible_consultant: consultant,
       status: status,
       estimated_value: row[:estimated_value],
-      final_value: row[:final_value],
       current_document_url: valid_url(row[:current_document_url]),
       notes: row[:notes],
       date_asked: row[:date_asked],

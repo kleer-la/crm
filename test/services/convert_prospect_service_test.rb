@@ -67,6 +67,33 @@ class ConvertProspectServiceTest < ActiveSupport::TestCase
     assert_equal "Cannot convert a disqualified prospect", error.message
   end
 
+  test "conversion creates a primary contact from prospect inline fields" do
+    @prospect.update!(primary_contact_phone: "+598 99 999 999")
+    customer = ConvertProspectService.new(@prospect, @user).call
+
+    assert_equal 1, customer.contacts.count
+    contact = customer.contacts.first
+    assert_equal @prospect.primary_contact_name, contact.name
+    assert_equal @prospect.primary_contact_email, contact.email
+    assert_equal "+598 99 999 999", contact.phone
+    assert contact.primary
+  end
+
+  test "conversion copies collaborating consultants to new customer" do
+    collaborator = create(:user)
+    @prospect.consultant_assignments.create!(user: collaborator)
+
+    customer = ConvertProspectService.new(@prospect, @user).call
+
+    assert_equal [ collaborator ], customer.collaborating_consultants
+  end
+
+  test "conversion handles prospect with no collaborating consultants" do
+    customer = ConvertProspectService.new(@prospect, @user).call
+
+    assert_empty customer.collaborating_consultants
+  end
+
   test "conversion is transactional - rolls back on failure" do
     # Create a customer then set its name to match the prospect, bypassing validation
     existing = create(:customer)

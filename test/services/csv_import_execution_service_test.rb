@@ -268,7 +268,7 @@ class CsvImportExecutionServiceTest < ActiveSupport::TestCase
       {
         row_number: 2, title: "URL Test", linkable_company_name: "URLCo",
         responsible_consultant_name: nil, status: "draft",
-        estimated_value: nil, final_value: nil,
+        estimated_value: nil,
         current_document_url: "N/A", notes: nil, date_asked: nil,
         actual_close_date: nil, contact: nil
       }
@@ -288,7 +288,7 @@ class CsvImportExecutionServiceTest < ActiveSupport::TestCase
       {
         row_number: 2, title: "URL Valid", linkable_company_name: "URLCo2",
         responsible_consultant_name: nil, status: "draft",
-        estimated_value: nil, final_value: nil,
+        estimated_value: nil,
         current_document_url: "https://docs.google.com/proposal/123", notes: nil, date_asked: nil,
         actual_close_date: nil, contact: nil
       }
@@ -308,7 +308,7 @@ class CsvImportExecutionServiceTest < ActiveSupport::TestCase
       {
         row_number: 2, title: "Curso Agilidad", description: "Curso Agilidad", linkable_company_name: "UTE UY",
         responsible_consultant_name: "Pablo Lis", status: "lost",
-        estimated_value: BigDecimal("2500"), final_value: nil,
+        estimated_value: BigDecimal("2500"),
         current_document_url: nil, notes: nil, date_asked: Date.new(2024, 3, 11),
         actual_close_date: nil, contact: { name: "Lucila", email: "lucila@ute.com" }
       }
@@ -334,7 +334,7 @@ class CsvImportExecutionServiceTest < ActiveSupport::TestCase
       {
         row_number: 2, title: "Won Deal", linkable_company_name: "WinCo",
         responsible_consultant_name: nil, status: "won",
-        estimated_value: BigDecimal("5000"), final_value: nil,
+        estimated_value: BigDecimal("5000"),
         current_document_url: nil, notes: nil, date_asked: nil,
         actual_close_date: nil, contact: nil
       }
@@ -353,7 +353,7 @@ class CsvImportExecutionServiceTest < ActiveSupport::TestCase
       {
         row_number: 2, title: "Draft Deal", linkable_company_name: "DraftCo",
         responsible_consultant_name: nil, status: "draft",
-        estimated_value: nil, final_value: nil,
+        estimated_value: nil,
         current_document_url: nil, notes: nil, date_asked: nil,
         actual_close_date: nil, contact: nil
       }
@@ -369,7 +369,7 @@ class CsvImportExecutionServiceTest < ActiveSupport::TestCase
       {
         row_number: 2, title: "Orphan Proposal", linkable_company_name: "NonExistent Corp",
         responsible_consultant_name: nil, status: "draft",
-        estimated_value: nil, final_value: nil,
+        estimated_value: nil,
         current_document_url: nil, notes: nil, date_asked: nil,
         actual_close_date: nil, contact: nil
       }
@@ -392,7 +392,7 @@ class CsvImportExecutionServiceTest < ActiveSupport::TestCase
       {
         row_number: 2, title: "Case Test", linkable_company_name: "acme corp",
         responsible_consultant_name: nil, status: "draft",
-        estimated_value: nil, final_value: nil,
+        estimated_value: nil,
         current_document_url: nil, notes: nil, date_asked: nil,
         actual_close_date: nil, contact: nil
       }
@@ -412,7 +412,7 @@ class CsvImportExecutionServiceTest < ActiveSupport::TestCase
       {
         row_number: 2, title: "Fuzzy Match Deal", linkable_company_name: "Banco Republica Oriental",
         responsible_consultant_name: nil, status: "draft",
-        estimated_value: nil, final_value: nil,
+        estimated_value: nil,
         current_document_url: nil, notes: nil, date_asked: nil,
         actual_close_date: nil, contact: nil
       }
@@ -434,7 +434,7 @@ class CsvImportExecutionServiceTest < ActiveSupport::TestCase
       {
         row_number: 2, title: "Contact Test", linkable_company_name: "ContactCo",
         responsible_consultant_name: nil, status: "draft",
-        estimated_value: nil, final_value: nil,
+        estimated_value: nil,
         current_document_url: nil, notes: nil, date_asked: nil,
         actual_close_date: nil, contact: { name: "New Person", email: "new@contactco.com" }
       }
@@ -455,7 +455,7 @@ class CsvImportExecutionServiceTest < ActiveSupport::TestCase
       {
         row_number: 2, title: "First Contact", linkable_company_name: "NoCo",
         responsible_consultant_name: nil, status: "draft",
-        estimated_value: nil, final_value: nil,
+        estimated_value: nil,
         current_document_url: nil, notes: nil, date_asked: nil,
         actual_close_date: nil, contact: { name: "First Person", email: "first@noco.com" }
       }
@@ -475,7 +475,7 @@ class CsvImportExecutionServiceTest < ActiveSupport::TestCase
       {
         row_number: 2, title: "Dup Contact", linkable_company_name: "DupCo",
         responsible_consultant_name: nil, status: "draft",
-        estimated_value: nil, final_value: nil,
+        estimated_value: nil,
         current_document_url: nil, notes: nil, date_asked: nil,
         actual_close_date: nil, contact: { name: "Existing", email: "existing@dupco.com" }
       }
@@ -493,7 +493,7 @@ class CsvImportExecutionServiceTest < ActiveSupport::TestCase
       {
         row_number: 2, title: "No Email", linkable_company_name: "PlaceholderCo",
         responsible_consultant_name: nil, status: "draft",
-        estimated_value: nil, final_value: nil,
+        estimated_value: nil,
         current_document_url: nil, notes: nil, date_asked: nil,
         actual_close_date: nil, contact: { name: "Juan Pérez", email: nil }
       }
@@ -563,7 +563,7 @@ class CsvImportExecutionServiceTest < ActiveSupport::TestCase
       {
         row_number: 2, title: "No Status Proposal", linkable_company_name: "StatusNilCo",
         responsible_consultant_name: nil, status: nil,
-        estimated_value: nil, final_value: nil,
+        estimated_value: nil,
         current_document_url: nil, notes: nil, date_asked: nil,
         actual_close_date: nil, contact: nil
       }
@@ -613,7 +613,7 @@ class CsvImportExecutionServiceTest < ActiveSupport::TestCase
       {
         row_number: 2, title: "Logged Proposal", linkable_company_name: "LogPropCo",
         responsible_consultant_name: nil, status: "draft",
-        estimated_value: nil, final_value: nil,
+        estimated_value: nil,
         current_document_url: nil, notes: nil, date_asked: nil,
         actual_close_date: nil, contact: nil
       }

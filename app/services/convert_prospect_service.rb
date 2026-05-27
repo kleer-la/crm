@@ -12,6 +12,8 @@ class ConvertProspectService
     ActiveRecord::Base.transaction do
       mark_prospect_converting
       customer = create_customer
+      create_contact(customer)
+      copy_collaborating_consultants(customer)
       relink_proposals(customer)
       relink_tasks(customer)
       link_prospect_to_customer(customer)
@@ -48,6 +50,21 @@ class ConvertProspectService
   def relink_tasks(customer)
     @prospect.tasks.find_each do |task|
       task.update!(linkable: customer)
+    end
+  end
+
+  def create_contact(customer)
+    customer.contacts.create!(
+      name: @prospect.primary_contact_name,
+      email: @prospect.primary_contact_email,
+      phone: @prospect.primary_contact_phone,
+      primary: true
+    )
+  end
+
+  def copy_collaborating_consultants(customer)
+    @prospect.consultant_assignments.find_each do |assignment|
+      customer.consultant_assignments.create!(user: assignment.user)
     end
   end
 

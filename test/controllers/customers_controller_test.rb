@@ -58,6 +58,22 @@ class CustomersControllerTest < ActionDispatch::IntegrationTest
     assert_includes response.body, @customer.company_name
   end
 
+  test "show includes proposals section heading" do
+    get customer_path(@customer)
+    assert_response :success
+    assert_includes response.body, "Proposals"
+    assert_includes response.body, "No proposals yet."
+  end
+
+  test "show lists linked proposals" do
+    proposal = create(:proposal, linkable: @customer, title: "Q1 Strategy")
+    get customer_path(@customer)
+    assert_response :success
+    assert_includes response.body, "Q1 Strategy"
+    assert_includes response.body, "Proposals"
+    assert_not_includes response.body, "No proposals yet."
+  end
+
   # New / Create
   test "new renders form" do
     get new_customer_path

@@ -224,13 +224,12 @@ class CsvImportParserServiceTest < ActiveSupport::TestCase
   # Monetary value cleanup
 
   test "parses monetary values with dollar sign and commas" do
-    csv = "Propuesta\tCliente\t$ Oportunidad\tValor factura\n" \
-          "Test\tAcme\t$1,234.56\t$2,500\n"
+    csv = "Propuesta\tCliente\t$ Oportunidad\n" \
+          "Test\tAcme\t$1,234.56\n"
     result = CsvImportParserService.new(csv, :proposal).call
 
     row = result[:rows].first
     assert_equal BigDecimal("1234.56"), row[:estimated_value]
-    assert_equal BigDecimal("2500"), row[:final_value]
   end
 
   test "parses monetary values without formatting" do

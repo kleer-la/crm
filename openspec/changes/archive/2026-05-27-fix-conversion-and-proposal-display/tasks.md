@@ -23,4 +23,4 @@
 
 - [x] 4.1 Update `openspec/specs/customers/spec.md`: modify revenue calc requirement to use `estimated_value` and add proposals section requirement
 - [x] 4.2 Update `openspec/specs/prospects/spec.md`: modify conversion requirement to include Contact creation and consultant copy
-- [ ] 4.3 Run `bin/ci` and fix any failures
+- [x] 4.3 Run `bin/ci` and fix any failures
