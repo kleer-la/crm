@@ -41,10 +41,11 @@
                   <%= user.created_at.strftime("%b %d, %Y") %>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm">
-                  <%= turbo_frame_tag "user_#{user.id}_role" do %>
-                    <%= button_to "Make Consultant", assign_role_admin_user_path(user, role: :consultant), method: :patch, class: "inline-block px-3 py-1 text-xs font-semibold text-indigo-700 bg-indigo-100 rounded-lg hover:bg-indigo-200 mr-2" %>
-                    <%= button_to "Make Admin", assign_role_admin_user_path(user, role: :admin), method: :patch, class: "inline-block px-3 py-1 text-xs font-semibold text-purple-700 bg-purple-100 rounded-lg hover:bg-purple-200" %>
-                  <% end %>
+                  <%# No turbo-frame here: assign_role redirects to this index, where the
+                      promoted user has moved out of the pending section, so a frame-scoped
+                      submit would find no matching frame and silently do nothing. %>
+                  <%= button_to "Make Consultant", assign_role_admin_user_path(user, role: :consultant), method: :patch, class: "inline-block px-3 py-1 text-xs font-semibold text-indigo-700 bg-indigo-100 rounded-lg hover:bg-indigo-200 mr-2" %>
+                  <%= button_to "Make Admin", assign_role_admin_user_path(user, role: :admin), method: :patch, class: "inline-block px-3 py-1 text-xs font-semibold text-purple-700 bg-purple-100 rounded-lg hover:bg-purple-200" %>
                 </td>
               </tr>
             <% end %>

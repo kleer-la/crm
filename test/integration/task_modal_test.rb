@@ -9,32 +9,42 @@ class TaskModalTest < ActionDispatch::IntegrationTest
     @proposal = create(:proposal, :draft, linkable: @customer)
   end
 
-  # Turbo Frame presence on show pages
+  # The task section is rendered inline. It deliberately has no turbo-frame wrapper:
+  # writes answer with a redirect, so there is nothing to stream into, and a frame here
+  # would capture every link inside it.
 
-  test "customer show includes tasks turbo frame with correct dom id" do
+  def assert_task_section_for(record)
+    assert_includes response.body, %(linkable_type=#{record.class.name})
+    assert_includes response.body, %(linkable_id=#{record.id})
+    assert_includes response.body, %(data-turbo-frame="modal")
+  end
+
+  test "customer show renders the task section with a modal link" do
     get customer_path(@customer)
     assert_response :success
-    assert_includes response.body, %(<turbo-frame id="tasks_customer_#{@customer.id}")
+    assert_task_section_for(@customer)
+    assert_not_includes response.body, %(<turbo-frame id="tasks_customer_#{@customer.id}")
   end
 
-  test "prospect show includes tasks turbo frame with correct dom id" do
+  test "prospect show renders the task section with a modal link" do
     get prospect_path(@prospect)
     assert_response :success
-    assert_includes response.body, %(<turbo-frame id="tasks_prospect_#{@prospect.id}")
+    assert_task_section_for(@prospect)
+    assert_not_includes response.body, %(<turbo-frame id="tasks_prospect_#{@prospect.id}")
   end
 
-  test "proposal show includes tasks turbo frame with correct dom id" do
+  test "proposal show renders the task section with a modal link" do
     get proposal_path(@proposal)
     assert_response :success
-    assert_includes response.body, %(<turbo-frame id="tasks_proposal_#{@proposal.id}")
+    assert_task_section_for(@proposal)
   end
 
-  test "converted prospect show does not include tasks turbo frame" do
+  test "converted prospect show does not render the task section" do
     customer = create(:customer)
     @prospect.update!(status: :converted, converted_customer: customer)
     get prospect_path(@prospect)
     assert_response :success
-    assert_not_includes response.body, %(<turbo-frame id="tasks_prospect_#{@prospect.id}")
+    assert_not_includes response.body, %(linkable_id=#{@prospect.id})
   end
 
   # New task form renders inside modal frame when turbo-frame request

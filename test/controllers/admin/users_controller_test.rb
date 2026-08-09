@@ -34,6 +34,33 @@ class Admin::UsersControllerTest < ActionDispatch::IntegrationTest
     assert_equal "admin", user.reload.role
   end
 
+  # The role buttons must not sit inside a turbo-frame. assign_role redirects to the
+  # index, where a newly-promoted user has moved out of the pending section — so a
+  # frame-scoped submit would find no matching frame and silently do nothing.
+  test "role buttons are not wrapped in a turbo frame" do
+    pending_user = create(:user, :pending)
+
+    get admin_users_path
+    assert_response :success
+    assert_includes response.body, "Make Consultant"
+    assert_not_includes response.body, %(id="user_#{pending_user.id}_role")
+  end
+
+  test "assign_role result is visible on the index after redirect" do
+    pending_user = create(:user, :pending)
+
+    patch assign_role_admin_user_path(pending_user),
+      params: { role: "consultant" },
+      headers: {
+        "Accept" => "text/vnd.turbo-stream.html, text/html, application/xhtml+xml"
+      }
+    follow_redirect!
+
+    assert_response :success
+    assert_includes response.body, "has been assigned the consultant role"
+    assert_not_includes response.body, "Pending approval"
+  end
+
   test "deactivate user" do
     user = create(:user)
 

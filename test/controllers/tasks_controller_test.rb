@@ -1,6 +1,14 @@
 require "test_helper"
 
 class TasksControllerTest < ActionDispatch::IntegrationTest
+  # What a real browser sends on a Turbo form submit from a full page…
+  STANDALONE_HEADERS = {
+    "Accept" => "text/vnd.turbo-stream.html, text/html, application/xhtml+xml"
+  }.freeze
+
+  # …and the same, from a form rendered inside <turbo-frame id="modal">.
+  MODAL_HEADERS = STANDALONE_HEADERS.merge("Turbo-Frame" => "modal").freeze
+
   setup do
     @user = create(:user)
     sign_in(@user)
@@ -98,11 +106,14 @@ class TasksControllerTest < ActionDispatch::IntegrationTest
         notes: "Important task"
       } }
     end
-    assert_redirected_to task_path(Task.last)
+    assert_redirected_to customer_path(@customer)
     assert_equal "Follow up call", Task.last.title
   end
 
-  test "create task via turbo stream returns stream response" do
+  # The task form submits as a full page visit (data-turbo-frame="_top") whether it was
+  # rendered standalone or inside the modal, so writes always answer with a redirect and
+  # the controller never needs to know which page is showing.
+  test "create task redirects to the linked record from the modal" do
     assert_difference("Task.count", 1) do
       post tasks_path,
         params: { task: {
@@ -113,15 +124,28 @@ class TasksControllerTest < ActionDispatch::IntegrationTest
           due_date: 5.days.from_now.to_date,
           priority: "medium"
         } },
-        headers: { "Accept" => "text/vnd.turbo-stream.html" }
+        headers: MODAL_HEADERS
     end
-    assert_response :success
-    assert_equal "text/vnd.turbo-stream.html; charset=utf-8", response.content_type
-    assert_includes response.body, %(<turbo-stream action="update" target="modal">)
-    assert_includes response.body, %(<turbo-stream action="update" target="tasks_customer_#{@customer.id}">)
+    assert_redirected_to customer_path(@customer)
   end
 
-  test "create task via turbo stream clears modal in response" do
+  test "create task redirects to the linked record from the standalone page" do
+    assert_difference("Task.count", 1) do
+      post tasks_path,
+        params: { task: {
+          title: "Standalone task",
+          linkable_type: "Customer",
+          linkable_id: @customer.id,
+          assigned_to_id: @user.id,
+          due_date: 5.days.from_now.to_date,
+          priority: "medium"
+        } },
+        headers: STANDALONE_HEADERS
+    end
+    assert_redirected_to customer_path(@customer)
+  end
+
+  test "create task never answers with a turbo stream" do
     post tasks_path,
       params: { task: {
         title: "Modal task",
@@ -131,10 +155,24 @@ class TasksControllerTest < ActionDispatch::IntegrationTest
         due_date: 5.days.from_now.to_date,
         priority: "medium"
       } },
-      headers: { "Accept" => "text/vnd.turbo-stream.html" }
-    modal_stream = response.body.scan(/<turbo-stream[^>]*target="modal"[^>]*>.*?<\/turbo-stream>/m).first
-    assert_not_nil modal_stream
-    assert_includes modal_stream, "<template></template>"
+      headers: MODAL_HEADERS
+    assert_not_equal "text/vnd.turbo-stream.html", response.media_type
+  end
+
+  test "update task redirects to the linked record from the standalone page" do
+    patch task_path(@task),
+      params: { task: { title: "Standalone updated" } },
+      headers: STANDALONE_HEADERS
+    assert_redirected_to customer_path(@customer)
+    assert_equal "Standalone updated", @task.reload.title
+  end
+
+  test "update task redirects to the linked record from the modal" do
+    patch task_path(@task),
+      params: { task: { title: "Modal updated" } },
+      headers: MODAL_HEADERS
+    assert_redirected_to customer_path(@customer)
+    assert_equal "Modal updated", @task.reload.title
   end
 
   test "create task with invalid data renders new" do
@@ -142,11 +180,15 @@ class TasksControllerTest < ActionDispatch::IntegrationTest
     assert_response :unprocessable_entity
   end
 
-  test "create task with invalid data via turbo stream renders form" do
+  # Because the form breaks out to _top, a failed modal submit renders the standalone
+  # form page with its errors rather than re-rendering the dialog.
+  test "create task with invalid data renders the full page form as html" do
     post tasks_path,
       params: { task: { title: "", linkable_type: "Customer", linkable_id: @customer.id } },
-      headers: { "Accept" => "text/vnd.turbo-stream.html", "Turbo-Frame" => "modal" }
+      headers: STANDALONE_HEADERS
     assert_response :unprocessable_entity
+    assert_equal "text/html", response.media_type
+    assert_not_includes response.body, "<dialog"
   end
 
   # Edit
@@ -158,7 +200,7 @@ class TasksControllerTest < ActionDispatch::IntegrationTest
   # Update
   test "update task" do
     patch task_path(@task), params: { task: { title: "Updated title" } }
-    assert_redirected_to task_path(@task)
+    assert_redirected_to customer_path(@customer)
     assert_equal "Updated title", @task.reload.title
   end
 

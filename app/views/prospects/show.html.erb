@@ -149,9 +149,7 @@
       <% unless @prospect.read_only? %>
         <%= render "shared/touchpoint_form", record: @prospect %>
 
-        <turbo-frame id="<%= dom_id(@prospect, :tasks) %>" class="block">
-          <%= render "tasks/section", linkable: @prospect %>
-        </turbo-frame>
+        <%= render "tasks/section", linkable: @prospect %>
       <% end %>
 
       <div class="bg-white ring-1 ring-slate-200 rounded-xl p-4">

@@ -1,4 +1,7 @@
-<% if turbo_frame_request? %>
+<%# The form also contains a <turbo-frame id="linkable_id_select"> that fetches this
+    same page, so match on the frame name — turbo_frame_request? alone would render
+    the dialog for that request too. %>
+<% if turbo_frame_request_id == "modal" %>
   <turbo-frame id="modal">
     <dialog class="m-auto rounded-xl shadow-2xl w-full max-w-lg p-0 border-0 backdrop:bg-slate-900/50">
       <div class="p-6">

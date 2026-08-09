@@ -1,4 +1,7 @@
-<%= form_with(model: task, class: "space-y-0") do |f| %>
+<%# Submits as a full page visit even when rendered inside the modal frame, so the
+    write response is an ordinary redirect and the controller needs no knowledge of
+    which page is showing. Validation errors render the standalone form page. %>
+<%= form_with(model: task, class: "space-y-0", data: { turbo_frame: "_top" }) do |f| %>
   <%= render "shared/error_summary", record: task %>
 
   <%= render "shared/form_field", form: f, field: :title, label: "Title", required: true %>

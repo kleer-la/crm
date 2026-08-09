@@ -149,9 +149,7 @@
     <div class="space-y-6">
       <%= render "shared/touchpoint_form", record: @proposal %>
 
-      <turbo-frame id="<%= dom_id(@proposal, :tasks) %>" class="block">
-        <%= render "tasks/section", linkable: @proposal %>
-      </turbo-frame>
+      <%= render "tasks/section", linkable: @proposal %>
 
       <div class="bg-white ring-1 ring-slate-200 rounded-xl p-4">
         <h3 class="text-sm font-semibold text-slate-900 mb-3">Activity</h3>

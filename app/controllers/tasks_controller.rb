@@ -1,6 +1,5 @@
 class TasksController < ApplicationController
   include Sortable
-  include ActionView::RecordIdentifier
 
   before_action :set_task, only: [ :show, :edit, :update, :destroy, :mark_done, :cancel, :reassign ]
 
@@ -29,19 +28,9 @@ class TasksController < ApplicationController
     @task = Task.new(task_params)
 
     if @task.save
-      respond_to do |format|
-        format.turbo_stream do
-          render turbo_stream: [
-            turbo_stream.update("modal", ""),
-            turbo_stream.update(dom_id(@task.linkable, :tasks),
-                                partial: "tasks/section",
-                                locals: { linkable: @task.linkable })
-          ]
-        end
-        format.html { redirect_to @task, notice: "Task was successfully created." }
-      end
+      redirect_to @task.linkable, notice: "Task was successfully created."
     else
-      render :new, status: :unprocessable_entity, formats: [ :html ]
+      render :new, status: :unprocessable_entity
     end
   end
 
@@ -50,19 +39,9 @@ class TasksController < ApplicationController
 
   def update
     if @task.update(task_params)
-      respond_to do |format|
-        format.turbo_stream do
-          render turbo_stream: [
-            turbo_stream.update("modal", ""),
-            turbo_stream.update(dom_id(@task.linkable, :tasks),
-                                partial: "tasks/section",
-                                locals: { linkable: @task.linkable })
-          ]
-        end
-        format.html { redirect_to @task, notice: "Task was successfully updated." }
-      end
+      redirect_to @task.linkable, notice: "Task was successfully updated."
     else
-      render :edit, status: :unprocessable_entity, formats: [ :html ]
+      render :edit, status: :unprocessable_entity
     end
   end
 
