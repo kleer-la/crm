@@ -18,7 +18,9 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
     curl -fsSL https://deb.nodesource.com/setup_lts.x | bash - && apt-get -y install nodejs && \
     apt-get -y autoremove && apt-get clean && rm -rf /var/lib/apt/lists/* && \
     npm install -g @fission-ai/openspec@latest && \
-    npm install -g opencode-ai@latest && \
+    # Install opencode natively into the user's home so `opencode upgrade` needs no sudo
+    su - $USER_NAME -c 'curl -fsSL https://opencode.ai/install | bash -s -- --no-modify-path' && \
+    echo 'export PATH="$HOME/.opencode/bin:$PATH"' >> /home/$USER_NAME/.bashrc && \
     pip install --break-system-packages edge-tts
 
 # Chrome for system tests (headless)

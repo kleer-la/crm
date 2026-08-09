@@ -8,6 +8,10 @@ ln -sfn /app/.claude /home/user/.claude
 # Load environment variables in every shell session
 echo '[ -f /app/.env ] && set -a && . /app/.env && set +a' >> /home/user/.bashrc
 
+# opencode: ensure user-local bin dir is on PATH (idempotent across rebuilds)
+grep -q '.opencode/bin' /home/user/.bashrc || \
+  echo 'export PATH="$HOME/.opencode/bin:$PATH"' >> /home/user/.bashrc
+
 # Dependencies
 cd /app
 [ -d openspec ] && openspec update || true
