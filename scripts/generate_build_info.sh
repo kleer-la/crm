@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # Generate build info JSON for CRM deployments.
 # Collects git metadata and outputs JSON to stdout.
