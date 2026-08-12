@@ -133,7 +133,7 @@ class MetaProvider
   def token_for(platform)
     case platform
     when "instagram"
-      ENV["META_IG_ACCESS_TOKEN"].presence || ENV["META_ACCESS_TOKEN"]
+      Setting.ig_access_token.presence || ENV["META_ACCESS_TOKEN"]
     else
       ENV["META_ACCESS_TOKEN"]
     end
