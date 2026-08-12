@@ -74,6 +74,7 @@ class MetaWebhookService
     # (requires enable_welcome_message in the number's conversational_automation).
     if msg["type"] == "request_welcome"
       WelcomeMessageJob.perform_later(conversation)
+      TelegramNewConversationJob.perform_later(conversation) if new_conversation
       return Result.new(conversation: conversation, message: nil)
     end
 
@@ -88,6 +89,7 @@ class MetaWebhookService
 
     WhatsappMediaDownloadJob.perform_later(message) if WhatsappMediaDownloadJob::MEDIA_TYPES.include?(msg["type"])
     WelcomeMessageJob.perform_later(conversation) if new_conversation
+    TelegramNewConversationJob.perform_later(conversation) if new_conversation
 
     Result.new(conversation: conversation, message: message)
   end
@@ -110,6 +112,7 @@ class MetaWebhookService
       external_contact_id: contact_id,
       contact_name: outbound ? nil : fetch_ig_username(sender_id)
     )
+    new_conversation = conversation.previously_new_record?
 
     message = conversation.messages.create!(
       direction: outbound ? :outbound : :inbound,
@@ -119,6 +122,8 @@ class MetaWebhookService
       sent_at: Time.at(change["timestamp"].to_i / 1000.0),
       metadata: msg.except("mid", "text")
     )
+
+    TelegramNewConversationJob.perform_later(conversation) if new_conversation && !outbound
 
     Result.new(conversation: conversation, message: message)
   end

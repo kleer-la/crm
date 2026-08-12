@@ -25,6 +25,11 @@ default: &default
     queue: default
     schedule: "0 3 * * 1" # weekly, Mondays 03:00
 
+  telegram_daily_summary:
+    class: TelegramDailySummaryJob
+    queue: default
+    schedule: "0 12 * * *" # daily 09:00 America/Argentina/Buenos_Aires (server runs UTC)
+
 
 development:
   <<: *default

@@ -83,6 +83,50 @@ class MetaWebhookServiceTest < ActiveSupport::TestCase
     end
   end
 
+  test "enqueues telegram alert for a whatsapp message that opens a new conversation" do
+    payload = whatsapp_payload("text", { "body" => "Hola" })
+
+    assert_enqueued_with(job: TelegramNewConversationJob) do
+      MetaWebhookService.process(payload)
+    end
+  end
+
+  test "does not enqueue telegram alert for an existing conversation" do
+    create(:conversation, platform: :whatsapp, external_contact_id: "5491155500001")
+    payload = whatsapp_payload("text", { "body" => "Hola de nuevo" })
+
+    assert_no_enqueued_jobs(only: TelegramNewConversationJob) do
+      MetaWebhookService.process(payload)
+    end
+  end
+
+  test "request_welcome that opens a new conversation enqueues telegram alert" do
+    payload = whatsapp_payload("request_welcome", nil)
+    payload["entry"][0]["changes"][0]["value"]["messages"][0].delete("request_welcome")
+
+    assert_enqueued_with(job: TelegramNewConversationJob) do
+      MetaWebhookService.process(payload)
+    end
+  end
+
+  test "enqueues telegram alert for a new instagram conversation" do
+    payload = instagram_payload("text", { "text" => "Hola" })
+
+    assert_enqueued_with(job: TelegramNewConversationJob) do
+      MetaWebhookService.process(payload)
+    end
+  end
+
+  test "does not enqueue telegram alert for an outbound echo that creates a conversation" do
+    payload = instagram_payload("text", { "text" => "auto-reply" })
+    payload["entry"][0]["messaging"][0]["sender"]["id"] = "IG_BIZ_ID"
+    payload["entry"][0]["messaging"][0]["recipient"]["id"] = "ig_user_x"
+
+    assert_no_enqueued_jobs(only: TelegramNewConversationJob) do
+      MetaWebhookService.process(payload)
+    end
+  end
+
   test "reuses existing conversation for same contact" do
     existing = create(:conversation, platform: :whatsapp, external_contact_id: "5491155500001")
     payload = whatsapp_payload("text", { "body" => "Hello again" })
