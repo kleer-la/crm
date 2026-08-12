@@ -41,4 +41,48 @@ class WelcomeMessageJobTest < ActiveSupport::TestCase
       WelcomeMessageJob.perform_now(@conversation)
     end
   end
+
+  # 2026-08-12 is a Wednesday; business hours are 9:00-18:00 America/Argentina/Buenos_Aires (UTC-3)
+  test "uses the business-hours welcome during working hours" do
+    create(:canned_response, :welcome)
+    after_hours = create(:canned_response, :welcome_after_hours)
+
+    travel_to Time.utc(2026, 8, 12, 13, 0) do # 10:00 ART, Wednesday
+      WelcomeMessageJob.perform_now(@conversation)
+    end
+
+    assert_not_equal after_hours.content, @conversation.messages.last.content
+  end
+
+  test "uses the after-hours welcome outside working hours" do
+    create(:canned_response, :welcome)
+    after_hours = create(:canned_response, :welcome_after_hours)
+
+    travel_to Time.utc(2026, 8, 12, 23, 0) do # 20:00 ART, Wednesday
+      WelcomeMessageJob.perform_now(@conversation)
+    end
+
+    assert_equal after_hours.content, @conversation.messages.last.content
+  end
+
+  test "uses the after-hours welcome on weekends" do
+    create(:canned_response, :welcome)
+    after_hours = create(:canned_response, :welcome_after_hours)
+
+    travel_to Time.utc(2026, 8, 15, 15, 0) do # 12:00 ART, Saturday
+      WelcomeMessageJob.perform_now(@conversation)
+    end
+
+    assert_equal after_hours.content, @conversation.messages.last.content
+  end
+
+  test "falls back to the regular welcome when no after-hours response exists" do
+    canned = create(:canned_response, :welcome)
+
+    travel_to Time.utc(2026, 8, 15, 15, 0) do # Saturday
+      WelcomeMessageJob.perform_now(@conversation)
+    end
+
+    assert_equal canned.content, @conversation.messages.last.content
+  end
 end

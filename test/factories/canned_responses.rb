@@ -15,5 +15,11 @@ FactoryBot.define do
       content { "¡Hola! Gracias por contactarnos, en breve te respondemos." }
       key { CannedResponse::WELCOME_KEY }
     end
+
+    trait :welcome_after_hours do
+      name { "Bienvenida fuera de horario" }
+      content { "Gracias por contactarnos. Te atendemos de Lunes a Viernes de 9:00 a 18:00 (GMT-3)." }
+      key { CannedResponse::WELCOME_AFTER_HOURS_KEY }
+    end
   end
 end
