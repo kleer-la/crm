@@ -77,4 +77,58 @@ class MetaProviderTest < ActiveSupport::TestCase
     assert_equal "5491155500001", captured_body[:to]
     assert_equal "WA reply", captured_body[:text][:body]
   end
+
+  test "whatsapp send with image attachment builds media request" do
+    ENV["META_PHONE_NUMBER_ID"] = "phone_456"
+    conversation = create(:conversation, platform: :whatsapp, external_contact_id: "5491155500001")
+    message = create(:message, :outbound, conversation: conversation, content: "Look at this", message_type: :image)
+    message.file.attach(io: StringIO.new("jpeg-bytes"), filename: "photo.jpg", content_type: "image/jpeg")
+
+    captured_body = capture_whatsapp_send(message)
+
+    assert_equal "image", captured_body[:type]
+    assert_includes captured_body[:image][:link], "crm.kleer.la"
+    assert_equal "Look at this", captured_body[:image][:caption]
+    assert_nil captured_body[:text]
+  end
+
+  test "whatsapp media send omits placeholder caption" do
+    ENV["META_PHONE_NUMBER_ID"] = "phone_456"
+    conversation = create(:conversation, platform: :whatsapp, external_contact_id: "5491155500001")
+    message = create(:message, :outbound, conversation: conversation, content: "[Image]", message_type: :image)
+    message.file.attach(io: StringIO.new("jpeg-bytes"), filename: "photo.jpg", content_type: "image/jpeg")
+
+    captured_body = capture_whatsapp_send(message)
+
+    assert_nil captured_body[:image][:caption]
+  end
+
+  test "whatsapp document send includes filename" do
+    ENV["META_PHONE_NUMBER_ID"] = "phone_456"
+    conversation = create(:conversation, platform: :whatsapp, external_contact_id: "5491155500001")
+    message = create(:message, :outbound, conversation: conversation, content: "[Document]", message_type: :document)
+    message.file.attach(io: StringIO.new("pdf-bytes"), filename: "proposal.pdf", content_type: "application/pdf")
+
+    captured_body = capture_whatsapp_send(message)
+
+    assert_equal "document", captured_body[:type]
+    assert_equal "proposal.pdf", captured_body[:document][:filename]
+  end
+
+  private
+
+  def capture_whatsapp_send(message)
+    captured_body = nil
+    @provider.define_singleton_method(:post_json) do |uri, body, platform: nil|
+      captured_body = body
+      response = Net::HTTPOK.new("1.1", "200", "OK")
+      response.instance_variable_set(:@read, true)
+      response.instance_variable_set(:@body, { messages: [ { id: "wamid.abc" } ] }.to_json)
+      response
+    end
+
+    result = @provider.send_message(message)
+    assert result.success
+    captured_body
+  end
 end

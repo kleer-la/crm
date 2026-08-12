@@ -58,10 +58,8 @@ class MetaProvider
     uri = URI("https://graph.facebook.com/v25.0/#{phone_number_id}/messages")
     body = {
       messaging_product: "whatsapp",
-      to: conversation.external_contact_id,
-      type: "text",
-      text: { body: message.content }
-    }
+      to: conversation.external_contact_id
+    }.merge(whatsapp_content(message))
 
     response = post_json(uri, body)
 
@@ -93,6 +91,29 @@ class MetaProvider
       error = parse_error(response)
       Rails.logger.error("[MetaProvider] FB send failed: #{error}")
       MessageDispatcher::Result.new(success: false, error: error)
+    end
+  end
+
+  def whatsapp_content(message)
+    unless message.file.attached?
+      return { type: "text", text: { body: message.content } }
+    end
+
+    media_type = wa_media_type(message)
+    media = { link: file_url(message) }
+    media[:filename] = message.file.filename.to_s if media_type == "document"
+    if media_type != "audio" && message.content.present? && message.content != "[#{message.message_type.capitalize}]"
+      media[:caption] = message.content
+    end
+
+    { type: media_type, media_type.to_sym => media }
+  end
+
+  # WhatsApp only accepts image/video/audio/document as outbound media types
+  def wa_media_type(message)
+    case message.message_type
+    when "image", "video", "audio" then message.message_type
+    else "document"
     end
   end
 
