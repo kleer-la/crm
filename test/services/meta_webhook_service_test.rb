@@ -53,6 +53,36 @@ class MetaWebhookServiceTest < ActiveSupport::TestCase
     end
   end
 
+  test "enqueues welcome for a whatsapp message that opens a new conversation" do
+    payload = whatsapp_payload("text", { "body" => "Hola" })
+
+    assert_enqueued_with(job: WelcomeMessageJob) do
+      MetaWebhookService.process(payload)
+    end
+  end
+
+  test "does not enqueue welcome for an existing conversation" do
+    create(:conversation, platform: :whatsapp, external_contact_id: "5491155500001")
+    payload = whatsapp_payload("text", { "body" => "Hola de nuevo" })
+
+    assert_no_enqueued_jobs(only: WelcomeMessageJob) do
+      MetaWebhookService.process(payload)
+    end
+  end
+
+  test "request_welcome enqueues welcome without creating a message" do
+    payload = whatsapp_payload("request_welcome", nil)
+    payload["entry"][0]["changes"][0]["value"]["messages"][0].delete("request_welcome")
+
+    assert_enqueued_with(job: WelcomeMessageJob) do
+      assert_no_difference -> { Message.count } do
+        results = MetaWebhookService.process(payload)
+        assert_nil results.first.message
+        assert_equal "whatsapp", results.first.conversation.platform
+      end
+    end
+  end
+
   test "reuses existing conversation for same contact" do
     existing = create(:conversation, platform: :whatsapp, external_contact_id: "5491155500001")
     payload = whatsapp_payload("text", { "body" => "Hello again" })

@@ -9,5 +9,11 @@ FactoryBot.define do
       content { "Nos desconectamos de esta conversación, avisanos si querés continuar" }
       key { CannedResponse::AUTO_DISCONNECT_KEY }
     end
+
+    trait :welcome do
+      name { "Bienvenida" }
+      content { "¡Hola! Gracias por contactarnos, en breve te respondemos." }
+      key { CannedResponse::WELCOME_KEY }
+    end
   end
 end

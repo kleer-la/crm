@@ -68,6 +68,14 @@ class MetaWebhookService
       external_contact_id: msg["from"],
       contact_name: contact&.dig("profile", "name")
     )
+    new_conversation = conversation.previously_new_record?
+
+    # Sent by Meta when the user opens the chat, before writing anything
+    # (requires enable_welcome_message in the number's conversational_automation).
+    if msg["type"] == "request_welcome"
+      WelcomeMessageJob.perform_later(conversation)
+      return Result.new(conversation: conversation, message: nil)
+    end
 
     message = create_message(
       conversation: conversation,
@@ -79,6 +87,7 @@ class MetaWebhookService
     )
 
     WhatsappMediaDownloadJob.perform_later(message) if WhatsappMediaDownloadJob::MEDIA_TYPES.include?(msg["type"])
+    WelcomeMessageJob.perform_later(conversation) if new_conversation
 
     Result.new(conversation: conversation, message: message)
   end
