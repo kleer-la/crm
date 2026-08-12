@@ -78,6 +78,8 @@ class MetaWebhookService
       metadata: msg.except("id", "from", "timestamp", "type", "text")
     )
 
+    WhatsappMediaDownloadJob.perform_later(message) if WhatsappMediaDownloadJob::MEDIA_TYPES.include?(msg["type"])
+
     Result.new(conversation: conversation, message: message)
   end
 

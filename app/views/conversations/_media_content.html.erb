@@ -70,11 +70,15 @@
   <% end %>
 
 <% when "sticker" %>
-  <% sticker_url = message.metadata.dig("sticker", "url") || message.metadata.dig("sticker", "link") %>
-  <% if sticker_url %>
-    <img src="<%= sticker_url %>" alt="Sticker" class="max-w-[128px] max-h-[128px]" loading="lazy">
+  <% if message.file.attached? %>
+    <%= image_tag message.file, alt: "Sticker", class: "max-w-[128px] max-h-[128px]", loading: "lazy" %>
   <% else %>
-    <p class="text-sm italic">Sticker</p>
+    <% sticker_url = message.metadata.dig("sticker", "url") || message.metadata.dig("sticker", "link") %>
+    <% if sticker_url %>
+      <img src="<%= sticker_url %>" alt="Sticker" class="max-w-[128px] max-h-[128px]" loading="lazy">
+    <% else %>
+      <p class="text-sm italic">Sticker</p>
+    <% end %>
   <% end %>
 
 <% when "location" %>

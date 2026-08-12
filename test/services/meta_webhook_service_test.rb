@@ -1,6 +1,8 @@
 require "test_helper"
 
 class MetaWebhookServiceTest < ActiveSupport::TestCase
+  include ActiveJob::TestHelper
+
   test "processes whatsapp text message" do
     payload = whatsapp_payload("text", { "body" => "Hi there" })
 
@@ -33,6 +35,22 @@ class MetaWebhookServiceTest < ActiveSupport::TestCase
 
     results = MetaWebhookService.process(payload)
     assert_equal "[Image]", results.first.message.content
+  end
+
+  test "enqueues media download for whatsapp image message" do
+    payload = whatsapp_payload("image", { "id" => "img_1" })
+
+    assert_enqueued_with(job: WhatsappMediaDownloadJob) do
+      MetaWebhookService.process(payload)
+    end
+  end
+
+  test "does not enqueue media download for whatsapp text message" do
+    payload = whatsapp_payload("text", { "body" => "Hi there" })
+
+    assert_no_enqueued_jobs(only: WhatsappMediaDownloadJob) do
+      MetaWebhookService.process(payload)
+    end
   end
 
   test "reuses existing conversation for same contact" do
