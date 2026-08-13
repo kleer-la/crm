@@ -42,7 +42,7 @@ module Admin
     end
 
     def canned_response_params
-      params.require(:canned_response).permit(:name, :content, :position)
+      params.require(:canned_response).permit(:name, :content, :position, :key)
     end
   end
 end

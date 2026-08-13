@@ -22,6 +22,7 @@ Rails.application.routes.draw do
       end
     end
     resources :canned_responses, except: [ :show ]
+    resource :settings, only: [ :edit, :update ]
   end
 
   # Prospects

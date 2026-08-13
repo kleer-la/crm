@@ -123,7 +123,10 @@ class MetaWebhookService
       metadata: msg.except("mid", "text")
     )
 
-    TelegramNewConversationJob.perform_later(conversation) if new_conversation && !outbound
+    if new_conversation && !outbound
+      WelcomeMessageJob.perform_later(conversation) if platform == :instagram && Setting.ig_welcome_enabled?
+      TelegramNewConversationJob.perform_later(conversation)
+    end
 
     Result.new(conversation: conversation, message: message)
   end

@@ -16,4 +16,10 @@ class Setting < ApplicationRecord
   def self.ig_access_token
     get("ig_access_token").presence || ENV["META_IG_ACCESS_TOKEN"]
   end
+
+  # Off by default: must stay off while Instagram's native auto-reply is active
+  # in Meta Business Suite, or new contacts get greeted twice.
+  def self.ig_welcome_enabled?
+    get("ig_welcome_enabled") == "true"
+  end
 end

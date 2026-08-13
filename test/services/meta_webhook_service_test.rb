@@ -109,6 +109,44 @@ class MetaWebhookServiceTest < ActiveSupport::TestCase
     end
   end
 
+  test "enqueues welcome for a new instagram conversation when enabled" do
+    Setting.set("ig_welcome_enabled", "true")
+    payload = instagram_payload("text", { "text" => "Hola" })
+
+    assert_enqueued_with(job: WelcomeMessageJob) do
+      MetaWebhookService.process(payload)
+    end
+  end
+
+  test "does not enqueue instagram welcome when the setting is off" do
+    payload = instagram_payload("text", { "text" => "Hola" })
+
+    assert_no_enqueued_jobs(only: WelcomeMessageJob) do
+      MetaWebhookService.process(payload)
+    end
+  end
+
+  test "does not enqueue welcome for an existing instagram conversation" do
+    Setting.set("ig_welcome_enabled", "true")
+    create(:conversation, :instagram, external_contact_id: "ig_sender_001")
+    payload = instagram_payload("text", { "text" => "Hola de nuevo" })
+
+    assert_no_enqueued_jobs(only: WelcomeMessageJob) do
+      MetaWebhookService.process(payload)
+    end
+  end
+
+  test "does not enqueue welcome for an outbound echo that creates a conversation" do
+    Setting.set("ig_welcome_enabled", "true")
+    payload = instagram_payload("text", { "text" => "auto-reply" })
+    payload["entry"][0]["messaging"][0]["sender"]["id"] = "IG_BIZ_ID"
+    payload["entry"][0]["messaging"][0]["recipient"]["id"] = "ig_user_x"
+
+    assert_no_enqueued_jobs(only: WelcomeMessageJob) do
+      MetaWebhookService.process(payload)
+    end
+  end
+
   test "enqueues telegram alert for a new instagram conversation" do
     payload = instagram_payload("text", { "text" => "Hola" })
 

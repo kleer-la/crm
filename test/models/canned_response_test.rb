@@ -19,8 +19,8 @@ class CannedResponseTest < ActiveSupport::TestCase
   end
 
   test "key uniqueness" do
-    create(:canned_response, key: "test_key")
-    duplicate = build(:canned_response, key: "test_key")
+    create(:canned_response, key: CannedResponse::WELCOME_KEY)
+    duplicate = build(:canned_response, key: CannedResponse::WELCOME_KEY)
     assert_not duplicate.valid?
     assert_includes duplicate.errors[:key], "has already been taken"
   end
@@ -29,6 +29,18 @@ class CannedResponseTest < ActiveSupport::TestCase
     create(:canned_response, key: nil)
     another = build(:canned_response, key: nil)
     assert another.valid?
+  end
+
+  test "rejects keys outside the system whitelist" do
+    cr = build(:canned_response, key: "made_up_key")
+    assert_not cr.valid?
+    assert_includes cr.errors[:key], "is not included in the list"
+  end
+
+  test "normalizes a blank key to nil" do
+    cr = create(:canned_response, key: "")
+    assert_nil cr.key
+    assert_not cr.system?
   end
 
   test "ordered scope sorts by position then name" do
@@ -49,7 +61,7 @@ class CannedResponseTest < ActiveSupport::TestCase
   end
 
   test "system? returns true when key is present" do
-    cr = build(:canned_response, key: "some_key")
+    cr = build(:canned_response, key: CannedResponse::AUTO_DISCONNECT_KEY)
     assert cr.system?
   end
 

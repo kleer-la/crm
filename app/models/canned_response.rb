@@ -2,10 +2,13 @@ class CannedResponse < ApplicationRecord
   AUTO_DISCONNECT_KEY = "auto_disconnect".freeze
   WELCOME_KEY = "welcome".freeze
   WELCOME_AFTER_HOURS_KEY = "welcome_after_hours".freeze
+  SYSTEM_KEYS = [ AUTO_DISCONNECT_KEY, WELCOME_KEY, WELCOME_AFTER_HOURS_KEY ].freeze
+
+  normalizes :key, with: ->(key) { key.presence }
 
   validates :name, presence: true
   validates :content, presence: true
-  validates :key, uniqueness: true, allow_nil: true
+  validates :key, uniqueness: true, inclusion: { in: SYSTEM_KEYS }, allow_nil: true
 
   scope :ordered, -> { order(:position, :name) }
 

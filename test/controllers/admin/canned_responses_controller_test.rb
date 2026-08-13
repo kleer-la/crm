@@ -41,6 +41,39 @@ class Admin::CannedResponsesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test "create with a system key" do
+    post admin_canned_responses_path, params: {
+      canned_response: { name: "Welcome", content: "Hi!", key: CannedResponse::WELCOME_KEY }
+    }
+    assert_redirected_to admin_canned_responses_path
+    assert_equal CannedResponse.welcome, CannedResponse.find_by(name: "Welcome")
+  end
+
+  test "create with a blank key stays a regular quick reply" do
+    post admin_canned_responses_path, params: {
+      canned_response: { name: "Plain", content: "Hi!", key: "" }
+    }
+    assert_nil CannedResponse.find_by(name: "Plain").key
+  end
+
+  test "create with an already-taken key renders form with error" do
+    create(:canned_response, :welcome)
+    assert_no_difference "CannedResponse.count" do
+      post admin_canned_responses_path, params: {
+        canned_response: { name: "Second welcome", content: "Hi!", key: CannedResponse::WELCOME_KEY }
+      }
+    end
+    assert_response :unprocessable_entity
+  end
+
+  test "update can assign a system key" do
+    patch admin_canned_response_path(@canned_response), params: {
+      canned_response: { key: CannedResponse::AUTO_DISCONNECT_KEY }
+    }
+    assert_redirected_to admin_canned_responses_path
+    assert_equal @canned_response.reload, CannedResponse.auto_disconnect
+  end
+
   test "update with valid params" do
     patch admin_canned_response_path(@canned_response), params: {
       canned_response: { content: "Updated content" }
