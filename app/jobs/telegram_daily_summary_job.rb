@@ -21,18 +21,33 @@ class TelegramDailySummaryJob < ApplicationJob
 
     lines = [ "📋 <b>Conversaciones abiertas: #{open_conversations.count}</b> (#{by_platform})" ]
 
-    waiting = awaiting_reply(open_conversations).order(last_message_at: :asc)
-    if waiting.any?
+    waiting_ids = awaiting_reply(open_conversations).pluck(:id).to_set
+
+    grouped_by_assignee(open_conversations, waiting_ids).each do |assignee, conversations|
+      waiting = conversations.select { |c| waiting_ids.include?(c.id) }.sort_by(&:last_message_at)
+
       lines << ""
-      lines << "⏳ Esperando respuesta:"
+      lines << "<b>#{assignee ? h(assignee.name) : "Sin asignar"}</b> — #{count_label(conversations.size, "abierta")}, #{count_label(waiting.size, "espera")} respuesta#{":" if waiting.any?}"
       waiting.each do |conversation|
-        lines << "• #{conversation_link(conversation, conversation.display_name)} (#{platform_name(conversation)}) — #{waiting_label(conversation)}"
+        lines << "  ⏳ #{conversation_link(conversation, conversation.display_name)} (#{platform_name(conversation)}) — #{waiting_label(conversation)}"
       end
-    else
-      lines << "✅ Ninguna espera respuesta."
     end
 
     lines.join("\n")
+  end
+
+  # Unassigned bucket first, then assignees with the most conversations awaiting a reply
+  def grouped_by_assignee(open_conversations, waiting_ids)
+    open_conversations.includes(:assigned_user).group_by(&:assigned_user).sort_by do |assignee, conversations|
+      [ assignee.nil? ? 0 : 1, -conversations.count { |c| waiting_ids.include?(c.id) } ]
+    end
+  end
+
+  def count_label(count, noun)
+    case noun
+    when "abierta" then "#{count} #{count == 1 ? "abierta" : "abiertas"}"
+    when "espera" then "#{count} #{count == 1 ? "espera" : "esperan"}"
+    end
   end
 
   # Open conversations whose most recent message is inbound (they wrote, we didn't reply)
