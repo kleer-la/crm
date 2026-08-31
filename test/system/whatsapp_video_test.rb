@@ -1,28 +1,37 @@
 require "application_system_test_case"
+require_relative "../support/video_recording"
 
 # Captures numbered screenshots for a video walkthrough of WhatsApp conversations.
-# Run with: docker exec -w /app crm_devcontainer-web-1 bin/rails test test/system/whatsapp_video_test.rb
+# Assembled into a narrated MP4 by the e2e-video-doc plugin, which also discovers the
+# devcontainer name rather than hardcoding it. See e2e-video-doc.json.
 #
-# Screenshots are saved to tmp/video_screenshots/ with sequential numbering.
-# Use scripts/make_video.sh to assemble into a narrated video.
+#   bash <plugin>/engine/run.sh whatsapp
 class WhatsappVideoTest < ApplicationSystemTestCase
-  # Tablet viewport for good visuals in video
-  driven_by :selenium, using: :headless_chrome, screen_size: [ 1024, 768 ] do |options|
+  include VideoRecording
+  # 16:9 *viewport* to match the video frame, so the engine pads nothing: the window
+  # is 143px taller than the shot because Selenium's chrome eats that much.
+  driven_by :selenium, using: :headless_chrome, screen_size: [ 1280, 863 ] do |options|
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--force-device-scale-factor=1")
+    # Keeps the "Enable desktop notifications" banner out of every frame: the view
+    # only shows it while the permission is still "default".
+    options.add_argument("--disable-notifications")
   end
 
   setup do
+    # Before setup_video_recording: it rm -rf's the screenshot directory, so a
+    # skip in the test body would still wipe the captures of the last real run.
+    skip "only with RUN_VIDEO_TESTS=1" unless ENV["RUN_VIDEO_TESTS"]
+
     @consultant = create(:user, name: "Ana Mendez")
     @customer = create(:customer, company_name: "Kleer", responsible_consultant: @consultant)
     create(:contact, customer: @customer, name: "Juan Gabardini", email: "juan@kleer.la", primary: true)
 
-    @screenshot_dir = Rails.root.join("tmp", "video_screenshots")
-    FileUtils.rm_rf(@screenshot_dir)
-    FileUtils.mkdir_p(@screenshot_dir)
-    @step = 0
+    setup_video_recording
   end
+
+  def scenario_name = "whatsapp"
 
   test "capture WhatsApp conversation screenshots for video" do
     sign_in_via_ui(@consultant)
@@ -96,33 +105,10 @@ class WhatsappVideoTest < ApplicationSystemTestCase
     capture("closed_filter")
 
     # ── Summary ──
-    puts "\n#{@step} screenshots saved to tmp/video_screenshots/"
-    puts "Run: bash scripts/make_video.sh"
+    puts "\n#{@step} screenshots saved to #{screenshot_dir}"
   end
 
   private
-
-  def capture(name, pause: 0.5, scroll: nil)
-    case scroll
-    when :bottom
-      page.execute_script("window.scrollTo(0, document.body.scrollHeight)")
-    when :top
-      page.execute_script("window.scrollTo(0, 0)")
-    when /\Atext:(.+)\z/
-      text = $1
-      element = find(:xpath, "//*[contains(text(), '#{text}')]", match: :first, visible: :all)
-      scroll_to(element, align: :top)
-    when /\Acss:(.+)\z/
-      selector = $1
-      element = find(selector, match: :first, visible: :all)
-      scroll_to(element, align: :top)
-    end
-
-    sleep pause
-    @step += 1
-    filename = format("%02d_%s.png", @step, name)
-    page.save_screenshot(@screenshot_dir.join(filename))
-  end
 
   # Create messages directly in the DB (bypasses Turbo Stream broadcast issues in test)
   def create_conversation(name, phone)

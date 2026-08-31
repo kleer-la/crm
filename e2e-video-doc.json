@@ -1,0 +1,13 @@
+{
+  "defaults": {
+    "voice": "es-AR-ElenaNeural",
+    "screenshots": "tmp/video_screenshots/{flow}",
+    "narration": "scripts/{flow}_video_narration.json",
+    "output": "public/videos/{flow}.mp4"
+  },
+  "flows": {
+    "whatsapp": {
+      "capture": "docker exec -e RUN_VIDEO_TESTS=1 -w /app \"$(bash \"$E2E_VIDEO_DOC_ENGINE/devcontainer.sh\" web)\" bin/rails test test/system/{flow}_video_test.rb"
+    }
+  }
+}
