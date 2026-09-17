@@ -11,7 +11,8 @@
       </p>
       <%= render "conversations/media_content", message: message %>
     <% end %>
-    <p class="text-xs mt-1 <%= message.outbound? ? 'text-indigo-200' : 'text-slate-400' %>">
+    <p class="text-xs mt-1 <%= message.outbound? ? 'text-indigo-200' : 'text-slate-400' %>"
+       data-controller="local-time" data-local-time-iso-value="<%= message.sent_at.iso8601 %>">
       <%= message.sent_at.strftime("%b %d, %H:%M") %>
     </p>
   </div>
