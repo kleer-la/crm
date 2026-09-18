@@ -12,4 +12,9 @@ class NotificationTest < ApplicationSystemTestCase
     assert_selector "#notification-banner", visible: :visible
     assert_includes page.text, "Enable desktop notifications"
   end
+
+  test "notification permission banner appears app-wide, not just on a conversation" do
+    visit conversations_path
+    assert_selector "#notification-banner", visible: :visible
+  end
 end

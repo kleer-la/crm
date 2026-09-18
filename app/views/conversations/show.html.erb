@@ -1,24 +1,4 @@
-<div class="px-4 sm:px-6 lg:px-8 py-8"
-     data-controller="notification"
-     data-notification-conversation-id-value="<%= @conversation.id %>">
-  <audio id="notification-sound" preload="auto" src="/notification.wav"></audio>
-
-  <!-- Notification permission banner -->
-  <div id="notification-banner" class="mb-4 hidden">
-    <div class="rounded-lg bg-indigo-50 p-3 flex items-center justify-between">
-      <p class="text-sm text-indigo-700">Enable desktop notifications to get alerts for new messages.</p>
-      <button onclick="Notification.requestPermission().then(() => this.closest('#notification-banner').remove())"
-              class="text-sm font-medium text-indigo-600 hover:text-indigo-500 ml-4">
-        Enable
-      </button>
-    </div>
-  </div>
-  <script>
-    if ("Notification" in window && Notification.permission === "default") {
-      document.getElementById("notification-banner").classList.remove("hidden")
-    }
-  </script>
-
+<div class="px-4 sm:px-6 lg:px-8 py-8">
   <!-- Header -->
   <div class="sm:flex sm:items-center sm:justify-between mb-6">
     <div class="flex items-center gap-3">

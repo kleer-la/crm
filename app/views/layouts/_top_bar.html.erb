@@ -1,4 +1,16 @@
-<div class="sticky top-0 z-10 bg-white shadow">
+<div class="sticky top-0 z-10 bg-white shadow" data-controller="message-alerts">
+  <div id="notification-banner" data-message-alerts-target="banner" class="hidden bg-indigo-50 px-4 sm:px-6 lg:px-8 py-2 flex items-center justify-between">
+    <p class="text-sm text-indigo-700">Enable desktop notifications to get alerts for new messages.</p>
+    <button type="button" data-action="click->message-alerts#requestPermission"
+            class="text-sm font-medium text-indigo-600 hover:text-indigo-500 ml-4">
+      Enable
+    </button>
+  </div>
+
+  <audio id="notification-sound" preload="auto" src="/notification.wav"></audio>
+  <%= turbo_stream_from [ current_user, :notifications ] %>
+  <div id="global-notifications" data-message-alerts-target="feed" class="hidden"></div>
+
   <div class="flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
     <%# Mobile menu button %>
     <button type="button" class="lg:hidden -ml-2 p-2 text-gray-500 hover:text-gray-900" data-action="sidebar#toggle">

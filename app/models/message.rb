@@ -11,6 +11,7 @@ class Message < ApplicationRecord
 
   after_create :update_conversation_last_message_at
   after_create_commit :broadcast_message
+  after_create_commit :notify_assigned_user, if: :inbound?
 
   private
 
@@ -30,6 +31,17 @@ class Message < ApplicationRecord
       target: "conversation_#{conversation_id}",
       partial: "conversations/conversation_row",
       locals: { conversation: conversation.reload }
+    )
+  end
+
+  def notify_assigned_user
+    return unless conversation.assigned_user
+
+    broadcast_append_to(
+      [ conversation.assigned_user, :notifications ],
+      target: "global-notifications",
+      partial: "conversations/message_alert",
+      locals: { message: self }
     )
   end
 end

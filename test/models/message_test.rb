@@ -1,6 +1,9 @@
 require "test_helper"
+require "turbo/broadcastable/test_helper"
 
 class MessageTest < ActiveSupport::TestCase
+  include Turbo::Broadcastable::TestHelper
+
   test "valid message" do
     message = build(:message)
     assert message.valid?
@@ -60,5 +63,31 @@ class MessageTest < ActiveSupport::TestCase
     create(:message, conversation: conversation, sent_at: 2.days.ago)
 
     assert_in_delta original.to_f, conversation.reload.last_message_at.to_f, 1
+  end
+
+  test "notifies the assigned user on an inbound message" do
+    user = create(:user)
+    conversation = create(:conversation, assigned_user: user)
+
+    assert_turbo_stream_broadcasts [ user, :notifications ] do
+      create(:message, conversation: conversation, direction: :inbound)
+    end
+  end
+
+  test "does not notify on an outbound message" do
+    user = create(:user)
+    conversation = create(:conversation, assigned_user: user)
+
+    assert_no_turbo_stream_broadcasts [ user, :notifications ] do
+      create(:message, conversation: conversation, direction: :outbound)
+    end
+  end
+
+  test "does not notify when the conversation is unassigned" do
+    conversation = create(:conversation, assigned_user: nil)
+
+    assert_nothing_raised do
+      create(:message, conversation: conversation, direction: :inbound)
+    end
   end
 end

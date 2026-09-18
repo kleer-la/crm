@@ -1,0 +1,5 @@
+<div id="<%= dom_id(message, :alert) %>" class="hidden"
+     data-conversation-path="<%= conversation_path(message.conversation) %>"
+     data-sender="<%= message.conversation.display_name %>"
+     data-content="<%= truncate(message.content || "New message", length: 100) %>">
+</div>
