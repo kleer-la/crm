@@ -19,7 +19,7 @@
 - **Search** — by contact name (pg_search)
 - **Message pagination** — cursor-based lazy loading for long conversations
 - **Contact info panel** — linked CRM record details alongside conversation
-- **Pluggable outbound** — `MessageDispatcher` with `MetaProvider` (IG/WA/FB), `NullProvider`, `KapsoProvider` stubs
+- **Pluggable outbound** — `MessageDispatcher` with `MetaProvider` (IG/WA/FB), `NullProvider`
 - **Webhook signature verification** — supports both `META_APP_SECRET` and `META_IG_APP_SECRET` (Instagram uses separate secret)
 - **Video demo generator** — system test captures screenshots, `make_video.sh` assembles narrated MP4
 
@@ -44,8 +44,7 @@
 | `META_PHONE_NUMBER_ID` | developers.facebook.com > WhatsApp > API Setup | WhatsApp phone to send from |
 | `META_IG_APP_SECRET` | developers.facebook.com > Instagram > API Setup | Instagram webhook signature verification |
 | `META_IG_ACCESS_TOKEN` | developers.facebook.com > Instagram > API Setup > step 2 | Instagram API calls (send + profile lookup) |
-| `MESSAGING_PROVIDER` | deploy.yml (clear, not secret) | `"meta"`, `"kapso"`, or `"null"` |
-| `KAPSO_WEBHOOK_SECRET` | Kapso dashboard | Kapso webhook signature verification |
+| `MESSAGING_PROVIDER` | deploy.yml (clear, not secret) | `"meta"` or `"null"` |
 
 ---
 
@@ -80,7 +79,7 @@ Connect directly to Meta's WhatsApp Cloud API.
 
 ### Track 3: Kapso middleware
 
-**Status:** Webhook receiver built and tested. Not active — evaluating whether still needed given direct Meta integration works.
+**Status:** Removed (2026-10-25). Direct Meta integration made it unnecessary; webhook, provider and secret deleted.
 
 ### Track 4: Real business number migration (WhatsApp)
 
@@ -122,7 +121,7 @@ Bought a US phone number on Twilio for WhatsApp testing.
 
 ## Architecture decisions
 
-1. **Two providers, one model** — Both Meta and Kapso webhooks normalize into the same Conversation/Message models.
+1. **One model for all platforms** — Meta webhooks (WhatsApp, Instagram, Facebook) normalize into the same Conversation/Message models.
 2. **Platform enum** — Conversations support WhatsApp, Instagram, and Facebook.
 3. **Pluggable outbound** — `MessageDispatcher` → provider adapter pattern. `MetaProvider` handles IG/WA/FB, configured via `MESSAGING_PROVIDER` env var.
 4. **Separate IG credentials** — Instagram uses its own app secret and access token, separate from WhatsApp. The webhook controller tries both secrets for signature verification.
@@ -140,5 +139,4 @@ Bought a US phone number on Twilio for WhatsApp testing.
 4. **Media send** — upload and send images/documents from CRM
 5. **Real-time verification** — test Turbo Streams and notifications in production
 6. **Production video demo** — re-run video generator with real IG conversation data
-7. **Evaluate Kapso** — decide if still needed or remove
-8. **Business number migration** — plan timeline once CRM reaches feature parity
+7. **Business number migration** — plan timeline once CRM reaches feature parity
