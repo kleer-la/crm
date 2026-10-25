@@ -23,7 +23,7 @@ class ApplicationController < ActionController::Base
     return unless current_user
 
     if !current_user.active?
-      session[:user_id] = nil
+      reset_session
       redirect_to login_path, alert: "Your account has been deactivated."
     elsif current_user.pending?
       redirect_to pending_approval_path

@@ -256,7 +256,7 @@ class CsvImportExecutionService
   def valid_url(value)
     url = value.presence
     return nil unless url
-    url if url.match?(URI::DEFAULT_PARSER.make_regexp(%w[http https]))
+    url if url.match?(/\A#{URI::DEFAULT_PARSER.make_regexp(%w[http https])}\z/)
   end
 
   def log_error(row_number, message)

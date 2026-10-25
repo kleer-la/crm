@@ -2,7 +2,7 @@ class ConversationsController < ApplicationController
   before_action :set_conversation, only: [ :show, :older_messages, :assign, :link, :close, :reopen ]
 
   def index
-    @conversations = Conversation.recent.includes(:messages, :read_states)
+    @conversations = Conversation.recent
     # Default to open conversations unless explicitly set
     status_filter = params[:status] || "open"
     @conversations = @conversations.where(status: status_filter) unless status_filter == "all"

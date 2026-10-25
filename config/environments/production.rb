@@ -27,6 +27,10 @@ Rails.application.configure do
   # Assume all access to the app is happening through a SSL-terminating reverse proxy.
   config.assume_ssl = true
 
+  # YJIT trades ~30-70 MB of code cache for CPU speed; this small IO-bound app
+  # does not need it. Set to true to re-enable.
+  config.yjit = false
+
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
   config.force_ssl = true
 

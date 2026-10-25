@@ -10,7 +10,7 @@ class WhatsappMediaDownloadJobTest < ActiveSupport::TestCase
     @job.define_singleton_method(:fetch_media_info) do |media_id|
       { "url" => "https://lookaside.example/media/#{media_id}", "mime_type" => "image/jpeg" }
     end
-    @job.define_singleton_method(:download_media) { |_url| "jpeg-bytes" }
+    @job.define_singleton_method(:download_media) { |_url| StringIO.new("jpeg-bytes") }
 
     @job.perform(@message)
 
@@ -26,7 +26,7 @@ class WhatsappMediaDownloadJobTest < ActiveSupport::TestCase
     @job.define_singleton_method(:fetch_media_info) do |_id|
       { "url" => "https://lookaside.example/media/doc_1", "mime_type" => "application/pdf" }
     end
-    @job.define_singleton_method(:download_media) { |_url| "pdf-bytes" }
+    @job.define_singleton_method(:download_media) { |_url| StringIO.new("pdf-bytes") }
 
     @job.perform(message)
 
@@ -39,7 +39,7 @@ class WhatsappMediaDownloadJobTest < ActiveSupport::TestCase
     @job.define_singleton_method(:fetch_media_info) do |_id|
       { "url" => "https://lookaside.example/media/aud_1", "mime_type" => "audio/ogg; codecs=opus" }
     end
-    @job.define_singleton_method(:download_media) { |_url| "ogg-bytes" }
+    @job.define_singleton_method(:download_media) { |_url| StringIO.new("ogg-bytes") }
 
     @job.perform(message)
 
@@ -62,6 +62,13 @@ class WhatsappMediaDownloadJobTest < ActiveSupport::TestCase
     @job.perform(message)
 
     assert_not message.file.attached?
+  end
+
+  test "sends the Meta token only to Meta hosts" do
+    assert @job.send(:meta_host?, "graph.facebook.com")
+    assert @job.send(:meta_host?, "lookaside.fbsbx.com")
+    assert_not @job.send(:meta_host?, "evil.com")
+    assert_not @job.send(:meta_host?, "notfacebook.com")
   end
 
   test "raises when media info has no url" do

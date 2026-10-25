@@ -41,6 +41,9 @@ env:
     - TELEGRAM_CHAT_ID
   clear:
     SOLID_QUEUE_IN_PUMA: true
+    RAILS_MAX_THREADS: 3
+    # Return freed memory to the OS sooner and limit jemalloc arenas.
+    MALLOC_CONF: "narenas:2,background_thread:true,dirty_decay_ms:1000,muzzy_decay_ms:1000"
     MESSAGING_PROVIDER: "meta"
 
 # Aliases are triggered with "bin/kamal <alias>".

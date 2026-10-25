@@ -18,6 +18,14 @@ class Webhooks::MetaControllerTest < ActionDispatch::IntegrationTest
     assert_equal "challenge_123", response.body
   end
 
+  test "verify returns forbidden when no token is configured" do
+    ENV["META_WEBHOOK_VERIFY_TOKEN"] = nil
+    get webhooks_meta_path, params: { "hub.mode" => "subscribe", "hub.challenge" => "x" }
+    assert_response :forbidden
+  ensure
+    ENV["META_WEBHOOK_VERIFY_TOKEN"] = "test_verify_token"
+  end
+
   test "verify returns forbidden when token does not match" do
     get webhooks_meta_path, params: {
       "hub.mode" => "subscribe",

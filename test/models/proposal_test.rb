@@ -42,6 +42,12 @@ class ProposalTest < ActiveSupport::TestCase
     assert_includes proposal.errors[:current_document_url], "must be a valid URL"
   end
 
+  test "rejects javascript urls that embed an http url" do
+    proposal = build(:proposal, current_document_url: "javascript:alert(document.cookie)//https://x.com")
+    assert_not proposal.valid?
+    assert_includes proposal.errors[:current_document_url], "must be a valid URL"
+  end
+
   test "allows valid document url" do
     proposal = build(:proposal, current_document_url: "https://docs.google.com/doc/123")
     assert proposal.valid?

@@ -8,7 +8,9 @@ module Webhooks
       token = params["hub.verify_token"]
       challenge = params["hub.challenge"]
 
-      if mode == "subscribe" && token == ENV["META_WEBHOOK_VERIFY_TOKEN"]
+      expected = ENV["META_WEBHOOK_VERIFY_TOKEN"].to_s
+      if mode == "subscribe" && expected.present? &&
+          ActiveSupport::SecurityUtils.secure_compare(token.to_s, expected)
         render plain: challenge, status: :ok
       else
         head :forbidden
@@ -22,6 +24,9 @@ module Webhooks
       head :ok
     rescue JSON::ParserError
       head :bad_request
+    rescue ActiveRecord::RecordNotUnique
+      # Meta redelivered a message we already stored; ack so it stops retrying.
+      head :ok
     end
 
     private

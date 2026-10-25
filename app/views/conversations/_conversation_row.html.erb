@@ -35,7 +35,7 @@
       <% if conversation.last_message_at %>
         <p class="text-xs text-slate-400"><%= time_ago_in_words(conversation.last_message_at) %> ago</p>
       <% end %>
-      <p class="text-xs text-slate-400 mt-1"><%= conversation.messages.size %> messages</p>
+      <p class="text-xs text-slate-400 mt-1"><%= conversation.messages.count %> messages</p>
     </div>
   </div>
 <% end %>

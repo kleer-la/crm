@@ -18,7 +18,7 @@ class Proposal < ApplicationRecord
   validates :status, presence: true
   validates :responsible_consultant, presence: true
   validates :win_loss_reason, presence: true, if: -> { won? || lost? }
-  validates :current_document_url, format: { with: URI::DEFAULT_PARSER.make_regexp(%w[http https]), message: "must be a valid URL" }, allow_blank: true
+  validates :current_document_url, format: { with: /\A#{URI::DEFAULT_PARSER.make_regexp(%w[http https])}\z/, message: "must be a valid URL" }, allow_blank: true
 
   validate :cannot_win_if_prospect_disqualified, if: :won?
 
