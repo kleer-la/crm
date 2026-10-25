@@ -4,6 +4,28 @@ require "turbo/broadcastable/test_helper"
 class MessageTest < ActiveSupport::TestCase
   include Turbo::Broadcastable::TestHelper
 
+  test "rejects outbound attachments over the size limit" do
+    message = build(:message, :outbound, message_type: :document, content: "[Document]")
+    message.file.attach(io: StringIO.new("x" * (Message::MAX_UPLOAD_SIZE + 1)), filename: "big.pdf", content_type: "application/pdf")
+
+    assert_not message.valid?
+    assert_includes message.errors[:file], "is too large (maximum is 16 MB)"
+  end
+
+  test "allows outbound attachments within the size limit" do
+    message = build(:message, :outbound, message_type: :document, content: "[Document]")
+    message.file.attach(io: StringIO.new("small"), filename: "ok.pdf", content_type: "application/pdf")
+
+    assert message.valid?
+  end
+
+  test "does not limit inbound media size" do
+    message = build(:message, message_type: :document, content: "[Document]")
+    message.file.attach(io: StringIO.new("x" * (Message::MAX_UPLOAD_SIZE + 1)), filename: "big.pdf", content_type: "application/pdf")
+
+    assert message.valid?
+  end
+
   test "valid message" do
     message = build(:message)
     assert message.valid?

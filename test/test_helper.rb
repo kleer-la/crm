@@ -7,6 +7,12 @@ module ActiveSupport
     include FactoryBot::Syntax::Methods
 
     parallelize(workers: :number_of_processors)
+
+    # Reset rate_limit counters so tests don't throttle each other.
+    setup do
+      ActionController::Base.cache_store.clear
+      ActionController::API.cache_store.clear
+    end
   end
 end
 

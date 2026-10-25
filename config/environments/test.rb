@@ -21,6 +21,9 @@ Rails.application.configure do
   # Show full error reports.
   config.consider_all_requests_local = true
   config.cache_store = :null_store
+  # rate_limit counters live in the controller cache store; a real store lets
+  # tests exercise the limits (cleared before every test in test_helper).
+  config.action_controller.cache_store = :memory_store
 
   # Render exception templates for rescuable exceptions and raise for other exceptions.
   config.action_dispatch.show_exceptions = :rescuable

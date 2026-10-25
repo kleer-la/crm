@@ -25,6 +25,10 @@
     </div>
   <% end %>
 
+  <% if message&.errors&.any? %>
+    <p class="mb-2 text-sm text-red-600"><%= message.errors.full_messages.to_sentence %></p>
+  <% end %>
+
   <%= form_with(model: [conversation, message || Message.new], url: conversation_messages_path(conversation),
                 class: "flex gap-2 items-end", html: { multipart: true },
                 data: { reply_composer_target: "form", action: "keydown.enter->reply-composer#submitOnEnter turbo:submit-end->reply-composer#resetAfterSubmit" }) do |f| %>

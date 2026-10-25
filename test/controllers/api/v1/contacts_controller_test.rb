@@ -15,6 +15,16 @@ module Api
         }
       end
 
+      test "requests are rate limited" do
+        30.times do
+          post api_v1_contact_path, params: @valid_payload.to_json, headers: { "CONTENT_TYPE" => "application/json" }
+          assert_response :accepted
+        end
+        post api_v1_contact_path, params: @valid_payload.to_json, headers: { "CONTENT_TYPE" => "application/json" }
+
+        assert_response :too_many_requests
+      end
+
       test "valid payload returns 202 and enqueues the job" do
         assert_enqueued_with(job: IngestWebContactJob, args: [ @valid_payload[:contact].stringify_keys ]) do
           post api_v1_contact_path, params: @valid_payload.to_json, headers: { "CONTENT_TYPE" => "application/json" }

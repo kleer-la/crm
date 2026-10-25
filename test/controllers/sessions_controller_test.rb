@@ -1,6 +1,15 @@
 require "test_helper"
 
 class SessionsControllerTest < ActionDispatch::IntegrationTest
+  test "sign-in callback is rate limited" do
+    user = create(:user)
+    10.times { sign_in(user) }
+    sign_in(user)
+
+    assert_redirected_to login_path
+    assert_match "Too many sign-in attempts", flash[:alert]
+  end
+
   test "login page renders for unauthenticated user" do
     get login_path
     assert_response :success

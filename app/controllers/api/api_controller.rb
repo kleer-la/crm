@@ -6,6 +6,9 @@ module Api
 
     rescue_from ActiveRecord::RecordNotFound, with: :handle_not_found
 
+    rate_limit to: 30, within: 1.minute,
+      with: -> { render json: { message: "Too many requests" }, status: :too_many_requests }
+
     before_action :authenticate
 
     private

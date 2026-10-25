@@ -2,6 +2,9 @@ class SessionsController < ApplicationController
   skip_before_action :require_authenticated_user, only: [ :new, :create, :failure ]
   skip_before_action :require_active_role, only: [ :new, :create, :failure, :pending, :destroy ]
 
+  rate_limit to: 10, within: 3.minutes, only: :create,
+    with: -> { redirect_to login_path, alert: "Too many sign-in attempts. Please try again in a few minutes." }
+
   def new
     redirect_to root_path if current_user&.active? && !current_user.pending?
   end

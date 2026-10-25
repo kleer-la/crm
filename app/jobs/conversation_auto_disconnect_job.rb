@@ -13,7 +13,7 @@ class ConversationAutoDisconnectJob < ApplicationJob
     idle_conversations.find_each do |conversation|
       send_disconnect_message(conversation, canned.content)
       conversation.closed!
-      Rails.logger.info("[AutoDisconnect] Closed conversation ##{conversation.id} (#{conversation.display_name})")
+      Rails.logger.info("[AutoDisconnect] Closed conversation ##{conversation.id}")
     end
   end
 

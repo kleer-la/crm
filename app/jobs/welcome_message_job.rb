@@ -23,7 +23,7 @@ class WelcomeMessageJob < ApplicationJob
       sent_at: Time.current
     )
     MessageDispatcher.new.dispatch(message)
-    Rails.logger.info("[WelcomeMessage] Sent welcome to conversation ##{conversation.id} (#{conversation.display_name})")
+    Rails.logger.info("[WelcomeMessage] Sent welcome to conversation ##{conversation.id}")
   end
 
   private

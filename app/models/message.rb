@@ -2,6 +2,10 @@ class Message < ApplicationRecord
   belongs_to :conversation, touch: true
   has_one_attached :file
 
+  # Outbound uploads only; inbound media comes from Meta, which enforces its own limits.
+  MAX_UPLOAD_SIZE = 16.megabytes
+  validate :file_size_within_limit, if: -> { outbound? && file.attached? }
+
   enum :direction, { inbound: 0, outbound: 1 }
   enum :message_type, { text: 0, image: 1, audio: 2, video: 3, document: 4, sticker: 5, location: 6, reaction: 7, note: 8 }
 
@@ -43,5 +47,11 @@ class Message < ApplicationRecord
       partial: "conversations/message_alert",
       locals: { message: self }
     )
+  end
+
+  def file_size_within_limit
+    return if file.blob.byte_size <= MAX_UPLOAD_SIZE
+
+    errors.add(:file, "is too large (maximum is #{MAX_UPLOAD_SIZE / 1.megabyte} MB)")
   end
 end
