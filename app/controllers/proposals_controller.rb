@@ -113,7 +113,7 @@ class ProposalsController < ApplicationController
     params.require(:proposal).permit(
       :title, :description, :linkable_type, :linkable_id,
       :status, :estimated_value,
-      :date_asked, :date_sent, :expected_close_date, :actual_close_date,
+      :date_asked, :date_sent, :expected_close_date, :actual_close_date, :follow_up_from,
       :win_loss_reason, :notes, :current_document_url,
       :responsible_consultant_id,
       collaborating_consultant_ids: []

@@ -41,6 +41,8 @@
     <%= render "shared/form_field", form: f, field: :expected_close_date, label: "Expected close date", type: :date_field %>
     <%= render "shared/form_field", form: f, field: :date_asked, label: "Date asked", type: :date_field %>
     <%= render "shared/form_field", form: f, field: :date_sent, label: "Date sent", type: :date_field %>
+    <%= render "shared/form_field", form: f, field: :follow_up_from, label: "Follow up from", type: :date_field,
+               hint: "No stale alerts before this date, e.g. when the client will only decide in next year's budget" %>
   </div>
 
   <%= render "shared/form_field", form: f, field: :current_document_url, label: "Document link (URL)" %>

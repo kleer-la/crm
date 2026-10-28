@@ -203,6 +203,37 @@ class ProposalTest < ActiveSupport::TestCase
     assert_includes Proposal.stale, proposal
   end
 
+  test "stale scope excludes proposals with a future follow up from date" do
+    proposal = create(:proposal, linkable: create(:customer), follow_up_from: 1.month.from_now.to_date)
+    create(:activity_log, :touchpoint, loggable: proposal, user: proposal.responsible_consultant,
+           occurred_at: 90.days.ago)
+
+    assert_not_includes Proposal.stale, proposal
+  end
+
+  test "stale scope includes proposals once the follow up from date arrives" do
+    proposal = create(:proposal, linkable: create(:customer), follow_up_from: Date.current)
+    create(:activity_log, :touchpoint, loggable: proposal, user: proposal.responsible_consultant,
+           occurred_at: 90.days.ago)
+
+    assert_includes Proposal.stale, proposal
+  end
+
+  test "past follow up from date still respects recent touchpoints" do
+    proposal = create(:proposal, linkable: create(:customer), follow_up_from: 1.week.ago.to_date)
+    create(:activity_log, :touchpoint, loggable: proposal, user: proposal.responsible_consultant,
+           occurred_at: 5.days.ago)
+
+    assert_not_includes Proposal.stale, proposal
+  end
+
+  test "changing follow up from is logged as a system event" do
+    proposal = create(:proposal, linkable: create(:customer))
+    proposal.update!(follow_up_from: Date.new(2027, 3, 1))
+
+    assert proposal.activity_logs.system.exists?(content: "Follow up from set to Mar 01, 2027")
+  end
+
   test "stale scope excludes proposals with touchpoint within STALE_DAYS" do
     customer = create(:customer)
     proposal = create(:proposal, linkable: customer)

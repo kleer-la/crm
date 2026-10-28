@@ -64,6 +64,10 @@
             <dd class="mt-1 text-sm text-slate-900"><%= @proposal.expected_close_date&.strftime("%b %d, %Y") || "—" %></dd>
           </div>
           <div>
+            <dt class="text-sm font-medium text-slate-500">Follow up from</dt>
+            <dd class="mt-1 text-sm text-slate-900"><%= @proposal.follow_up_from&.strftime("%b %d, %Y") || "—" %></dd>
+          </div>
+          <div>
             <dt class="text-sm font-medium text-slate-500">Actual close date</dt>
             <dd class="mt-1 text-sm text-slate-900"><%= @proposal.actual_close_date&.strftime("%b %d, %Y") || "—" %></dd>
           </div>

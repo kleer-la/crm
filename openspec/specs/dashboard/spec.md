@@ -99,7 +99,7 @@ The system SHALL display a **Mine** tab on the dashboard showing the user's pers
 - **THEN** the worklists show only records where the user is responsible or a collaborating consultant
 
 ### Requirement: Stale proposal alerts on personal dashboard
-The Mine tab SHALL display an alert box listing the user's open proposals that have had no **touchpoint** (call, email, meeting, or note) logged in the last 30 calendar days. A proposal is stale if no touchpoint activity log entry has been recorded against it in the past 30 days and its status is not Won, Lost, or Cancelled. System-generated activity log entries (status changes, document link updates, consultant changes) SHALL NOT count toward staleness resolution. These alerts are dashboard-only and SHALL NOT trigger email notifications. The alert box SHALL NOT be rendered when the user has no stale proposals.
+The Mine tab SHALL display an alert box listing the user's open proposals that have had no **touchpoint** (call, email, meeting, or note) logged in the last 30 calendar days. A proposal is stale if no touchpoint activity log entry has been recorded against it in the past 30 days and its status is not Won, Lost, or Cancelled. System-generated activity log entries (status changes, document link updates, consultant changes) SHALL NOT count toward staleness resolution. Proposals whose `follow_up_from` date is in the future SHALL NOT be listed (see the proposals spec). These alerts are dashboard-only and SHALL NOT trigger email notifications. The alert box SHALL NOT be rendered when the user has no stale proposals.
 
 #### Scenario: Stale proposal displayed
 - **WHEN** the user has an open Proposal with no touchpoint logged in the last 30 days

@@ -26,8 +26,10 @@ class Proposal < ApplicationRecord
   scope :closed, -> { where(status: [ :won, :lost, :cancelled ]) }
   STALE_DAYS = 30
 
+  # A follow_up_from date in the future snoozes the alert (e.g. the client will
+  # only decide in next year's budget); from that date on the 30-day rule applies.
   scope :stale, -> {
-    open.where.not(
+    open.where("proposals.follow_up_from IS NULL OR proposals.follow_up_from <= ?", Date.current).where.not(
       id: ActivityLog.where(loggable_type: "Proposal")
                      .where(entry_type: :touchpoint)
                      .where("occurred_at >= ?", STALE_DAYS.days.ago)
@@ -85,6 +87,12 @@ class Proposal < ApplicationRecord
     log_status_change if previous_changes.key?("status")
     log_consultant_change if previous_changes.key?("responsible_consultant_id")
     log_document_url_change if previous_changes.key?("current_document_url")
+    log_follow_up_change if previous_changes.key?("follow_up_from")
+  end
+
+  def log_follow_up_change
+    new_date = previous_changes["follow_up_from"].last
+    log_system_event(new_date ? "Follow up from set to #{new_date.strftime('%b %d, %Y')}" : "Follow up from date removed")
   end
 
   def log_status_change

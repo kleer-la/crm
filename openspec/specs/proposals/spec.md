@@ -120,3 +120,14 @@ The system SHALL consider a Proposal stale when no touchpoint with an occurred_a
 #### Scenario: Proposal with no touchpoints in 30 days is stale
 - **WHEN** a Proposal has no touchpoints with occurred_at within the last 30 days
 - **THEN** the Proposal is flagged as stale
+
+### Requirement: Follow up from date snoozes stale detection
+A Proposal MAY have an optional `follow_up_from` date. While that date is in the future the Proposal SHALL NOT be considered stale, regardless of its last touchpoint. From that date on (inclusive) the normal 30-day rule applies. Use case: the client will only decide in next year's budget, so contact is not expected until then. Setting, changing, or clearing the date SHALL be recorded as a system activity entry (which does not count as a touchpoint).
+
+#### Scenario: Future follow up from date hides the stale alert
+- **WHEN** a Proposal's last touchpoint was in October and its follow_up_from is March 1
+- **THEN** the Proposal is not flagged as stale in November through February
+
+#### Scenario: Stale alert returns on the follow up from date
+- **WHEN** the follow_up_from date arrives and there is still no touchpoint within the last 30 days
+- **THEN** the Proposal is flagged as stale again
