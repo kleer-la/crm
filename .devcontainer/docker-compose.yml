@@ -16,6 +16,8 @@ services:
 
     # Overrides default command so things don't shut down after the process ends.
     command: sleep infinity
+    # tini as PID 1 to reap zombies (e.g. Chromium from system tests).
+    init: true
 
     # Uncomment the next line to use a non-root user for all processes.
     user: user
